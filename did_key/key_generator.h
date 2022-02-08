@@ -24,7 +24,7 @@ typedef struct key_pair_tag {
 extern "C" {
 #endif
 
-void generate_key(rand_func_cb rand_func, char* algo, key_pair_t* key_pair);
+void generate_key_pair(rand_func_cb rand_func, char* algo, key_pair_t* key_pair);
 
 #ifdef __cplusplus
 }
