@@ -17,7 +17,7 @@ int default_rand_func(int len, unsigned char* buffer)
     return len;
 }
 
-void generate_key_pair(rand_func_cb rand_func, char* algo, key_pair_t* key_pair)
+void generate_key_pair(rand_func_cb rand_func, const char* algo, key_pair_t* key_pair)
 {
     if (rand_func == NULL) 
     {
