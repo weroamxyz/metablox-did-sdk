@@ -5,6 +5,7 @@
 #include "did_key/key_generator.h"
 
 typedef struct did_meta_tag {
+    char dummy;
 } did_meta_t;
 
 typedef void*  did_handle;
@@ -16,7 +17,7 @@ extern "C" {
 did_handle did_create(const char* algo, rand_func_cb rand_func);
 void       did_destroy(did_handle handle);
 int        did_serialize(did_handle handle, char* buffer, int buff_len);
-did_handle did_deserialize(const char* buffer, int buff_len);
+did_handle did_deserialize(const char* buffer);
 #ifdef __cplusplus
 }
 #endif

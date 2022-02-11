@@ -42,7 +42,6 @@ void did_destroy(did_handle handle)
 int did_serialize(did_handle handle, char* buffer, int buff_len) 
 {
     did_context_t* context = (did_context_t*)handle;
-
     cJSON* did_root = NULL;
     cJSON* key_root = NULL;
     char*  privkey_base64 = NULL;
@@ -86,7 +85,7 @@ int did_serialize(did_handle handle, char* buffer, int buff_len)
         goto RET;
     }
 
-    if (cJSON_AddItemToObject(did_root, "key_pari", key_root) != cJSON_True) 
+    if (cJSON_AddItemToObject(did_root, "key_pair", key_root) != cJSON_True) 
     {
         goto RET;
     }
@@ -144,6 +143,63 @@ RET:
     return result;
 }
 
-did_handle did_deserialize(const char* buffer, int buff_len) {
+did_handle did_deserialize(const char* buffer) {
+    did_context_t* context = (did_context_t*)malloc(sizeof(did_context_t));
+    cJSON* did_json = NULL;
+    cJSON* key_pair_item = NULL;
+    cJSON* item = NULL;
+    int    data_length = 0;
+    unsigned char key_buffer[2048] = {0};
+    char*  key_base64_str = NULL;
+    memset(context, 0, sizeof(did_context_t));
+    did_json = cJSON_Parse(buffer);
+    if (did_json == NULL)
+    {
+        goto ERR;
+    }
+    
+    item = cJSON_GetObjectItem(did_json, "algo");
+    if (item == NULL) 
+    {
+        goto ERR;
+    }
 
+    strcpy(context->algo, cJSON_GetStringValue(item));
+    
+    key_pair_item = cJSON_GetObjectItem(did_json, "key_pair");
+    if (key_pair_item == NULL) 
+    {
+        goto ERR;
+    }
+
+    key_base64_str = cJSON_GetStringValue(cJSON_GetObjectItem(key_pair_item, "pub"));
+    data_length = base64_decode(key_base64_str, strlen(key_base64_str), key_buffer);
+    
+    context->key_pair.pubkey_len = data_length;
+    memcpy(context->key_pair.pubkey, key_buffer, data_length);
+
+    key_base64_str = cJSON_GetStringValue(cJSON_GetObjectItem(key_pair_item, "priv"));
+    data_length = base64_decode(key_base64_str, strlen(key_base64_str), key_buffer);
+    
+    context->key_pair.priv_len = data_length;
+    memcpy(context->key_pair.priv, key_buffer, data_length);
+    
+    if (did_json != NULL) 
+    {
+        cJSON_Delete(did_json);
+    }
+    
+    return context;
+ERR:
+    if (did_json != NULL) 
+    {
+        cJSON_Delete(did_json);
+    }
+    
+    if (context != NULL) 
+    {
+        free(context);
+    }
+
+    return NULL;
 }
