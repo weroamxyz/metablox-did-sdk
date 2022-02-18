@@ -16,8 +16,11 @@ extern "C" {
 
 did_handle did_create(const char* algo, rand_func_cb rand_func);
 void       did_destroy(did_handle handle);
-int        did_serialize(did_handle handle, char* buffer, int buff_len);
+int        did_serialize(did_handle handle, char* buffer, size_t buff_len);
 did_handle did_deserialize(const char* buffer);
+int        did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size_t out_len);
+int        did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, size_t sign_len);
+
 #ifdef __cplusplus
 }
 #endif
