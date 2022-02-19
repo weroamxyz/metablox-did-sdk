@@ -37,7 +37,7 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
 {
     if (out == NULL) 
     {
-        return 64
+        return 64;
     }
     secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
     if (ctx == NULL) {
@@ -63,4 +63,30 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
     secp256k1_context_destroy(ctx);
 
     return copy_len;
+}
+
+int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, const char* signature)
+{
+    secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+    if (ctx == NULL) {
+        return -1;
+    }
+
+    secp256k1_ecdsa_signature sig;
+    memcpy(sig.data, signature, 64);
+
+    secp256k1_pubkey pubkey;
+    memcpy(pubkey.data, public_key, 64);
+    
+    char hash[32] = {0};
+    SHA256_CTX sha256_ctx = {0};
+
+    sha256_init(&sha256_ctx);
+    sha256_update(&sha256_ctx, msg, msg_len);
+    sha256_final(&sha256_ctx, hash);
+
+    int result = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey);
+    secp256k1_context_destroy(ctx);
+    
+    return result;
 }

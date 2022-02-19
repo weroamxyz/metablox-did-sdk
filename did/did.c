@@ -206,10 +206,18 @@ ERR:
 
 int did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size_t out_len) 
 {
-
+    did_context_t* context = (did_context_t*)handle;
+    return key_sign(&context->key_pair, context->algo, msg, msg_len, out, out_len);
 }
 
 int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, size_t sign_len)
 {
+    if (strcmp(did_key->type, "Ed25519VerificationKey2018") == 0) 
+    {
 
+    } 
+    else 
+    {
+        return 0;
+    }
 }
