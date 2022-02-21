@@ -4,10 +4,12 @@
 #include "cJSON/cJSON.h"
 #include "common/base64.h"
 #include "common/base58.h"
+#include "common/sha256.h"
 
 typedef struct did_context_tag {
-    key_pair_t  key_pair;
+    char        did[MAX_DID_STR_LEN];
     char        algo[64];
+    key_pair_t  key_pair;
 } did_context_t;
 
 did_handle did_create(const char* algo, rand_func_cb rand_func) 
@@ -26,6 +28,15 @@ did_handle did_create(const char* algo, rand_func_cb rand_func)
     
     generate_key_pair(rand_func, algo, &handle->key_pair);
     strcpy(handle->algo, algo);
+    
+    char hash[32] = {0};
+    int  base58_len = 64;
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
+    sha256_final(&ctx, hash);
+
+    b58_encode(hash, 32, handle->algo, base58_len);
 
     return handle;    
 }
@@ -53,6 +64,12 @@ int did_serialize(did_handle handle, char* buffer, size_t buff_len)
     char*  json_str = NULL;
 
     did_root = cJSON_CreateObject();
+    if (cJSON_AddStringToObject(did_root, "did", context->did) == NULL)
+    {
+        goto RET;
+    }
+    
+
     if (cJSON_AddStringToObject(did_root, "algo", context->algo) == NULL)
     {
         goto RET;
@@ -159,6 +176,14 @@ did_handle did_deserialize(const char* buffer) {
         goto ERR;
     }
     
+    item = cJSON_GetObjectItem(did_json, "did");
+    if (item == NULL) 
+    {
+        goto ERR;
+    }
+
+    strcpy(context->did, cJSON_GetStringValue(item));
+
     item = cJSON_GetObjectItem(did_json, "algo");
     if (item == NULL) 
     {
@@ -228,4 +253,48 @@ int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, 
     {
         return 0;
     }
+}
+
+did_meta_t*  did_to_did_meta(did_handle handle)
+{
+    did_context_t* context = (did_context_t*)handle;
+    did_meta_t* meta = (did_meta_t*)malloc(sizeof(did_meta_t));
+
+    strcpy(meta->did, context->did);
+    strcpy(meta->controller, context->did);
+
+    if (strcmp(context->algo, "secp256k1") == 0) 
+    {
+        //Only support one key in did document
+        meta->did_keys = (did_meta_t*)malloc(sizeof(did_key_t));
+        strcpy(meta->did_keys->relationship, "EcdsaSecp256k1VerificationKey2019");
+        strcpy(meta->did_keys->id, "keys-1");
+        strcpy(meta->did_keys->controller, "context->did");
+        size_t base58_len = MAX_KEY_PUBKEY_BASE58_LEN;
+        b58_encode(context->key_pair.pubkey, context->key_pair.pubkey_len, meta->did_keys->publicKeyBase58, &base58_len);
+
+        meta->did_services = NULL;
+
+        return meta;
+    }  
+    else 
+    {
+        free(meta);
+        return NULL;
+    }
+}
+
+void did_meta_destroy(did_meta_t* meta) 
+{
+    if (meta->did_keys != NULL) 
+    {
+        free(meta->did_keys);
+    }
+
+    if (meta->did_services != NULL) 
+    {
+        free(meta->did_services);
+    }
+
+    free(meta);
 }

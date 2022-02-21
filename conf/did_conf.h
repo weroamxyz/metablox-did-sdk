@@ -13,4 +13,6 @@
 
 #define   MAX_TYPE_LEN                  (64)
 
+#define   MAX_ID_LEN                    (64) 
+
 #endif /* __DID_CONF_H__ */

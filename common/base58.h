@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 int b58_decode(const char *b58, size_t b58sz, void *bin, size_t *binsz);
-int b58_encode(char *b58, size_t *b58sz, const void *bin, size_t binsz);
+int b58_encode(const void *bin, size_t binsz, char *b58, size_t *b58sz);
 
 #ifdef __cplusplus
 }
