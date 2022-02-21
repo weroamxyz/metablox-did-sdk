@@ -3,6 +3,7 @@
 #include "string.h"
 #include "cJSON/cJSON.h"
 #include "common/base64.h"
+#include "common/base58.h"
 
 typedef struct did_context_tag {
     key_pair_t  key_pair;
@@ -214,7 +215,14 @@ int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, 
 {
     if (strcmp(did_key->type, "Ed25519VerificationKey2018") == 0) 
     {
+        key_pair_t key_pair;
+        key_pair.pubkey_len = 64;
+        int result = b58_decode(did_key->publicKeyBase58, strlen(did_key->publicKeyBase58), key_pair.pubkey, &key_pair.pubkey_len);
+        if (result == 0) {
+            return result;
+        }
 
+        return key_verify(&key_pair, "secp256k1", msg, msg_len, sign, sign_len);
     } 
     else 
     {
