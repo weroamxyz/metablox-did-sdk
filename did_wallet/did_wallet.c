@@ -1,4 +1,7 @@
 #include "did_wallet.h"
+#include "stdlib.h"
+#include "stdio.h"
+#include "string.h"
 #include "leveldb/c.h"
 #include "common/aes.h"
 
@@ -110,7 +113,7 @@ did_handle wallet_load_did(wallet_handle wallet, const char* name, const char* p
     
     //Padding with 0 has no effect on parsing as json
     
-    did_handle did = did_deserialize(data, len);
+    did_handle did = did_deserialize(data);
 
     leveldb_writeoptions_destroy(options);
     free(data);

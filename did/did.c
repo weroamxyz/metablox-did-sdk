@@ -17,7 +17,7 @@ did_handle did_create(const char* algo, rand_func_cb rand_func)
     if (strlen(algo) > 63) 
     {
         // Algo length overflow
-        return;
+        return NULL;
     }
 
     did_context_t* handle = (did_context_t*)malloc(sizeof(did_context_t));

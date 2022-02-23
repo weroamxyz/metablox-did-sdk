@@ -1,4 +1,5 @@
 #include "did_register.h"
+#include "string.h"
 #include "curl/curl.h"
 #include "conf/did_conf.h"
 #include "cJSON/cJSON.h"

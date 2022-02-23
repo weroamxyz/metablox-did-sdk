@@ -1,6 +1,7 @@
 #ifndef __DID_KEY_H__
 #define __DID_KEY_H__ 
 
+#include "unistd.h"
 #include "conf/did_conf.h"
 #include "did_key/key_generator.h"
 

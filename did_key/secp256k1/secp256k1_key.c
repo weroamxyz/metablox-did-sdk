@@ -1,6 +1,7 @@
 #include "secp256k1/include/secp256k1.h"
 #include "../key_generator.h"
 #include "stdlib.h"
+#include "string.h"
 #include "common/sha256.h"
 
 int generate_secp256k1_keypair(rand_func_cb rand_func, key_pair_t* key_pair) 
