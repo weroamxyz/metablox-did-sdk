@@ -1,9 +1,12 @@
 Long: ntlm
 Help: Use HTTP NTLM authentication
-Mutexed: basic negotiated digest anyauth
+Mutexed: basic negotiate digest anyauth
 See-also: proxy-ntlm
 Protocols: HTTP
 Requires: TLS
+Category: auth http
+Example: --ntlm -u user:password $URL
+Added: 7.10.6
 ---
 Enables NTLM authentication. The NTLM authentication method was designed by
 Microsoft and is used by IIS web servers. It is a proprietary protocol,

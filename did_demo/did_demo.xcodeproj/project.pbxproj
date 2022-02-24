@@ -18,6 +18,12 @@
 		00B1132E27C6179000CD8DB2 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1132427C6179000CD8DB2 /* base64.c */; };
 		00B1132F27C6179000CD8DB2 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1132527C6179000CD8DB2 /* sha256.c */; };
 		00B1133027C6179000CD8DB2 /* base58.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1132627C6179000CD8DB2 /* base58.c */; };
+		00B1133827C62D0A00CD8DB2 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1133627C62D0A00CD8DB2 /* cJSON.c */; };
+		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
+		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
+		00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136127C7549300CD8DB2 /* LDAP.framework */; };
+		00B1136E27C75D0300CD8DB2 /* libleveldb.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */; };
+		00B1136F27C75D0300CD8DB2 /* libleveldb.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +35,17 @@
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 1;
+		};
+		00B1137027C75D0300CD8DB2 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				00B1136F27C75D0300CD8DB2 /* libleveldb.dylib in Embed Libraries */,
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -56,6 +73,15 @@
 		00B1132427C6179000CD8DB2 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
 		00B1132527C6179000CD8DB2 /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
 		00B1132627C6179000CD8DB2 /* base58.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base58.c; sourceTree = "<group>"; };
+		00B1133627C62D0A00CD8DB2 /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cJSON.c; path = "../../../third-party/cJSON/cJSON.c"; sourceTree = "<group>"; };
+		00B1133727C62D0A00CD8DB2 /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cJSON.h; path = "../../../third-party/cJSON/cJSON.h"; sourceTree = "<group>"; };
+		00B1135427C733C400CD8DB2 /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsecp256k1.a; path = ../libs/libsecp256k1.a; sourceTree = "<group>"; };
+		00B1135527C733C400CD8DB2 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../libs/libcurl.a; sourceTree = "<group>"; };
+		00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		00B1136127C7549300CD8DB2 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
+		00B1136427C7550B00CD8DB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libleveldb.dylib; path = ../libs/macos/libleveldb.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +89,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */,
+				00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */,
+				00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */,
+				00B1136E27C75D0300CD8DB2 /* libleveldb.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -72,9 +102,11 @@
 		00B112F627C6170600CD8DB2 = {
 			isa = PBXGroup;
 			children = (
+				00B1133427C62C5100CD8DB2 /* third_party */,
 				00B1130A27C6177200CD8DB2 /* src */,
 				00B1130127C6170600CD8DB2 /* did_demo */,
 				00B1130027C6170600CD8DB2 /* Products */,
+				00B1135327C733C400CD8DB2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -184,6 +216,37 @@
 			path = ../../common;
 			sourceTree = "<group>";
 		};
+		00B1133427C62C5100CD8DB2 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				00B1133527C62C6400CD8DB2 /* cJSON */,
+			);
+			path = third_party;
+			sourceTree = "<group>";
+		};
+		00B1133527C62C6400CD8DB2 /* cJSON */ = {
+			isa = PBXGroup;
+			children = (
+				00B1133627C62D0A00CD8DB2 /* cJSON.c */,
+				00B1133727C62D0A00CD8DB2 /* cJSON.h */,
+			);
+			path = cJSON;
+			sourceTree = "<group>";
+		};
+		00B1135327C733C400CD8DB2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */,
+				00B1136427C7550B00CD8DB2 /* libz.tbd */,
+				00B1136127C7549300CD8DB2 /* LDAP.framework */,
+				00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */,
+				00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */,
+				00B1135527C733C400CD8DB2 /* libcurl.a */,
+				00B1135427C733C400CD8DB2 /* libsecp256k1.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -194,6 +257,7 @@
 				00B112FB27C6170600CD8DB2 /* Sources */,
 				00B112FC27C6170600CD8DB2 /* Frameworks */,
 				00B112FD27C6170600CD8DB2 /* CopyFiles */,
+				00B1137027C75D0300CD8DB2 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
@@ -249,6 +313,7 @@
 				00B1132E27C6179000CD8DB2 /* base64.c in Sources */,
 				00B1132A27C6179000CD8DB2 /* key_generator.c in Sources */,
 				00B1132727C6179000CD8DB2 /* did_register.c in Sources */,
+				00B1133827C62D0A00CD8DB2 /* cJSON.c in Sources */,
 				00B1130327C6170600CD8DB2 /* main.c in Sources */,
 				00B1132D27C6179000CD8DB2 /* aes.c in Sources */,
 			);
@@ -378,6 +443,15 @@
 					"../third-party/leveldb/include",
 					"../third-party/curl/include",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "/Users/liudeng/liziTest/gitlab/did-sdk/libs/macos";
+				LIBRARY_SEARCH_PATHS = ../libs/macos;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
+				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -392,6 +466,15 @@
 					"../third-party/leveldb/include",
 					"../third-party/curl/include",
 				);
+				LD_RUNPATH_SEARCH_PATHS = "/Users/liudeng/liziTest/gitlab/did-sdk/libs/macos";
+				LIBRARY_SEARCH_PATHS = ../libs/macos;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
+				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

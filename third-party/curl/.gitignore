@@ -1,0 +1,5 @@
+CMake
+lib
+tests
+docs
+**/*.o
