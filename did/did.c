@@ -1,6 +1,7 @@
 #include "did.h"
 #include "stdlib.h"
 #include "string.h"
+#include "stdio.h"
 #include "cJSON/cJSON.h"
 #include "common/base64.h"
 #include "common/base58.h"
@@ -25,18 +26,19 @@ did_handle did_create(const char* algo, rand_func_cb rand_func)
     {
         return NULL;
     }
+    memset(handle, 0, sizeof(did_context_t));
     
     generate_key_pair(rand_func, algo, &handle->key_pair);
     strcpy(handle->algo, algo);
     
     char hash[32] = {0};
-    int  base58_len = 64;
+    size_t  base58_len = 64;
     SHA256_CTX ctx;
     sha256_init(&ctx);
     sha256_update(&ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
     sha256_final(&ctx, hash);
 
-    b58_encode(hash, 32, handle->algo, base58_len);
+    b58_encode(hash, 32, handle->did, &base58_len);
 
     return handle;    
 }
@@ -75,9 +77,9 @@ int did_serialize(did_handle handle, char* buffer, size_t buff_len)
         goto RET;
     }
     
-    privkey_base64_len = base64_encode(context->key_pair.priv, context->key_pair.priv_len, NULL);
-    pubkey_base64_len = base64_encode(context->key_pair.pubkey, context->key_pair.pubkey_len, NULL);
-
+    privkey_base64_len = BASE64_ENCODE_OUT_SIZE(context->key_pair.priv_len);
+    pubkey_base64_len = BASE64_ENCODE_OUT_SIZE(context->key_pair.pubkey_len);
+    
     privkey_base64 = (char*)malloc(privkey_base64_len);
     if (privkey_base64 == NULL) 
     {
@@ -91,19 +93,18 @@ int did_serialize(did_handle handle, char* buffer, size_t buff_len)
         goto RET;
     }
     base64_encode(context->key_pair.pubkey, context->key_pair.pubkey_len, pubkey_base64);
-
-    key_root = cJSON_CreateObject();
+    
+    key_root = cJSON_AddObjectToObject(did_root, "key_pair");
+    if (key_root == NULL)
+    {
+        goto RET;
+    }
     if (cJSON_AddStringToObject(key_root, "priv", privkey_base64) == NULL) 
     {
         goto RET;
     }
 
     if (cJSON_AddStringToObject(key_root, "pub", pubkey_base64) == NULL) 
-    {
-        goto RET;
-    }
-
-    if (cJSON_AddItemToObject(did_root, "key_pair", key_root) != cJSON_True) 
     {
         goto RET;
     }
@@ -138,11 +139,6 @@ RET:
         cJSON_Delete(did_root);
     }
     
-    if (key_root != NULL) 
-    {
-        cJSON_Delete(key_root);
-    }
-    
     if (privkey_base64 != NULL) 
     {
         free(privkey_base64);
@@ -170,6 +166,7 @@ did_handle did_deserialize(const char* buffer) {
     unsigned char key_buffer[2048] = {0};
     char*  key_base64_str = NULL;
     memset(context, 0, sizeof(did_context_t));
+        
     did_json = cJSON_Parse(buffer);
     if (did_json == NULL)
     {
@@ -238,14 +235,16 @@ int did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size
 
 int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, size_t sign_len)
 {
-    if (strcmp(did_key->type, "Ed25519VerificationKey2018") == 0) 
+    if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0) 
     {
         key_pair_t key_pair;
         key_pair.pubkey_len = 64;
-        int result = b58_decode(did_key->publicKeyBase58, strlen(did_key->publicKeyBase58), key_pair.pubkey, &key_pair.pubkey_len);
+        size_t pubkey_len = 64;
+        int result = b58_decode(did_key->publicKeyBase58, strlen(did_key->publicKeyBase58), key_pair.pubkey, &pubkey_len);
         if (result == 0) {
             return result;
         }
+        key_pair.pubkey_len = (unsigned short)pubkey_len;
 
         return key_verify(&key_pair, "secp256k1", msg, msg_len, sign, sign_len);
     } 
@@ -266,10 +265,11 @@ did_meta_t*  did_to_did_meta(did_handle handle)
     if (strcmp(context->algo, "secp256k1") == 0) 
     {
         //Only support one key in did document
-        meta->did_keys = (did_meta_t*)malloc(sizeof(did_key_t));
-        strcpy(meta->did_keys->relationship, "EcdsaSecp256k1VerificationKey2019");
+        meta->did_keys = (did_key_t*)malloc(sizeof(did_key_t));
+        strcpy(meta->did_keys->type, "EcdsaSecp256k1VerificationKey2019");
+        strcpy(meta->did_keys->relationship, "authentication");
         strcpy(meta->did_keys->id, "keys-1");
-        strcpy(meta->did_keys->controller, "context->did");
+        strcpy(meta->did_keys->controller, context->did);
         size_t base58_len = MAX_KEY_PUBKEY_BASE58_LEN;
         b58_encode(context->key_pair.pubkey, context->key_pair.pubkey_len, meta->did_keys->publicKeyBase58, &base58_len);
 

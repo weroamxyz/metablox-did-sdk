@@ -22,7 +22,6 @@
 		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
 		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
 		00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136127C7549300CD8DB2 /* LDAP.framework */; };
-		00B1136E27C75D0300CD8DB2 /* libleveldb.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */; };
 		00B1136F27C75D0300CD8DB2 /* libleveldb.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
@@ -92,7 +91,6 @@
 				00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */,
 				00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */,
 				00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */,
-				00B1136E27C75D0300CD8DB2 /* libleveldb.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

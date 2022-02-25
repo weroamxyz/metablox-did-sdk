@@ -25,7 +25,7 @@ void generate_key_pair(rand_func_cb rand_func, const char* algo, key_pair_t* key
         rand_func = default_rand_func;
     }
     
-    if (strcmp("algo", "secp256k1") == 0) 
+    if (strcmp(algo, "secp256k1") == 0) 
     {
         generate_secp256k1_keypair(rand_func, key_pair);
         return;

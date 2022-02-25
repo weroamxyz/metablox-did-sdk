@@ -68,21 +68,24 @@ int wallet_store_did(wallet_handle wallet, did_handle did, const char* name, con
     }
     
     // Padding buffer with 0 for aes encrypt
-    len = (len + 31) / 32  * 32;
+    len = (len + 15) / 16  * 16;
     char* buffer = (char*)malloc(len);
     char key[128] = {0};
     char* error = NULL;
     struct AES_ctx aes_ctx;
 
     AES_init_ctx(&aes_ctx, password);
+    AES_ctx_set_iv(&aes_ctx, password);
     memset(buffer, 0, len);
     did_serialize(did, buffer, len);
-
+    
+    
     AES_CBC_encrypt_buffer(&aes_ctx, buffer, len);
 
-    sprintf("%s%s", DID_KEY_PREFIX, name);
+    sprintf(key, "%s%s", DID_KEY_PREFIX, name);
     
     leveldb_writeoptions_t*  options = leveldb_writeoptions_create();
+    
     leveldb_put(context->db, options, key, strlen(key), buffer, len, &error);
     
     free(buffer);
@@ -96,12 +99,13 @@ did_handle wallet_load_did(wallet_handle wallet, const char* name, const char* p
     wallet_context_t* context = (wallet_context_t*)wallet;
     char key[128] = {0};
     char* error = NULL;
-    int len = 0;
+    size_t len = 0;
     struct AES_ctx aes_ctx;
 
     AES_init_ctx(&aes_ctx, password);
-
-    sprintf("%s%s", DID_KEY_PREFIX, name);    
+    AES_ctx_set_iv(&aes_ctx, password);
+    
+    sprintf(key, "%s%s", DID_KEY_PREFIX, name);
     leveldb_readoptions_t*  options = leveldb_readoptions_create();
     char* data = leveldb_get(context->db, options, key, strlen(key), &len, &error);
     if (data == NULL) {

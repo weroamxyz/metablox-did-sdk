@@ -7,8 +7,11 @@
 extern "C" {
 #endif 
 
-int base64_encode(const unsigned char *src, size_t len, unsigned char *out);
-int base64_decode(const unsigned char *src, size_t len, unsigned char* out);
+#define BASE64_ENCODE_OUT_SIZE(s) ((unsigned int)((((s) + 2) / 3) * 4 + 1))
+#define BASE64_DECODE_OUT_SIZE(s) ((unsigned int)(((s) / 4) * 3))
+
+int base64_encode(const unsigned char *src, size_t len, char *out);
+int base64_decode(const char *src, size_t len, unsigned char* out);
 
 #ifdef __cplusplus 
 }
