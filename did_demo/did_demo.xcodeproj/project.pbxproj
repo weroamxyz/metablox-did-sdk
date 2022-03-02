@@ -22,7 +22,6 @@
 		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
 		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
 		00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136127C7549300CD8DB2 /* LDAP.framework */; };
-		00B1136F27C75D0300CD8DB2 /* libleveldb.dylib in Embed Libraries */ = {isa = PBXBuildFile; fileRef = 00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -41,7 +40,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				00B1136F27C75D0300CD8DB2 /* libleveldb.dylib in Embed Libraries */,
 			);
 			name = "Embed Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -80,7 +78,6 @@
 		00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		00B1136127C7549300CD8DB2 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
 		00B1136427C7550B00CD8DB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libleveldb.dylib; path = ../libs/macos/libleveldb.dylib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,7 +231,6 @@
 		00B1135327C733C400CD8DB2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				00B1136D27C75D0300CD8DB2 /* libleveldb.dylib */,
 				00B1136427C7550B00CD8DB2 /* libz.tbd */,
 				00B1136127C7549300CD8DB2 /* LDAP.framework */,
 				00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */,
@@ -441,7 +437,7 @@
 					"../third-party/leveldb/include",
 					"../third-party/curl/include",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "/Users/liudeng/liziTest/gitlab/did-sdk/libs/macos";
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/macos";
 				LIBRARY_SEARCH_PATHS = ../libs/macos;
 				OTHER_LDFLAGS = (
 					"-lcurl",
@@ -464,7 +460,7 @@
 					"../third-party/leveldb/include",
 					"../third-party/curl/include",
 				);
-				LD_RUNPATH_SEARCH_PATHS = "/Users/liudeng/liziTest/gitlab/did-sdk/libs/macos";
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/macos";
 				LIBRARY_SEARCH_PATHS = ../libs/macos;
 				OTHER_LDFLAGS = (
 					"-lcurl",
