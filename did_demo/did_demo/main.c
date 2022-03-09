@@ -15,23 +15,32 @@ int main(int argc, const char * argv[]) {
     char buffer1[2048] = {0};
     char buffer2[2048] = {0};
     size_t buff_len = 2048;
+    // create did
     did_handle did = did_create("secp256k1", NULL);
-    wallet_handle wallet= wallet_handle_create("test", "/Users/liudeng/liziTest/test");
     
+    // Set a local directory for did storage
+    // Must replace with an existing directory
+    wallet_handle wallet= wallet_handle_create("test", "/Users/tora/Documents/DIDTest");
+    
+    // Store did into a file with encrypt keyword
     wallet_store_did(wallet, did, "test-did", "12345678");
+    
+    // test retrieving did from storage
     did_handle did2 = wallet_load_did(wallet, "test-did", "12345678");
     
     did_serialize(did, buffer1, buff_len);
     did_serialize(did2, buffer2, buff_len);
     
+    // Did signature output
     char sig[64] = {0};
-    
+    // did signature process
     did_sign(did, "Hello, World!", strlen("Hello, World!"), sig, 64);
     
+    // get did document from storage
     did_meta_t* did2_meta = did_to_did_meta(did2);
     
+    // verify signature and signed content with public key
     int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 64);
-    
     
     printf("Hello, World! Verify result %d\n", verify);
     return 0;
