@@ -23,6 +23,20 @@
 		00B1139727CF54D700CD8DB2 /* did_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138D27CF54D700CD8DB2 /* did_key.c */; };
 		00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
 		966E8D2627D8252F002F4AD0 /* MetabloxDID.h in Headers */ = {isa = PBXBuildFile; fileRef = 966E8D2527D8252F002F4AD0 /* MetabloxDID.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		966E8D2A27D99196002F4AD0 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
+		966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138427CF54D700CD8DB2 /* did_wallet.c */; };
+		966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137427CF54D600CD8DB2 /* did_register.c */; };
+		966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138D27CF54D700CD8DB2 /* did_key.c */; };
+		966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138C27CF54D700CD8DB2 /* key_generator.c */; };
+		966E8D2F27D991A7002F4AD0 /* secp256k1_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */; };
+		966E8D3027D991AB002F4AD0 /* did.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137827CF54D700CD8DB2 /* did.c */; };
+		966E8D3127D991B4002F4AD0 /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137B27CF54D700CD8DB2 /* aes.c */; };
+		966E8D3227D991B6002F4AD0 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138027CF54D700CD8DB2 /* base64.c */; };
+		966E8D3327D991B8002F4AD0 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138127CF54D700CD8DB2 /* sha256.c */; };
+		966E8D3427D991BA002F4AD0 /* base58.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138227CF54D700CD8DB2 /* base58.c */; };
+		966E8D3527D991BD002F4AD0 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
+		966E8D3627D9927C002F4AD0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
+		966E8D3727D99292002F4AD0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -98,6 +112,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				966E8D3727D99292002F4AD0 /* SystemConfiguration.framework in Frameworks */,
+				966E8D3627D9927C002F4AD0 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,6 +380,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				966E8D3327D991B8002F4AD0 /* sha256.c in Sources */,
+				966E8D3427D991BA002F4AD0 /* base58.c in Sources */,
+				966E8D2F27D991A7002F4AD0 /* secp256k1_key.c in Sources */,
+				966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */,
+				966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */,
+				966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */,
+				966E8D3227D991B6002F4AD0 /* base64.c in Sources */,
+				966E8D2A27D99196002F4AD0 /* main.c in Sources */,
+				966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */,
+				966E8D3527D991BD002F4AD0 /* cJSON.c in Sources */,
+				966E8D3027D991AB002F4AD0 /* did.c in Sources */,
+				966E8D3127D991B4002F4AD0 /* aes.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -538,6 +566,12 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"../third-party",
+					"../third-party/leveldb/include",
+					"../third-party/curl/include",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -545,8 +579,16 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"$(PROJECT_DIR)/../libs/ios",
 				);
+				LIBRARY_SEARCH_PATHS = ../libs/ios;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.MetabloxDID;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
@@ -572,6 +614,12 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"../third-party",
+					"../third-party/leveldb/include",
+					"../third-party/curl/include",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -579,8 +627,16 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
+					"$(PROJECT_DIR)/../libs/ios",
 				);
+				LIBRARY_SEARCH_PATHS = ../libs/ios;
 				MARKETING_VERSION = 1.0;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.MetabloxDID;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
