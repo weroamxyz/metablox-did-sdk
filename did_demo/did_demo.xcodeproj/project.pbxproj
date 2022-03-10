@@ -64,8 +64,6 @@
 /* Begin PBXFileReference section */
 		00B112FF27C6170600CD8DB2 /* did_demo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = did_demo; sourceTree = BUILT_PRODUCTS_DIR; };
 		00B1130227C6170600CD8DB2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
-		00B1135427C733C400CD8DB2 /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsecp256k1.a; path = ../libs/libsecp256k1.a; sourceTree = "<group>"; };
-		00B1135527C733C400CD8DB2 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../libs/libcurl.a; sourceTree = "<group>"; };
 		00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		00B1136127C7549300CD8DB2 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
@@ -161,8 +159,6 @@
 				00B1136127C7549300CD8DB2 /* LDAP.framework */,
 				00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */,
 				00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */,
-				00B1135527C733C400CD8DB2 /* libcurl.a */,
-				00B1135427C733C400CD8DB2 /* libsecp256k1.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
