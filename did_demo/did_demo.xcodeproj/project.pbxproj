@@ -22,6 +22,8 @@
 		00B1139627CF54D700CD8DB2 /* key_generator.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138C27CF54D700CD8DB2 /* key_generator.c */; };
 		00B1139727CF54D700CD8DB2 /* did_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138D27CF54D700CD8DB2 /* did_key.c */; };
 		00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
+		00B1146927DF2D2700CD8DB2 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1146727DF2D0600CD8DB2 /* libc++.tbd */; };
+		00B1146C27DF2E2900CD8DB2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1146B27DF2E2900CD8DB2 /* Security.framework */; };
 		966E8D2627D8252F002F4AD0 /* MetabloxDID.h in Headers */ = {isa = PBXBuildFile; fileRef = 966E8D2527D8252F002F4AD0 /* MetabloxDID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		966E8D2A27D99196002F4AD0 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
 		966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138427CF54D700CD8DB2 /* did_wallet.c */; };
@@ -91,6 +93,8 @@
 		00B1138D27CF54D700CD8DB2 /* did_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did_key.c; sourceTree = "<group>"; };
 		00B1139C27CF555D00CD8DB2 /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cJSON.c; path = "../third-party/cJSON/cJSON.c"; sourceTree = "<group>"; };
 		00B1139D27CF555D00CD8DB2 /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cJSON.h; path = "../third-party/cJSON/cJSON.h"; sourceTree = "<group>"; };
+		00B1146727DF2D0600CD8DB2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		00B1146B27DF2E2900CD8DB2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetabloxDID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		966E8D2527D8252F002F4AD0 /* MetabloxDID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetabloxDID.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -110,7 +114,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				00B1146927DF2D2700CD8DB2 /* libc++.tbd in Frameworks */,
 				966E8D3727D99292002F4AD0 /* SystemConfiguration.framework in Frameworks */,
+				00B1146C27DF2E2900CD8DB2 /* Security.framework in Frameworks */,
 				966E8D3627D9927C002F4AD0 /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -155,6 +161,8 @@
 		00B1135327C733C400CD8DB2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				00B1146B27DF2E2900CD8DB2 /* Security.framework */,
+				00B1146727DF2D0600CD8DB2 /* libc++.tbd */,
 				00B1136427C7550B00CD8DB2 /* libz.tbd */,
 				00B1136127C7549300CD8DB2 /* LDAP.framework */,
 				00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */,
