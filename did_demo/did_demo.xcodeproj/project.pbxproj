@@ -39,6 +39,12 @@
 		966E8D3527D991BD002F4AD0 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
 		966E8D3627D9927C002F4AD0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
 		966E8D3727D99292002F4AD0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
+		966E8D3927DFC2AF002F4AD0 /* did.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137927CF54D700CD8DB2 /* did.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138527CF54D700CD8DB2 /* did_wallet.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		966E8D3E27DFC574002F4AD0 /* DIDSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */; };
+		966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138727CF54D700CD8DB2 /* did_key.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138827CF54D700CD8DB2 /* key_generator.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137627CF54D700CD8DB2 /* did_conf.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -97,6 +103,9 @@
 		00B1146B27DF2E2900CD8DB2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetabloxDID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		966E8D2527D8252F002F4AD0 /* MetabloxDID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetabloxDID.h; sourceTree = "<group>"; };
+		966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MetabloxDID.modulemap; sourceTree = "<group>"; };
+		966E8D3B27DFC366002F4AD0 /* did_demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "did_demo-Bridging-Header.h"; sourceTree = "<group>"; };
+		966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDSwift.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +147,7 @@
 				966E8D2427D8252F002F4AD0 /* MetabloxDID */,
 				00B1130027C6170600CD8DB2 /* Products */,
 				00B1135327C733C400CD8DB2 /* Frameworks */,
+				966E8D3B27DFC366002F4AD0 /* did_demo-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -260,6 +270,8 @@
 		966E8D2427D8252F002F4AD0 /* MetabloxDID */ = {
 			isa = PBXGroup;
 			children = (
+				966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */,
+				966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */,
 				966E8D2527D8252F002F4AD0 /* MetabloxDID.h */,
 			);
 			path = MetabloxDID;
@@ -273,6 +285,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				966E8D2627D8252F002F4AD0 /* MetabloxDID.h in Headers */,
+				966E8D3927DFC2AF002F4AD0 /* did.h in Headers */,
+				966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */,
+				966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */,
+				966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */,
+				966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +342,7 @@
 				TargetAttributes = {
 					00B112FE27C6170600CD8DB2 = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1320;
 					};
 					966E8D2227D8252F002F4AD0 = {
 						CreatedOnToolsVersion = 13.2;
@@ -390,6 +408,7 @@
 				966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */,
 				966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */,
 				966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */,
+				966E8D3E27DFC574002F4AD0 /* DIDSwift.swift in Sources */,
 				966E8D3227D991B6002F4AD0 /* base64.c in Sources */,
 				966E8D2A27D99196002F4AD0 /* main.c in Sources */,
 				966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */,
@@ -516,6 +535,7 @@
 		00B1130727C6170600CD8DB2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
 					../,
@@ -533,12 +553,16 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "did_demo-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
 		00B1130827C6170600CD8DB2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = (
 					../,
@@ -556,6 +580,8 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "did_demo-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -587,6 +613,8 @@
 				);
 				LIBRARY_SEARCH_PATHS = ../libs/ios;
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = $SRCROOT/MetabloxDID/MetabloxDID.modulemap;
+				MODULEMAP_PRIVATE_FILE = "";
 				OTHER_LDFLAGS = (
 					"-lcurl",
 					"-lleveldb",
@@ -635,6 +663,8 @@
 				);
 				LIBRARY_SEARCH_PATHS = ../libs/ios;
 				MARKETING_VERSION = 1.0;
+				MODULEMAP_FILE = $SRCROOT/MetabloxDID/MetabloxDID.modulemap;
+				MODULEMAP_PRIVATE_FILE = "";
 				OTHER_LDFLAGS = (
 					"-lcurl",
 					"-lleveldb",
