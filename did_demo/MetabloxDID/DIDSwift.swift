@@ -17,7 +17,7 @@ public class DIDSwift {
         self.storePath = storePath
         
         let name = "DIDStore"
-        self.walletHandlerPtr = wallet_handle_create(name, storePath.absoluteString)
+        self.walletHandlerPtr = wallet_handle_create(name, storePath.path)
     }
     
     public func createDID(name: String, passcode: String)-> Bool {

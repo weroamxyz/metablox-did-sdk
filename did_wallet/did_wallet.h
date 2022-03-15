@@ -1,7 +1,7 @@
 #ifndef __DID_WALLET_H__
 #define __DID_WALLET_H__
 
-#include "did/did.h"
+#include "did.h"
 
 typedef void* wallet_handle;
 

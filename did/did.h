@@ -2,8 +2,8 @@
 #define __DID_H__
 
 #include "unistd.h"
-#include "did_key/did_key.h"
-#include "did_key/key_generator.h"
+#include "did_key.h"
+#include "key_generator.h"
 
 typedef struct did_service_tag {
     char   id[MAX_ID_LEN];
