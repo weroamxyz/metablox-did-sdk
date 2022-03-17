@@ -41,7 +41,7 @@
 		966E8D3727D99292002F4AD0 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
 		966E8D3927DFC2AF002F4AD0 /* did.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137927CF54D700CD8DB2 /* did.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138527CF54D700CD8DB2 /* did_wallet.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		966E8D3E27DFC574002F4AD0 /* DIDSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */; };
+		966E8D3E27DFC574002F4AD0 /* DIDCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 966E8D3C27DFC367002F4AD0 /* DIDCore.swift */; };
 		966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138727CF54D700CD8DB2 /* did_key.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138827CF54D700CD8DB2 /* key_generator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137627CF54D700CD8DB2 /* did_conf.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -105,7 +105,7 @@
 		966E8D2527D8252F002F4AD0 /* MetabloxDID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetabloxDID.h; sourceTree = "<group>"; };
 		966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MetabloxDID.modulemap; sourceTree = "<group>"; };
 		966E8D3B27DFC366002F4AD0 /* did_demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "did_demo-Bridging-Header.h"; sourceTree = "<group>"; };
-		966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDSwift.swift; sourceTree = "<group>"; };
+		966E8D3C27DFC367002F4AD0 /* DIDCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -270,7 +270,7 @@
 		966E8D2427D8252F002F4AD0 /* MetabloxDID */ = {
 			isa = PBXGroup;
 			children = (
-				966E8D3C27DFC367002F4AD0 /* DIDSwift.swift */,
+				966E8D3C27DFC367002F4AD0 /* DIDCore.swift */,
 				966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */,
 				966E8D2527D8252F002F4AD0 /* MetabloxDID.h */,
 			);
@@ -408,7 +408,7 @@
 				966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */,
 				966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */,
 				966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */,
-				966E8D3E27DFC574002F4AD0 /* DIDSwift.swift in Sources */,
+				966E8D3E27DFC574002F4AD0 /* DIDCore.swift in Sources */,
 				966E8D3227D991B6002F4AD0 /* base64.c in Sources */,
 				966E8D2A27D99196002F4AD0 /* main.c in Sources */,
 				966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */,

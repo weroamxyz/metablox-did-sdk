@@ -233,7 +233,7 @@ int did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size
     return key_sign(&context->key_pair, context->algo, msg, msg_len, out, out_len);
 }
 
-int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, char* sign, size_t sign_len)
+int did_verify(did_key_t* did_key, const char* msg, size_t msg_len, const char* sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0) 
     {

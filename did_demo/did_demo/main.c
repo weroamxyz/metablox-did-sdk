@@ -39,7 +39,7 @@ int main(int argc, const char * argv[]) {
     // get did document from storage
     did_meta_t* did2_meta = did_to_did_meta(did2);
     
-    // verify signature and signed content with public key
+    // verify signature and unsigned content with public key
     int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 64);
     
     printf("Hello, World! Verify result %d\n", verify);
