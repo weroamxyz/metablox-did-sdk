@@ -45,7 +45,19 @@
 		966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138727CF54D700CD8DB2 /* did_key.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1138827CF54D700CD8DB2 /* key_generator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137627CF54D700CD8DB2 /* did_conf.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96CE5B0C27E94CEC0035E706 /* MetabloxDIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */; };
+		96CE5B0D27E94CEC0035E706 /* MetabloxDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		96CE5B0E27E94CEC0035E706 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 00B112F727C6170600CD8DB2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 966E8D2227D8252F002F4AD0;
+			remoteInfo = MetabloxDID;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		00B112FD27C6170600CD8DB2 /* CopyFiles */ = {
@@ -106,6 +118,8 @@
 		966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MetabloxDID.modulemap; sourceTree = "<group>"; };
 		966E8D3B27DFC366002F4AD0 /* DIDsdk-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIDsdk-Bridging-Header.h"; sourceTree = "<group>"; };
 		966E8D3C27DFC367002F4AD0 /* DIDCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDCore.swift; sourceTree = "<group>"; };
+		96CE5B0927E94CEC0035E706 /* MetabloxDIDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetabloxDIDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetabloxDIDTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +144,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96CE5B0627E94CEC0035E706 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96CE5B0D27E94CEC0035E706 /* MetabloxDID.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -145,6 +167,7 @@
 				00B1138327CF54D700CD8DB2 /* did_wallet */,
 				00B1130127C6170600CD8DB2 /* did_demo */,
 				966E8D2427D8252F002F4AD0 /* MetabloxDID */,
+				96CE5B0A27E94CEC0035E706 /* MetabloxDIDTests */,
 				00B1130027C6170600CD8DB2 /* Products */,
 				00B1135327C733C400CD8DB2 /* Frameworks */,
 				966E8D3B27DFC366002F4AD0 /* DIDsdk-Bridging-Header.h */,
@@ -156,6 +179,7 @@
 			children = (
 				00B112FF27C6170600CD8DB2 /* DIDsdk */,
 				966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */,
+				96CE5B0927E94CEC0035E706 /* MetabloxDIDTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -277,6 +301,14 @@
 			path = MetabloxDID;
 			sourceTree = "<group>";
 		};
+		96CE5B0A27E94CEC0035E706 /* MetabloxDIDTests */ = {
+			isa = PBXGroup;
+			children = (
+				96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */,
+			);
+			path = MetabloxDIDTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -332,12 +364,31 @@
 			productReference = 966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		96CE5B0827E94CEC0035E706 /* MetabloxDIDTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 96CE5B1227E94CEC0035E706 /* Build configuration list for PBXNativeTarget "MetabloxDIDTests" */;
+			buildPhases = (
+				96CE5B0527E94CEC0035E706 /* Sources */,
+				96CE5B0627E94CEC0035E706 /* Frameworks */,
+				96CE5B0727E94CEC0035E706 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				96CE5B0F27E94CEC0035E706 /* PBXTargetDependency */,
+			);
+			name = MetabloxDIDTests;
+			productName = MetabloxDIDTests;
+			productReference = 96CE5B0927E94CEC0035E706 /* MetabloxDIDTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		00B112F727C6170600CD8DB2 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1320;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
 					00B112FE27C6170600CD8DB2 = {
@@ -345,6 +396,9 @@
 						LastSwiftMigration = 1320;
 					};
 					966E8D2227D8252F002F4AD0 = {
+						CreatedOnToolsVersion = 13.2;
+					};
+					96CE5B0827E94CEC0035E706 = {
 						CreatedOnToolsVersion = 13.2;
 					};
 				};
@@ -364,12 +418,20 @@
 			targets = (
 				00B112FE27C6170600CD8DB2 /* DIDsdk */,
 				966E8D2227D8252F002F4AD0 /* MetabloxDID */,
+				96CE5B0827E94CEC0035E706 /* MetabloxDIDTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		966E8D2127D8252F002F4AD0 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		96CE5B0727E94CEC0035E706 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -418,7 +480,23 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		96CE5B0527E94CEC0035E706 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				96CE5B0C27E94CEC0035E706 /* MetabloxDIDTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		96CE5B0F27E94CEC0035E706 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 966E8D2227D8252F002F4AD0 /* MetabloxDID */;
+			targetProxy = 96CE5B0E27E94CEC0035E706 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		00B1130427C6170600CD8DB2 /* Debug */ = {
@@ -690,6 +768,47 @@
 			};
 			name = Release;
 		};
+		96CE5B1027E94CEC0035E706 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.app1.MetabloxDIDTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		96CE5B1127E94CEC0035E706 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.app1.MetabloxDIDTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -716,6 +835,15 @@
 			buildConfigurations = (
 				966E8D2727D8252F002F4AD0 /* Debug */,
 				966E8D2827D8252F002F4AD0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		96CE5B1227E94CEC0035E706 /* Build configuration list for PBXNativeTarget "MetabloxDIDTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				96CE5B1027E94CEC0035E706 /* Debug */,
+				96CE5B1127E94CEC0035E706 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
