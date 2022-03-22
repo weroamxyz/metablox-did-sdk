@@ -70,7 +70,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		00B112FF27C6170600CD8DB2 /* did_demo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = did_demo; sourceTree = BUILT_PRODUCTS_DIR; };
+		00B112FF27C6170600CD8DB2 /* DIDsdk */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DIDsdk; sourceTree = BUILT_PRODUCTS_DIR; };
 		00B1130227C6170600CD8DB2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
 		00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -104,7 +104,7 @@
 		966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetabloxDID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		966E8D2527D8252F002F4AD0 /* MetabloxDID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetabloxDID.h; sourceTree = "<group>"; };
 		966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MetabloxDID.modulemap; sourceTree = "<group>"; };
-		966E8D3B27DFC366002F4AD0 /* did_demo-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "did_demo-Bridging-Header.h"; sourceTree = "<group>"; };
+		966E8D3B27DFC366002F4AD0 /* DIDsdk-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "DIDsdk-Bridging-Header.h"; sourceTree = "<group>"; };
 		966E8D3C27DFC367002F4AD0 /* DIDCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDCore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -147,14 +147,14 @@
 				966E8D2427D8252F002F4AD0 /* MetabloxDID */,
 				00B1130027C6170600CD8DB2 /* Products */,
 				00B1135327C733C400CD8DB2 /* Frameworks */,
-				966E8D3B27DFC366002F4AD0 /* did_demo-Bridging-Header.h */,
+				966E8D3B27DFC366002F4AD0 /* DIDsdk-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
 		00B1130027C6170600CD8DB2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				00B112FF27C6170600CD8DB2 /* did_demo */,
+				00B112FF27C6170600CD8DB2 /* DIDsdk */,
 				966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */,
 			);
 			name = Products;
@@ -296,9 +296,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		00B112FE27C6170600CD8DB2 /* did_demo */ = {
+		00B112FE27C6170600CD8DB2 /* DIDsdk */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "did_demo" */;
+			buildConfigurationList = 00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "DIDsdk" */;
 			buildPhases = (
 				00B112FB27C6170600CD8DB2 /* Sources */,
 				00B112FC27C6170600CD8DB2 /* Frameworks */,
@@ -309,9 +309,9 @@
 			);
 			dependencies = (
 			);
-			name = did_demo;
+			name = DIDsdk;
 			productName = did_demo;
-			productReference = 00B112FF27C6170600CD8DB2 /* did_demo */;
+			productReference = 00B112FF27C6170600CD8DB2 /* DIDsdk */;
 			productType = "com.apple.product-type.tool";
 		};
 		966E8D2227D8252F002F4AD0 /* MetabloxDID */ = {
@@ -349,7 +349,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "did_demo" */;
+			buildConfigurationList = 00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "DIDsdk" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -362,7 +362,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				00B112FE27C6170600CD8DB2 /* did_demo */,
+				00B112FE27C6170600CD8DB2 /* DIDsdk */,
 				966E8D2227D8252F002F4AD0 /* MetabloxDID */,
 			);
 		};
@@ -553,7 +553,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "did_demo-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DIDsdk-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -580,7 +580,7 @@
 				);
 				OTHER_LIBTOOLFLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "did_demo-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "DIDsdk-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -693,7 +693,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "did_demo" */ = {
+		00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "DIDsdk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B1130427C6170600CD8DB2 /* Debug */,
@@ -702,7 +702,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "did_demo" */ = {
+		00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "DIDsdk" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				00B1130727C6170600CD8DB2 /* Debug */,
