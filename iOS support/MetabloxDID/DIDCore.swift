@@ -42,13 +42,24 @@ public class DIDCore {
         return true
     }
     
-    // Read DID Document from currently loaded DID, formated in JSON string.
-    public func readDIDDoc()-> String? {
+    public func readDIDString()-> String? {
+        guard let did = self.loadedDIDPtr else {return nil}
+        guard let meta = did_to_did_meta(did) else {return nil}
+        let DIDStr = String(cString: &meta.pointee.did.0, encoding: .utf8)
+        return DIDStr
+    }
+    
+    // Read DID description from currently loaded DID, formated in JSON string.
+    public func readDIDDesc()-> String? {
         guard let did = self.loadedDIDPtr else {return nil}
         let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: 2048)
+        buffer.initialize(repeating: 0, count: 2048)
         did_serialize(did, buffer, 2048)
         let serializedDoc = String(cString: buffer, encoding: .utf8)
-        //buffer.deallocate()
+        defer {
+            buffer.deinitialize(count: 2048)
+            buffer.deallocate()
+        }
         return serializedDoc
     }
     
@@ -58,9 +69,14 @@ public class DIDCore {
         guard let did = self.loadedDIDPtr else {return nil}
         
         let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDSignatureLength)
+        buffer.initialize(repeating: 0, count: DIDSignatureLength)
         did_sign(did, content, content.lengthOfBytes(using: .utf8), buffer, DIDSignatureLength)
         let sig = Data(bytes: buffer, count: DIDSignatureLength)
-        //buffer.deallocate()
+        defer {
+            buffer.deinitialize(count: DIDSignatureLength)
+            buffer.deallocate()
+        }
+        
         return sig
     }
     
