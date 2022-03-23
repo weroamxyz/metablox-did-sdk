@@ -72,7 +72,7 @@ int wallet_store_did(wallet_handle wallet, did_handle did, const char* name, con
     char* buffer = (char*)malloc(len);
     char key[128] = {0};
     char* error = NULL;
-    struct AES_ctx aes_ctx;
+    struct AES_ctx aes_ctx = {0};
 
     AES_init_ctx(&aes_ctx, password);
     AES_ctx_set_iv(&aes_ctx, password);
@@ -100,7 +100,7 @@ did_handle wallet_load_did(wallet_handle wallet, const char* name, const char* p
     char key[128] = {0};
     char* error = NULL;
     size_t len = 0;
-    struct AES_ctx aes_ctx;
+    struct AES_ctx aes_ctx = {0};
 
     AES_init_ctx(&aes_ctx, password);
     AES_ctx_set_iv(&aes_ctx, password);

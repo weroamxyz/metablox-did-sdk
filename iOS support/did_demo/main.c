@@ -23,10 +23,10 @@ int main(int argc, const char * argv[]) {
     wallet_handle wallet= wallet_handle_create("test", "/Users/tora/Documents/DIDTest");
     
     // Store did into a file with encrypt keyword
-    wallet_store_did(wallet, did, "test-did", "12345678");
+    wallet_store_did(wallet, did, "test-did", "1234567887654321");
     
     // test retrieving did from storage
-    did_handle did2 = wallet_load_did(wallet, "test-did", "12345678");
+    did_handle did2 = wallet_load_did(wallet, "test-did", "1234567887654321");
     
     did_serialize(did, buffer1, buff_len);
     did_serialize(did2, buffer2, buff_len);

@@ -40,7 +40,7 @@ class MetabloxDIDTests: XCTestCase {
         print(storeDir!.path)
         
         let didname = "PiuPiu"
-        let didpass = "123456"
+        let didpass = "1234567887654321"
         print("=== Create new DID with name '\(didname)' ===")
         let createdFlag = didc.createDID(name: didname, passcode: didpass)
         XCTAssert(createdFlag == true, "DID create failed")
