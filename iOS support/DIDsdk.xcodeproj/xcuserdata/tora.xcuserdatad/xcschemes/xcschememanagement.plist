@@ -7,12 +7,17 @@
 		<key>DIDsdk.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>0</integer>
+			<integer>50</integer>
 		</dict>
 		<key>MetabloxDID.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>51</integer>
+		</dict>
+		<key>MetabloxDIDTests.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>52</integer>
 		</dict>
 		<key>did_demo.xcscheme_^#shared#^_</key>
 		<dict>
