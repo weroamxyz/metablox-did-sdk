@@ -48,9 +48,9 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(loadedFlag == true, "DID load failed")
         print("=== Load DID with name '\(didname)' ===")
         
-        let didDoc = didc.readDIDDoc()
-        XCTAssert(didDoc != nil, "DID meta read failed")
-        print(didDoc!)
+        let didDesc = didc.readDIDDesc()
+        XCTAssert(didDesc != nil, "DID meta read failed")
+        print(didDesc!)
         
         print("=== Sign content with DID ===")
         let content = "Who is the smartest person in the world?"
