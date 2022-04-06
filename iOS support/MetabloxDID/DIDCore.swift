@@ -29,15 +29,19 @@ public class DIDCore {
     // Create a DID record stored in store path, tagged with 'name' and encrypted with 'passcode'.
     @discardableResult
     public func createDID(name: String, passcode: String)-> Bool {
+        // Use MD5 for password bit length complement
+        let pass = passcode.MD5()
         guard let newDidPtr = did_create("secp256k1", nil) else {return false}
-        wallet_store_did(self.walletHandlerPtr, newDidPtr, name, passcode)
+        wallet_store_did(self.walletHandlerPtr, newDidPtr, name, pass)
         return true
     }
     
     // Load the DID from storage using 'name' and 'passcode' for decryption
     @discardableResult
     public func loadDID(name: String, passcode:String)-> Bool {
-        guard let did = wallet_load_did(self.walletHandlerPtr, name, passcode) else {return false}
+        // Use MD5 for password bit length complement
+        let pass = passcode.MD5()
+        guard let did = wallet_load_did(self.walletHandlerPtr, name, pass) else {return false}
         self.loadedDIDPtr = did
         return true
     }
@@ -93,6 +97,19 @@ public class DIDCore {
             let result = did_verify(didMeta?.pointee.did_keys, content, content.lengthOfBytes(using: .utf8), bytes, DIDSignatureLength)
             finishHandler(Int(result))
         }
+    }
+}
+
+
+import CryptoKit
+
+extension String {
+    func MD5() -> String {
+        let digest = Insecure.MD5.hash(data: self.data(using: .utf8) ?? Data())
+
+        return digest.map {
+            String(format: "%02hhx", $0)
+        }.joined()
     }
 }
  
