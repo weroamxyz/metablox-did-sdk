@@ -1,0 +1,484 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		00B1130327C6170600CD8DB2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
+		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
+		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
+		00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1136127C7549300CD8DB2 /* LDAP.framework */; };
+		00B1138E27CF54D700CD8DB2 /* did_register.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137427CF54D600CD8DB2 /* did_register.c */; };
+		00B1138F27CF54D700CD8DB2 /* did.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137827CF54D700CD8DB2 /* did.c */; };
+		00B1139027CF54D700CD8DB2 /* aes.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1137B27CF54D700CD8DB2 /* aes.c */; };
+		00B1139127CF54D700CD8DB2 /* base64.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138027CF54D700CD8DB2 /* base64.c */; };
+		00B1139227CF54D700CD8DB2 /* sha256.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138127CF54D700CD8DB2 /* sha256.c */; };
+		00B1139327CF54D700CD8DB2 /* base58.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138227CF54D700CD8DB2 /* base58.c */; };
+		00B1139427CF54D700CD8DB2 /* did_wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138427CF54D700CD8DB2 /* did_wallet.c */; };
+		00B1139527CF54D700CD8DB2 /* secp256k1_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */; };
+		00B1139627CF54D700CD8DB2 /* key_generator.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138C27CF54D700CD8DB2 /* key_generator.c */; };
+		00B1139727CF54D700CD8DB2 /* did_key.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138D27CF54D700CD8DB2 /* did_key.c */; };
+		00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		00B112FD27C6170600CD8DB2 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		00B1137027C75D0300CD8DB2 /* Embed Libraries */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Libraries";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		00B112FF27C6170600CD8DB2 /* did_demo */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = did_demo; sourceTree = BUILT_PRODUCTS_DIR; };
+		00B1130227C6170600CD8DB2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		00B1135427C733C400CD8DB2 /* libsecp256k1.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libsecp256k1.a; path = ../libs/libsecp256k1.a; sourceTree = "<group>"; };
+		00B1135527C733C400CD8DB2 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../libs/libcurl.a; sourceTree = "<group>"; };
+		00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		00B1136127C7549300CD8DB2 /* LDAP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = LDAP.framework; path = System/Library/Frameworks/LDAP.framework; sourceTree = SDKROOT; };
+		00B1136427C7550B00CD8DB2 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		00B1137327CF54D600CD8DB2 /* did_register.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did_register.h; sourceTree = "<group>"; };
+		00B1137427CF54D600CD8DB2 /* did_register.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did_register.c; sourceTree = "<group>"; };
+		00B1137627CF54D700CD8DB2 /* did_conf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did_conf.h; sourceTree = "<group>"; };
+		00B1137827CF54D700CD8DB2 /* did.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did.c; sourceTree = "<group>"; };
+		00B1137927CF54D700CD8DB2 /* did.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did.h; sourceTree = "<group>"; };
+		00B1137B27CF54D700CD8DB2 /* aes.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = aes.c; sourceTree = "<group>"; };
+		00B1137C27CF54D700CD8DB2 /* base64.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base64.h; sourceTree = "<group>"; };
+		00B1137D27CF54D700CD8DB2 /* base58.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = base58.h; sourceTree = "<group>"; };
+		00B1137E27CF54D700CD8DB2 /* sha256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sha256.h; sourceTree = "<group>"; };
+		00B1137F27CF54D700CD8DB2 /* aes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aes.h; sourceTree = "<group>"; };
+		00B1138027CF54D700CD8DB2 /* base64.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base64.c; sourceTree = "<group>"; };
+		00B1138127CF54D700CD8DB2 /* sha256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sha256.c; sourceTree = "<group>"; };
+		00B1138227CF54D700CD8DB2 /* base58.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = base58.c; sourceTree = "<group>"; };
+		00B1138427CF54D700CD8DB2 /* did_wallet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did_wallet.c; sourceTree = "<group>"; };
+		00B1138527CF54D700CD8DB2 /* did_wallet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did_wallet.h; sourceTree = "<group>"; };
+		00B1138727CF54D700CD8DB2 /* did_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did_key.h; sourceTree = "<group>"; };
+		00B1138827CF54D700CD8DB2 /* key_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = key_generator.h; sourceTree = "<group>"; };
+		00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = secp256k1_key.c; sourceTree = "<group>"; };
+		00B1138B27CF54D700CD8DB2 /* seck256k1_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seck256k1_key.h; sourceTree = "<group>"; };
+		00B1138C27CF54D700CD8DB2 /* key_generator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = key_generator.c; sourceTree = "<group>"; };
+		00B1138D27CF54D700CD8DB2 /* did_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did_key.c; sourceTree = "<group>"; };
+		00B1139C27CF555D00CD8DB2 /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cJSON.c; path = "../third-party/cJSON/cJSON.c"; sourceTree = "<group>"; };
+		00B1139D27CF555D00CD8DB2 /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cJSON.h; path = "../third-party/cJSON/cJSON.h"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		00B112FC27C6170600CD8DB2 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00B1136227C7549300CD8DB2 /* LDAP.framework in Frameworks */,
+				00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */,
+				00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		00B112F627C6170600CD8DB2 = {
+			isa = PBXGroup;
+			children = (
+				00B1139B27CF552B00CD8DB2 /* third_party */,
+				00B1137A27CF54D700CD8DB2 /* common */,
+				00B1137527CF54D700CD8DB2 /* conf */,
+				00B1137727CF54D700CD8DB2 /* did */,
+				00B1138627CF54D700CD8DB2 /* did_key */,
+				00B1137227CF54D600CD8DB2 /* did_register */,
+				00B1138327CF54D700CD8DB2 /* did_wallet */,
+				00B1130127C6170600CD8DB2 /* did_demo */,
+				00B1130027C6170600CD8DB2 /* Products */,
+				00B1135327C733C400CD8DB2 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		00B1130027C6170600CD8DB2 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				00B112FF27C6170600CD8DB2 /* did_demo */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		00B1130127C6170600CD8DB2 /* did_demo */ = {
+			isa = PBXGroup;
+			children = (
+				00B1130227C6170600CD8DB2 /* main.c */,
+			);
+			path = did_demo;
+			sourceTree = "<group>";
+		};
+		00B1135327C733C400CD8DB2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				00B1136427C7550B00CD8DB2 /* libz.tbd */,
+				00B1136127C7549300CD8DB2 /* LDAP.framework */,
+				00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */,
+				00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */,
+				00B1135527C733C400CD8DB2 /* libcurl.a */,
+				00B1135427C733C400CD8DB2 /* libsecp256k1.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		00B1137227CF54D600CD8DB2 /* did_register */ = {
+			isa = PBXGroup;
+			children = (
+				00B1137327CF54D600CD8DB2 /* did_register.h */,
+				00B1137427CF54D600CD8DB2 /* did_register.c */,
+			);
+			name = did_register;
+			path = ../did_register;
+			sourceTree = "<group>";
+		};
+		00B1137527CF54D700CD8DB2 /* conf */ = {
+			isa = PBXGroup;
+			children = (
+				00B1137627CF54D700CD8DB2 /* did_conf.h */,
+			);
+			name = conf;
+			path = ../conf;
+			sourceTree = "<group>";
+		};
+		00B1137727CF54D700CD8DB2 /* did */ = {
+			isa = PBXGroup;
+			children = (
+				00B1137827CF54D700CD8DB2 /* did.c */,
+				00B1137927CF54D700CD8DB2 /* did.h */,
+			);
+			name = did;
+			path = ../did;
+			sourceTree = "<group>";
+		};
+		00B1137A27CF54D700CD8DB2 /* common */ = {
+			isa = PBXGroup;
+			children = (
+				00B1137B27CF54D700CD8DB2 /* aes.c */,
+				00B1137C27CF54D700CD8DB2 /* base64.h */,
+				00B1137D27CF54D700CD8DB2 /* base58.h */,
+				00B1137E27CF54D700CD8DB2 /* sha256.h */,
+				00B1137F27CF54D700CD8DB2 /* aes.h */,
+				00B1138027CF54D700CD8DB2 /* base64.c */,
+				00B1138127CF54D700CD8DB2 /* sha256.c */,
+				00B1138227CF54D700CD8DB2 /* base58.c */,
+			);
+			name = common;
+			path = ../common;
+			sourceTree = "<group>";
+		};
+		00B1138327CF54D700CD8DB2 /* did_wallet */ = {
+			isa = PBXGroup;
+			children = (
+				00B1138427CF54D700CD8DB2 /* did_wallet.c */,
+				00B1138527CF54D700CD8DB2 /* did_wallet.h */,
+			);
+			name = did_wallet;
+			path = ../did_wallet;
+			sourceTree = "<group>";
+		};
+		00B1138627CF54D700CD8DB2 /* did_key */ = {
+			isa = PBXGroup;
+			children = (
+				00B1138727CF54D700CD8DB2 /* did_key.h */,
+				00B1138827CF54D700CD8DB2 /* key_generator.h */,
+				00B1138927CF54D700CD8DB2 /* secp256k1 */,
+				00B1138C27CF54D700CD8DB2 /* key_generator.c */,
+				00B1138D27CF54D700CD8DB2 /* did_key.c */,
+			);
+			name = did_key;
+			path = ../did_key;
+			sourceTree = "<group>";
+		};
+		00B1138927CF54D700CD8DB2 /* secp256k1 */ = {
+			isa = PBXGroup;
+			children = (
+				00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */,
+				00B1138B27CF54D700CD8DB2 /* seck256k1_key.h */,
+			);
+			path = secp256k1;
+			sourceTree = "<group>";
+		};
+		00B1139B27CF552B00CD8DB2 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				00B1139C27CF555D00CD8DB2 /* cJSON.c */,
+				00B1139D27CF555D00CD8DB2 /* cJSON.h */,
+			);
+			name = third_party;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		00B112FE27C6170600CD8DB2 /* did_demo */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "did_demo" */;
+			buildPhases = (
+				00B112FB27C6170600CD8DB2 /* Sources */,
+				00B112FC27C6170600CD8DB2 /* Frameworks */,
+				00B112FD27C6170600CD8DB2 /* CopyFiles */,
+				00B1137027C75D0300CD8DB2 /* Embed Libraries */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = did_demo;
+			productName = did_demo;
+			productReference = 00B112FF27C6170600CD8DB2 /* did_demo */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		00B112F727C6170600CD8DB2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1240;
+				TargetAttributes = {
+					00B112FE27C6170600CD8DB2 = {
+						CreatedOnToolsVersion = 12.4;
+					};
+				};
+			};
+			buildConfigurationList = 00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "did_demo" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 00B112F627C6170600CD8DB2;
+			productRefGroup = 00B1130027C6170600CD8DB2 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				00B112FE27C6170600CD8DB2 /* did_demo */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		00B112FB27C6170600CD8DB2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				00B1139127CF54D700CD8DB2 /* base64.c in Sources */,
+				00B1138F27CF54D700CD8DB2 /* did.c in Sources */,
+				00B1138E27CF54D700CD8DB2 /* did_register.c in Sources */,
+				00B1139527CF54D700CD8DB2 /* secp256k1_key.c in Sources */,
+				00B1139327CF54D700CD8DB2 /* base58.c in Sources */,
+				00B1130327C6170600CD8DB2 /* main.c in Sources */,
+				00B1139227CF54D700CD8DB2 /* sha256.c in Sources */,
+				00B1139727CF54D700CD8DB2 /* did_key.c in Sources */,
+				00B1139627CF54D700CD8DB2 /* key_generator.c in Sources */,
+				00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */,
+				00B1139427CF54D700CD8DB2 /* did_wallet.c in Sources */,
+				00B1139027CF54D700CD8DB2 /* aes.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		00B1130427C6170600CD8DB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		00B1130527C6170600CD8DB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 11.1;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		00B1130727C6170600CD8DB2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"../third-party",
+					"../third-party/leveldb/include",
+					"../third-party/curl/include",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/macos";
+				LIBRARY_SEARCH_PATHS = ../libs/macos;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		00B1130827C6170600CD8DB2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				HEADER_SEARCH_PATHS = (
+					../,
+					"../third-party",
+					"../third-party/leveldb/include",
+					"../third-party/curl/include",
+				);
+				LD_RUNPATH_SEARCH_PATHS = "$(PROJECT_DIR)/../libs/macos";
+				LIBRARY_SEARCH_PATHS = ../libs/macos;
+				OTHER_LDFLAGS = (
+					"-lcurl",
+					"-lleveldb",
+					"-lsecp256k1",
+					"-lz",
+				);
+				OTHER_LIBTOOLFLAGS = "";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		00B112FA27C6170600CD8DB2 /* Build configuration list for PBXProject "did_demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00B1130427C6170600CD8DB2 /* Debug */,
+				00B1130527C6170600CD8DB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		00B1130627C6170600CD8DB2 /* Build configuration list for PBXNativeTarget "did_demo" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				00B1130727C6170600CD8DB2 /* Debug */,
+				00B1130827C6170600CD8DB2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 00B112F727C6170600CD8DB2 /* Project object */;
+}
