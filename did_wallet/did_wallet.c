@@ -74,13 +74,12 @@ int wallet_store_did(wallet_handle wallet, did_handle did, const char* name, con
     char* error = NULL;
     struct AES_ctx aes_ctx;
 
-    AES_init_ctx(&aes_ctx, password);
-    AES_ctx_set_iv(&aes_ctx, password);
+    AES_init_ctx(&aes_ctx, (const uint8_t*)password);
+    AES_ctx_set_iv(&aes_ctx, (const uint8_t*)password);
     memset(buffer, 0, len);
     did_serialize(did, buffer, len);
-    
-    
-    AES_CBC_encrypt_buffer(&aes_ctx, buffer, len);
+ 
+    AES_CBC_encrypt_buffer(&aes_ctx, (unsigned char*)buffer, len);
 
     sprintf(key, "%s%s", DID_KEY_PREFIX, name);
     
@@ -102,25 +101,123 @@ did_handle wallet_load_did(wallet_handle wallet, const char* name, const char* p
     size_t len = 0;
     struct AES_ctx aes_ctx;
 
-    AES_init_ctx(&aes_ctx, password);
-    AES_ctx_set_iv(&aes_ctx, password);
+    AES_init_ctx(&aes_ctx, (const unsigned char*)password);
+    AES_ctx_set_iv(&aes_ctx, (const unsigned char*)password);
     
     sprintf(key, "%s%s", DID_KEY_PREFIX, name);
+
     leveldb_readoptions_t*  options = leveldb_readoptions_create();
     char* data = leveldb_get(context->db, options, key, strlen(key), &len, &error);
+
     if (data == NULL) {
         free(options);
         return NULL;
     }
     
-    AES_CBC_decrypt_buffer(&aes_ctx, data, len);
-    
+    AES_CBC_decrypt_buffer(&aes_ctx, (unsigned char*)data, len);
+
     //Padding with 0 has no effect on parsing as json
-    
     did_handle did = did_deserialize(data);
 
-    leveldb_writeoptions_destroy(options);
+    leveldb_readoptions_destroy(options);
     free(data);
-
     return did;
+}
+
+//export did
+void wallet_export_did(wallet_handle wallet, const char *name, char *path)
+{
+  // 1. get did data
+  wallet_context_t* context = (wallet_context_t*)wallet;
+  char key[128] = {0};
+  sprintf(key, "%s%s", DID_KEY_PREFIX, name);
+  size_t len = 0;
+  char* read_error = NULL;
+  leveldb_readoptions_t*  read_options = leveldb_readoptions_create();
+  char* data = leveldb_get(context->db, read_options, key, strlen(key), &len, &read_error);
+
+  // 2. create new db
+  // call once create once
+  char buffer[2048] = {0};
+  char *error = NULL;
+  leveldb_options_t *options = NULL;
+  options = leveldb_options_create();
+  if (options == NULL)
+  {
+    free(data);
+    free(read_error);
+    leveldb_options_destroy(options);
+    leveldb_readoptions_destroy(read_options);
+    return;
+  }
+  leveldb_options_set_create_if_missing(options, 1);
+  leveldb_t *db = leveldb_open(options, path, &error); // export path
+  if (db == NULL)
+  {
+    free(error);
+    free(data);
+    free(read_error);
+    leveldb_options_destroy(options);
+    leveldb_readoptions_destroy(read_options);
+    leveldb_close(db);
+    return;
+  }
+
+  // 3. did to path
+  leveldb_writeoptions_t *w_options = leveldb_writeoptions_create();
+  leveldb_put(db, w_options, key, strlen(key), data, len, &error);
+  // 4. destroy
+  free(error);
+  free(data);
+  free(read_error);
+  leveldb_options_destroy(options);
+  leveldb_writeoptions_destroy(w_options);
+  leveldb_readoptions_destroy(read_options);
+  leveldb_close(db);
+}
+
+void wallet_import_did(wallet_handle wallet, char *path, const char *name, const char *password)
+{
+  // 1. create db
+  leveldb_options_t *options = NULL;
+  char *error = NULL;
+  options = leveldb_options_create();
+  if (options == NULL)
+  {
+    leveldb_options_destroy(options);
+    return;
+  }
+  leveldb_options_set_create_if_missing(options, 1);
+  leveldb_t *db = leveldb_open(options, path, &error); // export path
+  if (db == NULL)
+  {
+    free(error);
+    leveldb_options_destroy(options);
+    return;
+  }
+
+  // 2. read did
+  char key[128] = {0};
+  size_t len = 0;
+  sprintf(key, "%s%s", DID_KEY_PREFIX, name);
+  leveldb_readoptions_t *r_options = leveldb_readoptions_create();
+  char *data = leveldb_get(db, r_options, key, strlen(key), &len, &error);
+  if (data == NULL)
+  {
+    free(error);
+    leveldb_readoptions_destroy(r_options);
+    leveldb_options_destroy(options);
+    leveldb_close(db);
+    return NULL;
+  }
+
+  //3. store did
+  did_handle did = did_deserialize(data);
+  wallet_store_did(wallet, did, name, password);
+
+  // 4. destroy
+  leveldb_options_destroy(options);
+  leveldb_readoptions_destroy(r_options);
+  leveldb_close(db);
+  free(data);
 }
