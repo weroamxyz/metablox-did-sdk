@@ -46,7 +46,7 @@ int main(int argc, const char * argv[]) {
 	//wallet_export_did(wallet,"test-did","/home/meiqiu/doc/did_sdk-main2/build/ww");
     //wallet_import_did(wallet,"/home/meiqiu/doc/did_sdk-main2/build/ww","test-did","12345678");
 
-    printf("Hello, World! Verifyesult %d\n", verify);
+    printf("Hello, World! Verif yesult %d\n", verify);
     return 0;
 }
 #endif
