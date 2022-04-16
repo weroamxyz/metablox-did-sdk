@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "stddef.h"
-#include "secp256k1/seck256k1_key.h"
+#include "secp256k1/secp256k1_key.h"
 
 int key_sign(key_pair_t* key, const char* algo, const char* msg, size_t msg_len, char *out, size_t out_len) 
 {

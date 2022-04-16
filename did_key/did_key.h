@@ -2,8 +2,8 @@
 #define __DID_KEY_H__ 
 
 #include "unistd.h"
-#include "did_conf.h"
-#include "key_generator.h"
+#include "conf/did_conf.h"
+#include "did_key/key_generator.h"
 
 typedef struct did_key_tag {
     unsigned char  id[MAX_DID_DOC_ELEMENT_ID_LEN];

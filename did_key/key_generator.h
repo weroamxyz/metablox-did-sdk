@@ -1,7 +1,7 @@
 #ifndef __KEY_GENERATOR_H__
 #define __KEY_GENERATOR_H__
 
-#include "did_conf.h"
+#include "conf/did_conf.h"
 
 /**
  * @brief 

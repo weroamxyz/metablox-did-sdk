@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "time.h"
-#include "secp256k1/seck256k1_key.h"
+#include "secp256k1/secp256k1_key.h"
 
 static int default_rand_func(int len, unsigned char* buffer);
 

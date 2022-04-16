@@ -1,8 +1,10 @@
+#include "secp256k1_key.h"
 #include "secp256k1/include/secp256k1.h"
 #include "../key_generator.h"
 #include "stdlib.h"
 #include "string.h"
 #include "common/sha256.h"
+#include <stdio.h>
 
 int generate_secp256k1_keypair(rand_func_cb rand_func, key_pair_t* key_pair) 
 {
@@ -23,7 +25,7 @@ int generate_secp256k1_keypair(rand_func_cb rand_func, key_pair_t* key_pair)
     }
 
     secp256k1_pubkey pubkey = {0};
-    secp256k1_ec_pubkey_create(ctx, &pubkey, key);
+    int d=secp256k1_ec_pubkey_create(ctx, &pubkey, key);
     
     key_pair->priv_len = 32;
     key_pair->pubkey_len = 64;
@@ -88,6 +90,6 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
 
     int result = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey);
     secp256k1_context_destroy(ctx);
-    
+    printf("\n\nsig_size:%d\n   sig:%s",sizeof(sig.data),sig.data);
     return result;
 }
