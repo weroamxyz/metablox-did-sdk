@@ -1,0 +1,5 @@
+main
+*.o
+/third-party/
+/build/test/
+/build/ww/

@@ -48,6 +48,8 @@ $(TARGET):$(OBJS)
 
 %.o:%.c
 	        $(CC) $(INCLUDES) -fpermissive  -c  $< -o $@
-
+.PHONY:clean
+clean:
+	-rm -f $(OBJS) $(TARGET)
 
 
