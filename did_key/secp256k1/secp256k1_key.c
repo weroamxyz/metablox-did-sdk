@@ -90,6 +90,5 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
 
     int result = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey);
     secp256k1_context_destroy(ctx);
-    printf("\n\nsig_size:%d\n   sig:%s",sizeof(sig.data),sig.data);
     return result;
 }

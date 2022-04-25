@@ -10,10 +10,6 @@
 #include "did/did.h"
 #include "string.h"
 
-#define CREATE_AND_EXPORT
-// #define IMPORT
-
-#ifdef CREATE_AND_EXPORT
 int main(int argc, const char * argv[]) {
     // insert code here...
     char buffer1[2048] = {0};
@@ -32,34 +28,16 @@ int main(int argc, const char * argv[]) {
     did_serialize(did2, buffer2, buff_len);
 
     char sig[64] = {0};
-    int did_sign_res=did_sign(did, "Hello, World!", strlen("Hello, World!"), sig, 64);
-    printf("\n\n\tsig:%s,          did_sign_res:%d",sig,did_sign_res);
+    int did_sign_result=did_sign(did, "Hello, World!", strlen("Hello, World!"), sig, 64);
 
     did_meta_t* did2_meta = did_to_did_meta(did2);
 
     int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 64);
 
+    //2022.4.25
+    printf("\n did_priv key:%s",did_export_prikey(did));
+    did_sign_res* result=did_get_vrs(sig,verify);
 
-    printf("\n\n\tsig:%s,          did_sign_res:%d",sig,did_sign_res);
-    
-	//2022.4.13
-	//wallet_export_did(wallet,"test-did","/home/meiqiu/doc/did_sdk-main2/build/ww");
-    //wallet_import_did(wallet,"/home/meiqiu/doc/did_sdk-main2/build/ww","test-did","12345678");
-
-    printf("Hello, World! Verif yesult %d\n", verify);
+    printf("\nHello, World! Verif yesult %d\n", verify);
     return 0;
 }
-#endif
-
-#ifdef IMPORT
-int main(int argc, const char * argv[])
-{
-    wallet_handle wallet= wallet_handle_create("test-did", "/home/meiqiu/doc/did_sdk-main2/build/test");
-    wallet_import_did(wallet,"/home/meiqiu/doc/did_sdk-main2/build/ww","test-did","12345678");
-    did_handle did = wallet_load_did(wallet, "test-did", "12345678");
-    char buffer2[2048] = {0};
-    size_t buff_len = 2048;
-    did_serialize(did, buffer2, buff_len);
-    return 0;
-}
-#endif
