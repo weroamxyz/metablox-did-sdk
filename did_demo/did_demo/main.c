@@ -38,6 +38,15 @@ int main(int argc, const char * argv[]) {
     printf("\n did_priv key:%s",did_export_prikey(did));
     did_sign_res* result=did_get_vrs(sig,verify);
 
+    wallet_change_name(wallet,"test-did","haha");
+    did_handle did3=wallet_load_did(wallet,"haha","12345678");
+    char buffer3[2048] = {0};
+    did_serialize(did3, buffer3, buff_len);
+    printf("\n did3:%p\n did change name:%s",did3,buffer3);
+
+    wallet_change_password(wallet,"haha","1234","14725836");
+    wallet_change_password(wallet,"haha","12345678","14725836");
+
     printf("\nHello, World! Verif yesult %d\n", verify);
     return 0;
 }
