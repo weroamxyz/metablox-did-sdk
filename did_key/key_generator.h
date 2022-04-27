@@ -8,9 +8,6 @@
  * Do not support rsa
  */
 
-#define  MAX_PRIV_KEY_LEN      (1024)
-#define  MAX_PUBKEY_LEN        (2048)
-
 typedef int (*rand_func_cb)(int len, unsigned char* buffer);
 
 typedef struct key_pair_tag {
@@ -25,6 +22,8 @@ extern "C" {
 #endif
 
 void generate_key_pair(rand_func_cb rand_func, const char* algo, key_pair_t* key_pair);
+
+void import_key_pair(const char* algo, int priv_ken, const char* priv_key, key_pair_t* key_pair);
 
 #ifdef __cplusplus
 }

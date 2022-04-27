@@ -31,3 +31,13 @@ void generate_key_pair(rand_func_cb rand_func, const char* algo, key_pair_t* key
         return;
     }
 }
+
+void import_key_pair(const char* algo, int priv_ken, const char* priv_key, key_pair_t* key_pair)
+{
+    if (strcmp(algo, "secp256k1") == 0)
+    {
+        import_secp256k1_keypair(priv_key, key_pair);
+        return;
+    }
+}
+

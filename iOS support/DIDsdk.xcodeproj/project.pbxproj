@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		002B5D98281919FF00E17B29 /* secp256k1_key.h in Headers */ = {isa = PBXBuildFile; fileRef = 002B5D97281919FF00E17B29 /* secp256k1_key.h */; };
 		00B1130327C6170600CD8DB2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
 		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
 		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
@@ -82,6 +83,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		002B5D97281919FF00E17B29 /* secp256k1_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = secp256k1_key.h; sourceTree = "<group>"; };
 		00B112FF27C6170600CD8DB2 /* DIDsdk */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DIDsdk; sourceTree = BUILT_PRODUCTS_DIR; };
 		00B1130227C6170600CD8DB2 /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
@@ -106,7 +108,6 @@
 		00B1138727CF54D700CD8DB2 /* did_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = did_key.h; sourceTree = "<group>"; };
 		00B1138827CF54D700CD8DB2 /* key_generator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = key_generator.h; sourceTree = "<group>"; };
 		00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = secp256k1_key.c; sourceTree = "<group>"; };
-		00B1138B27CF54D700CD8DB2 /* seck256k1_key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seck256k1_key.h; sourceTree = "<group>"; };
 		00B1138C27CF54D700CD8DB2 /* key_generator.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = key_generator.c; sourceTree = "<group>"; };
 		00B1138D27CF54D700CD8DB2 /* did_key.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = did_key.c; sourceTree = "<group>"; };
 		00B1139C27CF555D00CD8DB2 /* cJSON.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = cJSON.c; path = "../third-party/cJSON/cJSON.c"; sourceTree = "<group>"; };
@@ -276,8 +277,8 @@
 		00B1138927CF54D700CD8DB2 /* secp256k1 */ = {
 			isa = PBXGroup;
 			children = (
+				002B5D97281919FF00E17B29 /* secp256k1_key.h */,
 				00B1138A27CF54D700CD8DB2 /* secp256k1_key.c */,
-				00B1138B27CF54D700CD8DB2 /* seck256k1_key.h */,
 			);
 			path = secp256k1;
 			sourceTree = "<group>";
@@ -320,6 +321,7 @@
 				966E8D3927DFC2AF002F4AD0 /* did.h in Headers */,
 				966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */,
 				966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */,
+				002B5D98281919FF00E17B29 /* secp256k1_key.h in Headers */,
 				966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */,
 				966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */,
 			);

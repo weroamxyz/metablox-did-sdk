@@ -298,53 +298,46 @@ void did_meta_destroy(did_meta_t* meta)
     free(meta);
 }
 
-int did_export_prikey(did_handle did,char * prikey)
+int did_export_prikey(did_handle did, priv_key_memo_t* priv_key)
 {
-    if(did==NULL)
+    if(did == NULL)
     {
         return -1;
     }
-    int len =did_serialize(did,NULL,0);
-    len=(len+15)/16*16;
-    if (len <= 0) {
-        return -1;
-    }
-    len = (len + 15) / 16  * 16;
-    char* buffer = (char*)malloc(len);
-    memset(buffer, 0, len);
-    did_serialize(did, buffer, len);
-
-    cJSON* cjson_read=NULL;
-    cJSON* cjson_key_pair=NULL;
-    cJSON* cjson_key_pair_priv=NULL;
-
-    cjson_read = cJSON_Parse(buffer);
-    if(cjson_read==NULL)
-    {
-        free(buffer);
-        return -1;
-    }
-    cjson_key_pair=cJSON_GetObjectItem(cjson_read,"key_pair");
-    if(cjson_key_pair==NULL)
-    {
-        free(buffer);
-        cJSON_Delete(cjson_read);
-        return -1;
-    }
-    cjson_key_pair_priv=cJSON_GetObjectItem(cjson_key_pair,"priv");
-    if(cjson_key_pair_priv==NULL)
-    {
-        free(buffer);
-        cJSON_Delete(cjson_read);
-        return -1;
-    }
-
-    memcpy(prikey,cjson_key_pair_priv->valuestring,strlen(cjson_key_pair_priv->valuestring));
-    free(buffer);
-    cJSON_Delete(cjson_read);
-
+    
+    did_context_t* context = (did_context_t*)did;
+    
+    strcpy(priv_key->algo, context->algo);
+ 
+    priv_key->priv_key_len = context->key_pair.priv_len;
+    memcpy(priv_key->priv_key, context->key_pair.priv, priv_key->priv_key_len);
+    
     return 0;
 }
+
+did_handle did_import_privkey(priv_key_memo_t* priv_key)
+{
+    did_context_t* handle = (did_context_t*)malloc(sizeof(did_context_t));
+    if (handle == NULL)
+    {
+        return NULL;
+    }
+    memset(handle, 0, sizeof(did_context_t));
+    
+    import_key_pair(priv_key->algo, priv_key->priv_key_len, priv_key->priv_key, &handle->key_pair);
+    strcpy(handle->algo, priv_key->algo);
+    
+    char hash[32] = {0};
+    size_t  base58_len = 64;
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
+    sha256_final(&ctx, hash);
+
+    b58_encode(hash, 32, handle->did, &base58_len);
+    return handle;
+}
+
 
 int did_get_vrs(char sig[64],int verify,char* vrs)
 {
