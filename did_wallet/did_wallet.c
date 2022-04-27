@@ -4,6 +4,7 @@
 #include "string.h"
 #include "leveldb/c.h"
 #include "common/aes.h"
+#include "cJSON/cJSON.h"
 
 #define  MAX_PATH            (260)
 #define  DID_KEY_PREFIX      "did_"
@@ -124,12 +125,16 @@ did_handle wallet_load_did(wallet_handle wallet, const char* name, const char* p
     return did;
 }
 
-void wallet_change_name(wallet_handle wallet,const char* oldname,const char* newname)
+int wallet_change_name(wallet_handle wallet,const char* oldname,const char* newname)
 {
     wallet_context_t* context = (wallet_context_t*)wallet;
 
     leveldb_writeoptions_t*  write_options = leveldb_writeoptions_create();
     leveldb_readoptions_t*  read_options=leveldb_readoptions_create();
+    if(write_options==NULL || read_options==NULL)
+    {
+        return -1;
+    }
 
     char old_key[128] = {0};
     char* error = NULL;
@@ -137,36 +142,73 @@ void wallet_change_name(wallet_handle wallet,const char* oldname,const char* new
 
     size_t len = 0;
     char* data = leveldb_get(context->db, read_options, old_key, strlen(old_key), &len, &error);
+    if(data==NULL)
+    {
+        leveldb_writeoptions_destroy(write_options);
+        leveldb_readoptions_destroy(read_options);
+        return -1;
+    }
 
     char new_key[128] = {0};
     sprintf(new_key, "%s%s", DID_KEY_PREFIX, newname);
-    //char* buffer = (char*)malloc(len);
     leveldb_put(context->db, write_options, new_key, strlen(new_key), data, len, &error);
 
-    //get name?by read leveldb  or  by argument
     leveldb_delete(context->db,write_options,old_key,strlen(old_key),&error);
+    if(error!=NULL)
+    {
+        leveldb_writeoptions_destroy(write_options);
+        leveldb_readoptions_destroy(read_options);
+        return -1;
+    }
 
     leveldb_writeoptions_destroy(write_options);
     leveldb_readoptions_destroy(read_options);
 
+    return 0;
 }
 
-void wallet_change_password(wallet_handle wallet,const char* name,const char* oldpassword,const char* newpassword)
+int wallet_change_password(wallet_handle wallet,const char* name,const char* oldpassword,const char* newpassword)
 {
+   wallet_context_t* context = (wallet_context_t*)wallet;
+
     struct AES_ctx old_aes_ctx,new_aes_ctx;
 
     AES_init_ctx(&old_aes_ctx, (const uint8_t*)oldpassword);
+    AES_ctx_set_iv(&old_aes_ctx, (const uint8_t*)oldpassword);
 
     AES_init_ctx(&new_aes_ctx, (const uint8_t*)newpassword);
+    AES_ctx_set_iv(&new_aes_ctx, (const uint8_t*)newpassword);
 
-    //How to judge the correctness of the long password
-    if(0)
+    char key[128] = {0};
+    char* error = NULL;
+    size_t len = 0;
+    sprintf(key, "%s%s", DID_KEY_PREFIX, name);
+    leveldb_readoptions_t*  options = leveldb_readoptions_create();
+    char* data = leveldb_get(context->db, options, key, strlen(key), &len, &error);
+    if(data==NULL)
     {
-        printf("\n fall");
-        return NULL;
+        leveldb_readoptions_destroy(options);
+        return -1;
+    }
+
+    AES_CBC_decrypt_buffer(&old_aes_ctx, (unsigned char*)data, len);
+
+    //Padding with 0 has no effect on parsing as json
+    did_handle did1 = did_deserialize(data);
+    if(did1==NULL)
+    {
+        leveldb_readoptions_destroy(options);
+        return -1;
     }
 
     did_handle did=wallet_load_did(wallet,name,oldpassword);
+    if(did==NULL)
+    {
+        leveldb_readoptions_destroy(options);
+        return -1;
+    }
     wallet_store_did(wallet,did,name,newpassword);
 
+    leveldb_readoptions_destroy(options);
+    return 0;
 }

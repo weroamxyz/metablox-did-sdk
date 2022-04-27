@@ -13,8 +13,6 @@ typedef struct did_context_tag {
     key_pair_t  key_pair;
 } did_context_t;
 
-typedef struct  did_sign_result did_sign_res;
-
 did_handle did_create(const char* algo, rand_func_cb rand_func) 
 {   
     if (strlen(algo) > 63) 
@@ -41,7 +39,6 @@ did_handle did_create(const char* algo, rand_func_cb rand_func)
     sha256_final(&ctx, hash);
 
     b58_encode(hash, 32, handle->did, &base58_len);
-
     return handle;    
 }
 
@@ -301,44 +298,91 @@ void did_meta_destroy(did_meta_t* meta)
     free(meta);
 }
 
-char* did_export_prikey(did_handle did)
+int did_export_prikey(did_handle did,char * prikey)
 {
     if(did==NULL)
     {
-        return NULL;
+        return -1;
     }
     int len =did_serialize(did,NULL,0);
     len=(len+15)/16*16;
     if (len <= 0) {
-        return len;
+        return -1;
     }
     len = (len + 15) / 16  * 16;
     char* buffer = (char*)malloc(len);
     memset(buffer, 0, len);
     did_serialize(did, buffer, len);
-    //printf("\ndid_export_prikey:buffer\t%s",buffer);
 
     cJSON* cjson_read=NULL;
     cJSON* cjson_key_pair=NULL;
     cJSON* cjson_key_pair_priv=NULL;
 
     cjson_read = cJSON_Parse(buffer);
+    if(cjson_read==NULL)
+    {
+        free(buffer);
+        return -1;
+    }
     cjson_key_pair=cJSON_GetObjectItem(cjson_read,"key_pair");
+    if(cjson_key_pair==NULL)
+    {
+        free(buffer);
+        cJSON_Delete(cjson_read);
+        return -1;
+    }
     cjson_key_pair_priv=cJSON_GetObjectItem(cjson_key_pair,"priv");
-    //printf("\npriv:%s",cjson_key_pair_priv->valuestring);
-    
-    return cjson_key_pair_priv->valuestring;
+    if(cjson_key_pair_priv==NULL)
+    {
+        free(buffer);
+        cJSON_Delete(cjson_read);
+        return -1;
+    }
+
+    memcpy(prikey,cjson_key_pair_priv->valuestring,strlen(cjson_key_pair_priv->valuestring));
+    free(buffer);
+    cJSON_Delete(cjson_read);
+
+    return 0;
 }
 
-did_sign_res* did_get_vrs(char sig[64],int verify)
+int did_get_vrs(char sig[64],int verify,char* vrs)
 {
-    did_sign_res* result=(did_sign_res*)malloc(68);
-    if(result==NULL)
+    cJSON* cjson_root=NULL;
+
+    cjson_root = cJSON_CreateObject();
+    if(cjson_root==NULL)
     {
-        return NULL;
+        return -1;
     }
-    memcpy(result->r,sig,32);
-    memcpy(result->s, sig+32, 32);
-    result->v=verify;
-    return result;
+
+    char r[32]={0};
+    char s[32]={0};
+    memcpy(r,sig,32);
+    memcpy(s, sig+32, 32);
+
+    if (cJSON_AddNumberToObject(cjson_root, "v",verify) == NULL)
+    {
+        cJSON_Delete(cjson_root);
+        return -1;
+    }
+    if (cJSON_AddStringToObject(cjson_root, "r",r) == NULL)
+    {
+        cJSON_Delete(cjson_root);
+        return -1;
+    }
+    if (cJSON_AddStringToObject(cjson_root, "s",s) == NULL)
+    {
+        cJSON_Delete(cjson_root);
+        return -1;
+    }
+    
+    char * out=cJSON_Print(cjson_root);
+    int len_vrs=strlen(out);
+    memcpy(vrs,out,len_vrs);
+
+    cJSON_free(out);
+    cJSON_Delete(cjson_root);
+    return len_vrs;
+
 }

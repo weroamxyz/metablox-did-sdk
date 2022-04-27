@@ -35,8 +35,13 @@ int main(int argc, const char * argv[]) {
     int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 64);
 
     //2022.4.25
-    printf("\n did_priv key:%s",did_export_prikey(did));
-    did_sign_res* result=did_get_vrs(sig,verify);
+    char prikey[128]={0};
+    did_export_prikey(did,prikey);
+    printf("\n prikey:%s",prikey);
+
+    char vrs[300];
+    int len_vrs=did_get_vrs(sig,verify,vrs);
+    printf("\n -------len_vrs:%d\n vrs:%s",len_vrs,vrs);
 
     wallet_change_name(wallet,"test-did","haha");
     did_handle did3=wallet_load_did(wallet,"haha","12345678");
@@ -44,7 +49,10 @@ int main(int argc, const char * argv[]) {
     did_serialize(did3, buffer3, buff_len);
     printf("\n did3:%p\n did change name:%s",did3,buffer3);
 
-    wallet_change_password(wallet,"haha","1234","14725836");
+    if(wallet_change_password(wallet,"haha","1234","14725836")==-1)
+    {
+        printf("\n change password      error");
+    }
     wallet_change_password(wallet,"haha","12345678","14725836");
 
     printf("\nHello, World! Verif yesult %d\n", verify);

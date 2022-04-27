@@ -18,13 +18,6 @@ typedef struct did_meta_tag {
     did_service_t* did_services;
 } did_meta_t;
 
-typedef struct  did_sign_result
-{
-    int     v;
-    char    r[32];
-    char    s[32];
-}did_sign_res;
-
 typedef void*  did_handle;
 
 #ifdef __cplusplus
@@ -41,9 +34,9 @@ int        did_verify(did_key_t* did_key, const char* msg, size_t msg_len, const
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  
 
-//2020.4.21     meiqiu
-char*       did_export_prikey(did_handle handle);
-did_sign_result*    did_get_vrs(char sig[64],int verify);
+//2020.4.16     meiqiu
+int         did_export_prikey(did_handle handle,char * prikey);
+int         did_get_vrs(char sig[64],int verify,char* vrs);
 
 #ifdef __cplusplus
 }
