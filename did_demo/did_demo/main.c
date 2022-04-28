@@ -39,9 +39,12 @@ int main(int argc, const char * argv[]) {
     did_export_prikey(did,prikey);
     printf("\n prikey:%s",prikey);
 
-    char vrs[300];
-    int len_vrs=did_get_vrs(sig,verify,vrs);
-    printf("\n -------len_vrs:%d\n vrs:%s",len_vrs,vrs);
+    did_handle did6=did_import_privkey(prikey);
+    char buffer6[2048] = {0};
+    did_serialize(did6, buffer6, buff_len);
+    printf("\n did:%p\n did buffer:%s",did,buffer1);
+    printf("\n compare");
+    printf("\n did6:%p\n did6 buffer:%s",did6,buffer6);
 
     wallet_change_name(wallet,"test-did","haha");
     did_handle did3=wallet_load_did(wallet,"haha","12345678");
