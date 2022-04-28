@@ -57,7 +57,7 @@ did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  
 
 int         did_export_prikey(did_handle handle,char *out);
-did_handle did_import_privkey(char * priv_key);
+did_handle did_import_privkey(const char * data);
 
 #ifdef __cplusplus
 }
