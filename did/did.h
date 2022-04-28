@@ -38,6 +38,9 @@ did_handle did_deserialize(const char* buffer);
 int        did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size_t out_len);
 int        did_verify(did_key_t* did_key, const char* msg, size_t msg_len, const char* sign, size_t sign_len);
 
+
+//int       did_sign
+
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  
 
