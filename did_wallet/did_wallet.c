@@ -215,8 +215,11 @@ int wallet_change_password(wallet_handle wallet, const char *name, const char *o
     return 0;
 }
 
-int wallet_get_namelist(wallet_handle wallet, char *data)
+int wallet_get_namelist(wallet_handle wallet, wallet_did_nl *data)
 {
+    data->count = 0;
+    data->names = NULL;
+
     wallet_context_t *context = (wallet_context_t *)wallet;
     leveldb_readoptions_t *options = NULL;
     options = leveldb_readoptions_create();
@@ -232,17 +235,47 @@ int wallet_get_namelist(wallet_handle wallet, char *data)
         return -1;
     }
 
-    char *p = data;
+    for (leveldb_iter_seek_to_first(point); leveldb_iter_valid(point); leveldb_iter_next(point))
+    {
+        data->count += 1;
+    }
+
+    data->names = (char **)malloc(sizeof(char *) * data->count);
+    int i = 0;
+    for (i = 0; i < data->count; i++)
+    {
+        data->names[i] = NULL;
+    }
+    int j = 0;
     for (leveldb_iter_seek_to_first(point); leveldb_iter_valid(point); leveldb_iter_next(point))
     {
         size_t keylen = 0;
         char *key = leveldb_iter_key(point, &keylen);
-        memcpy(p, key, keylen);
-        strcat(p, ".");
-        p = p + keylen + 1;
+
+        char *pox = NULL;
+        pox = strstr(key, DID_KEY_PREFIX);
+        if (pox != key)
+        {
+            continue;
+        }
+
+        data->names[j] = (char *)malloc(keylen);
+        memset(data->names[j], 0, keylen);
+        memcpy(data->names[j], key + 4, keylen - 4);
+        ++j;
     }
 
     leveldb_readoptions_destroy(options);
     leveldb_iter_destroy(point);
     return 0;
+}
+
+void did_wallet_free_namelist(wallet_did_nl *namelist)
+{
+    int i = 0;
+    for (i = 0; i < namelist->count; i++)
+    {
+        free(namelist->names[i]);
+    }
+    free(namelist->names);
 }

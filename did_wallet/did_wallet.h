@@ -5,6 +5,11 @@
 
 typedef void* wallet_handle;
 
+typedef struct wallet_did_namelist{
+int         count;
+char**   names;
+}wallet_did_nl;
+
 #ifdef __cplusplus
 extern "C" {
 #endif 
@@ -17,7 +22,8 @@ did_handle      wallet_load_did(wallet_handle wallet, const char* name, const ch
 
 int             wallet_change_name(wallet_handle wallet,const char* oldname,const char* newname);
 int             wallet_change_password(wallet_handle wallet,const char* name,const char* oldpassword,const char* newpassword);
-int             wallet_get_namelist(wallet_handle wallet, char *data);
+int              wallet_get_namelist(wallet_handle wallet,wallet_did_nl * data);
+void            did_wallet_free_namelist(wallet_did_nl* namelist);
 
 #ifdef __cplusplus
 }
