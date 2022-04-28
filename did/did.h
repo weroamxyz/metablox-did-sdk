@@ -56,8 +56,8 @@ int        did_verify(did_key_t* did_key, const char* msg, size_t msg_len, const
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  
 
-int         did_export_prikey(did_handle handle, priv_key_memo_t* priv_key);
-did_handle  did_import_privkey(priv_key_memo_t* priv_key);
+int         did_export_prikey(did_handle handle,char *out);
+did_handle did_import_privkey(char * priv_key);
 
 #ifdef __cplusplus
 }

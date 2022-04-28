@@ -298,7 +298,7 @@ void did_meta_destroy(did_meta_t* meta)
     free(meta);
 }
 
-int did_export_prikey(did_handle did, priv_key_memo_t* priv_key)
+int did_export_prikey(did_handle did,char *out)
 {
     if(did == NULL)
     {
@@ -306,16 +306,21 @@ int did_export_prikey(did_handle did, priv_key_memo_t* priv_key)
     }
     
     did_context_t* context = (did_context_t*)did;
-    
-    strcpy(priv_key->algo, context->algo);
- 
-    priv_key->priv_key_len = context->key_pair.priv_len;
-    memcpy(priv_key->priv_key, context->key_pair.priv, priv_key->priv_key_len);
-    
+
+    char data[64]={0};
+    strcat(data,context->algo);
+    strcat(data,".");
+
+    char priv_key[64]={0};
+    size_t priv_key_len=64;
+    b58_encode(context->key_pair.priv, context->key_pair.priv_len, priv_key, &priv_key_len);
+
+    strcat(data,priv_key);
+    memcpy(out,data,strlen(data));
     return 0;
 }
 
-did_handle did_import_privkey(priv_key_memo_t* priv_key)
+did_handle did_import_privkey(char * data)
 {
     did_context_t* handle = (did_context_t*)malloc(sizeof(did_context_t));
     if (handle == NULL)
@@ -323,10 +328,17 @@ did_handle did_import_privkey(priv_key_memo_t* priv_key)
         return NULL;
     }
     memset(handle, 0, sizeof(did_context_t));
+
+    char*algo = strtok(data, ".");
+    char* priv_key=strtok(NULL,".");
+    char bin_key[32]={0};
+    size_t bin_key_len=32;
     
-    import_key_pair(priv_key->algo, priv_key->priv_key_len, priv_key->priv_key, &handle->key_pair);
-    strcpy(handle->algo, priv_key->algo);
-    
+    b58_decode(priv_key,strlen(priv_key),bin_key,&bin_key_len);
+
+    import_key_pair(algo, 32, bin_key,&handle->key_pair);
+    strcpy(handle->algo, algo);
+
     char hash[32] = {0};
     size_t  base58_len = 64;
     SHA256_CTX ctx;
