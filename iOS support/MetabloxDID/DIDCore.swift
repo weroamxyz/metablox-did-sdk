@@ -29,10 +29,17 @@ public class DIDCore {
     // Create a DID record stored in store path, tagged with 'name' and encrypted with 'passcode'.
     @discardableResult
     public func createDID(name: String, passcode: String)-> Bool {
+        guard let newDidPtr = did_create("secp256k1", nil) else {return false}
+        return self.storeDID(didPtr: newDidPtr, name: name, passcode: passcode)
+    }
+    
+    private func storeDID(didPtr: UnsafeMutableRawPointer, name: String, passcode: String)-> Bool {
         // Use MD5 for password bit length complement
         let pass = passcode.MD5()
-        guard let newDidPtr = did_create("secp256k1", nil) else {return false}
-        wallet_store_did(self.walletHandlerPtr, newDidPtr, name, pass)
+        let result = wallet_store_did(self.walletHandlerPtr, didPtr, name, pass)
+        guard result > 0 else {
+            return false
+        }
         return true
     }
     
@@ -97,6 +104,78 @@ public class DIDCore {
             let result = did_verify(didMeta?.pointee.did_keys, content, content.lengthOfBytes(using: .utf8), bytes, DIDSignatureLength)
             finishHandler(Int(result))
         }
+    }
+    
+    private let DIDPrivateKeyLength = 64
+    // Export private key string from a DID profile decrypting with password
+    public func exportPrivateKey(name: String, password: String)-> String? {
+        guard true == self.loadDID(name: name, passcode: password) else {
+            return nil
+        }
+        
+        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDPrivateKeyLength)
+        buffer.initialize(repeating: 0, count: DIDPrivateKeyLength)
+        let result = did_export_prikey(self.loadedDIDPtr, buffer)
+        
+        guard result == 0 else {
+            return nil
+        }
+        
+        let privateKeyStr = String(cString: buffer, encoding: .utf8)
+        
+        defer {
+            buffer.deinitialize(count: DIDPrivateKeyLength)
+            buffer.deallocate()
+        }
+        return privateKeyStr
+    }
+    
+    // Import a DID profile with a profile name and a private key, encrypt with password, and then load it as current hold
+    public func importDID(name: String, password: String, privateKey: String)-> Bool {
+        guard let didPtr = did_import_privkey(privateKey) else {
+            return false
+        }
+        
+        guard true == self.storeDID(didPtr: didPtr, name: name, passcode: password) else {
+            return false
+        }
+        
+        return self.loadDID(name: name, passcode: password)
+    }
+    
+    // Get profile name list from storage
+//    public func profileNameList() -> [String] {
+//
+//        let nameListStruct = wallet_get_namelist(self.walletHandlerPtr, <#T##data: UnsafeMutablePointer<wallet_did_nl>!##UnsafeMutablePointer<wallet_did_nl>!#>)
+//    }
+    
+    // Change name of DID profile
+    public func changeProfileName(name: String, newName: String) -> Bool {
+        guard newName != name else {
+            return true
+        }
+        
+        guard 0 == wallet_change_name(self.walletHandlerPtr, name, newName) else {
+            return false
+        }
+        
+        return true
+    }
+    
+    // Change password of DID profile
+    public func changePassword(name: String, oldPassword: String, newPassword: String) -> Bool {
+        guard oldPassword != newPassword else {
+            return true
+        }
+        
+        let oldPass = oldPassword.MD5()
+        let newPass = newPassword.MD5()
+        
+        guard 0 == wallet_change_password(self.walletHandlerPtr, name, oldPass, newPass) else {
+            return false
+        }
+        
+        return true
     }
 }
 

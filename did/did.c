@@ -335,7 +335,7 @@ did_handle did_import_privkey(const char *data)
         return NULL;
     }
     memset(handle, 0, sizeof(did_context_t));
-    printf("\n data len:%d", strlen(data));
+    printf("\n data len:%d \n", strlen(data));
     char *p = data;
     char algo[64] = {0};
     char priv_key[64] = {0};

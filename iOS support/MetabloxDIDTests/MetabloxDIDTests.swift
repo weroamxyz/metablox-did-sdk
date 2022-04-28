@@ -54,6 +54,10 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(didDesc != nil, "DID meta read failed")
         print(didDesc!)
         
+        let firstDidStr = didc.readDIDString()
+        print("DID string 1: " + firstDidStr!)
+        XCTAssert(firstDidStr != nil, "DID string read faild")
+        
         print("=== Sign content with DID ===")
         let content = "Who is the smartest person in the world?"
         print("Content: " + content)
@@ -77,6 +81,47 @@ class MetabloxDIDTests: XCTestCase {
             
             XCTAssert(result == 0, "DID signature verify failure")
         }
+        
+        // Export did1
+        let privatekey1 = didc.exportPrivateKey(name: didname, password: didpass)
+        XCTAssert(privatekey1 != nil, "DID privateKey export failure")
+        print("PrivateKey exported: " + privatekey1!)
+        
+        // Import did2
+        let didName2 = "DioDio"
+        let didPass2 = "111111"
+        
+        let didImportResult = didc.importDID(name: didName2, password: didPass2, privateKey: privatekey1!)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        // Export did2
+        let privatekey2 = didc.exportPrivateKey(name: didName2, password: didPass2)
+        XCTAssert(privatekey2 != nil, "DID privateKey export failure")
+        print("PrivateKey 2 exported: " + privatekey2!)
+        XCTAssert(privatekey1 == privatekey2, "DID private keys not the same after import")
+        
+        let didStr2 = didc.readDIDString()
+        print("DID string 2: " + didStr2!)
+        XCTAssert(didStr2 == firstDidStr, "DID strings not the same after import")
+        
+        let didLoadResult2 = didc.loadDID(name: didName2, passcode: didpass)
+        XCTAssert(didLoadResult2 == false, "DID pass not changed")
+        
+        // Change profile name
+        let didName3 = "JoJo"
+        let didPass3 = "4321"
+        
+        let changeNameResult = didc.changeProfileName(name: didName2, newName: didName3)
+        XCTAssert(changeNameResult == true, "DID name change failure")
+        let export3 = didc.exportPrivateKey(name: didName3, password: didPass2)
+        XCTAssert(export3 != nil, "DID privateKey export failure after change name")
+        
+        // Change password
+        let changePassResult = didc.changePassword(name: didName3, oldPassword: didPass2, newPassword: didPass3)
+        XCTAssert(changePassResult == true, "DID pass change failure")
+        let export4 = didc.exportPrivateKey(name: didName3, password: didPass3)
+        XCTAssert(export4 != nil, "DID privateKey export failure after change pass")
+        
     }
 
     func testPerformanceExample() throws {
