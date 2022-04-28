@@ -1,5 +1,5 @@
 #include "secp256k1_key.h"
-#include "secp256k1/include/secp256k1.h"
+#include "secp256k1/include/secp256k1_recovery.h"
 #include "../key_generator.h"
 #include "stdlib.h"
 #include "string.h"
@@ -65,7 +65,7 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
 {
     if (out == NULL) 
     {
-        return 64;
+        return 65;
     }
     secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
     if (ctx == NULL) {
@@ -73,16 +73,16 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
     }
 
     char hash[32] = {0};
-    secp256k1_ecdsa_signature signature = {0};
+    secp256k1_ecdsa_recoverable_signature signature = {0};
     SHA256_CTX sha256_ctx = {0};
 
     sha256_init(&sha256_ctx);
     sha256_update(&sha256_ctx, msg, msg_len);
     sha256_final(&sha256_ctx, hash);
   
-    secp256k1_ecdsa_sign(ctx, &signature, hash, priv_key, secp256k1_nonce_function_rfc6979, NULL);
+    secp256k1_ecdsa_sign_recoverable(ctx, &signature, hash, priv_key, secp256k1_nonce_function_rfc6979, NULL);
     
-    int copy_len = 64;
+    int copy_len = 65;
     if (copy_len < out_len)
     {
         copy_len = out_len;
@@ -100,11 +100,11 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
         return -1;
     }
 
-    secp256k1_ecdsa_signature sig;
-    memcpy(sig.data, signature, 64);
+    secp256k1_ecdsa_recoverable_signature sig;
+    memcpy(sig.data, signature, 65);
 
     secp256k1_pubkey pubkey;
-    memcpy(pubkey.data, public_key, 64);
+    
     
     char hash[32] = {0};
     SHA256_CTX sha256_ctx = {0};
@@ -113,7 +113,16 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
     sha256_update(&sha256_ctx, msg, msg_len);
     sha256_final(&sha256_ctx, hash);
 
-    int result = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey);
+    int result = secp256k1_ecdsa_recover(ctx, &pubkey, &sig, hash);
+    if (result == 0) {
+        secp256k1_context_destroy(ctx);
+        return -1;
+    }
+    
     secp256k1_context_destroy(ctx);
-    return result;
+    
+    result = memcmp(public_key, pubkey.data, 64);
+    
+    if (result == 0) return 0;
+    return -1;
 }

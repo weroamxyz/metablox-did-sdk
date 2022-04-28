@@ -67,7 +67,7 @@ public class DIDCore {
         return serializedDoc
     }
     
-    private let DIDSignatureLength = 64
+    private let DIDSignatureLength = 65
     // Sign a content string with the private key of DID and return signature
     public func signature(content: String)-> Data? {
         guard let did = self.loadedDIDPtr else {return nil}

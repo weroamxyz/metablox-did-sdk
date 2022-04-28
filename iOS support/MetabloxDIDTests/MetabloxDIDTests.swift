@@ -68,9 +68,6 @@ class MetabloxDIDTests: XCTestCase {
                 print("!!! DID ERROR !!!")
                 break
             case 0:
-                print("!!! DID signature verify failure !!!")
-                break
-            case 1:
                 print("--- DID signature verify pass ---")
                 break
             default:
@@ -78,7 +75,7 @@ class MetabloxDIDTests: XCTestCase {
                 break
             }
             
-            XCTAssert(result == 1, "DID signature verify failure")
+            XCTAssert(result == 0, "DID signature verify failure")
         }
     }
 

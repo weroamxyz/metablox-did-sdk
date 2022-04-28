@@ -35,19 +35,29 @@ did_handle did_create(const char* algo, rand_func_cb rand_func);
 void       did_destroy(did_handle handle);
 int        did_serialize(did_handle handle, char* buffer, size_t buff_len);
 did_handle did_deserialize(const char* buffer);
+
+/*
+  out  signature value
+     out[0..31]  r
+     out[32.63]  s
+     out[64]     v
+ */
 int        did_sign(did_handle handle, const char* msg, size_t msg_len, char *out, size_t out_len);
+
+/**
+ sign  signature value
+     sign[0..31]  r
+     sign[32.63]  s
+     sign[64]     v
+ */
 int        did_verify(did_key_t* did_key, const char* msg, size_t msg_len, const char* sign, size_t sign_len);
 
-
-//int       did_sign
 
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  
 
 int         did_export_prikey(did_handle handle, priv_key_memo_t* priv_key);
 did_handle  did_import_privkey(priv_key_memo_t* priv_key);
-
-int         did_get_vrs(char sig[64],int verify,char* vrs);
 
 #ifdef __cplusplus
 }
