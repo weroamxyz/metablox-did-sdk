@@ -36,6 +36,21 @@ int main(int argc, const char *argv[])
     int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 64);
 
     // 2022.4.25
+    // test namelist
+    did_handle did5 = did_create("secp256k1", NULL);
+    wallet_store_did(wallet, did5, "lufi", "468217586");
+
+    wallet_did_nl namelist;
+    wallet_get_namelist(wallet, &namelist);
+
+    int i = 0;
+    for (i = 0; i < namelist.count; i++)
+    {
+        printf("\n namelist :%s", namelist.names[i]);
+    }
+    did_wallet_free_namelist(&namelist);
+
+    // test impotr export private key
     char prikey[128] = {0};
     did_export_prikey(did, prikey);
     printf("\n prikey:%s", prikey);
@@ -46,18 +61,6 @@ int main(int argc, const char *argv[])
     printf("\n did:%p\n did buffer:%s", did, buffer1);
     printf("\n compare");
     printf("\n did6:%p\n did6 buffer:%s", did6, buffer6);
-
-    wallet_change_name(wallet, "test-did", "haha");
-    did_handle did3 = wallet_load_did(wallet, "haha", "12345678");
-    char buffer3[2048] = {0};
-    did_serialize(did3, buffer3, buff_len);
-    printf("\n did3:%p\n did change name:%s", did3, buffer3);
-
-    if (wallet_change_password(wallet, "haha", "1234", "14725836") == -1)
-    {
-        printf("\n change password      error");
-    }
-    wallet_change_password(wallet, "haha", "12345678", "14725836");
 
     printf("\nHello, World! Verif yesult %d\n", verify);
     return 0;
