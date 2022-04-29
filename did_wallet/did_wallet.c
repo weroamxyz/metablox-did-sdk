@@ -235,10 +235,12 @@ int wallet_get_namelist(wallet_handle wallet, wallet_did_nl *data)
         return -1;
     }
 
-    for (leveldb_iter_seek_to_first(point); leveldb_iter_valid(point); leveldb_iter_next(point))
+    size_t keylen = 0;
+    for (leveldb_iter_seek(point, "did_", strlen("did_")); leveldb_iter_valid(point) && (strcmp(leveldb_iter_key(point, &keylen), "did_") > 0); leveldb_iter_next(point))
     {
         data->count += 1;
     }
+    printf("\n data count:%d", data->count);
 
     data->names = (char **)malloc(sizeof(char *) * data->count);
     int i = 0;
@@ -247,16 +249,14 @@ int wallet_get_namelist(wallet_handle wallet, wallet_did_nl *data)
         data->names[i] = NULL;
     }
     int j = 0;
-    for (leveldb_iter_seek_to_first(point); leveldb_iter_valid(point); leveldb_iter_next(point))
+    for (leveldb_iter_seek(point, "did_", strlen("did_")); leveldb_iter_valid(point); leveldb_iter_next(point))
     {
-        size_t keylen = 0;
         char *key = leveldb_iter_key(point, &keylen);
 
-        char *pox = NULL;
-        pox = strstr(key, DID_KEY_PREFIX);
-        if (pox != key)
+        char *pox = key + 3;
+        if (*pox != '_')
         {
-            continue;
+            break;
         }
 
         data->names[j] = (char *)malloc(keylen);
