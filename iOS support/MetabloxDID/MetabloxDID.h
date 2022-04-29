@@ -6,8 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
-//#include "did_wallet/did_wallet.h"
-//#include "did/did.h"
+//#include "conf/did_conf.h"
 
 //! Project version number for MetabloxDID.
 FOUNDATION_EXPORT double MetabloxDIDVersionNumber;

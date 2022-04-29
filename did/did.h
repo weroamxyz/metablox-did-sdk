@@ -4,7 +4,7 @@
 #include "unistd.h"
 #include "did_key.h"
 #include "key_generator.h"
-#include "conf/did_conf.h"
+#include "did_conf.h"
 
 typedef struct did_service_tag {
     char   id[MAX_ID_LEN];
