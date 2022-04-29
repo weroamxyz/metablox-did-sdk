@@ -43,7 +43,7 @@ int import_secp256k1_keypair(const char* priv_key, key_pair_t* key_pair)
         return -1;
     }
     
-    if (secp256k1_ec_seckey_verify(ctx, priv_key) == 1)
+    if (secp256k1_ec_seckey_verify(ctx, priv_key) == 0)
     {
         secp256k1_context_destroy(ctx);
         return -1;
