@@ -240,14 +240,10 @@ int wallet_get_namelist(wallet_handle wallet, wallet_did_nl *data)
     {
         data->count += 1;
     }
-    printf("\n data count:%d", data->count);
 
     data->names = (char **)malloc(sizeof(char *) * data->count);
-    int i = 0;
-    for (i = 0; i < data->count; i++)
-    {
-        data->names[i] = NULL;
-    }
+    memset(data->names, 0, sizeof(char *) * data->count);
+
     int j = 0;
     for (leveldb_iter_seek(point, "did_", strlen("did_")); leveldb_iter_valid(point); leveldb_iter_next(point))
     {
