@@ -144,10 +144,24 @@ public class DIDCore {
     }
     
     // Get profile name list from storage
-//    public func profileNameList() -> [String] {
-//
-//        let nameListStruct = wallet_get_namelist(self.walletHandlerPtr, <#T##data: UnsafeMutablePointer<wallet_did_nl>!##UnsafeMutablePointer<wallet_did_nl>!#>)
-//    }
+    public func profileNameList() -> [String] {
+        let nameListStruct = UnsafeMutablePointer<wallet_did_namelist>.allocate(capacity: 1)
+        guard 0 == wallet_get_namelist(self.walletHandlerPtr, nameListStruct) else {
+            return []
+        }
+        
+        let listLength = Int(nameListStruct.pointee.count)
+        var nameList: [String] = []
+        for i in 0 ..< listLength {
+            let name: String = String(cString: nameListStruct.pointee.names[i]!, encoding: .utf8)!
+            nameList.append(name)
+        }
+        
+        defer {
+            nameListStruct.deallocate()
+        }
+        return nameList
+    }
     
     // Change name of DID profile
     public func changeProfileName(name: String, newName: String) -> Bool {

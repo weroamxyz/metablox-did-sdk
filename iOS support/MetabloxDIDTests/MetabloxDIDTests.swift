@@ -122,6 +122,10 @@ class MetabloxDIDTests: XCTestCase {
         let export4 = didc.exportPrivateKey(name: didName3, password: didPass3)
         XCTAssert(export4 != nil, "DID privateKey export failure after change pass")
         
+        // Test namelist
+        let namelist = didc.profileNameList()
+        print("DID Profile namelist: \n\(namelist)")
+        XCTAssert(namelist.count == 2, "DID namelist length not as expected")
     }
 
     func testPerformanceExample() throws {
