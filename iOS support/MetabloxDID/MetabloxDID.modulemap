@@ -2,11 +2,11 @@ framework module MetabloxDID {
     umbrella header "MetabloxDID.h"
     
     explicit module DID {
-        private header "did_wallet.h"
-        private header "did.h"
-        private header "did_key.h"
-        private header "did_conf.h"
+        header "did_conf.h"
         private header "key_generator.h"
+        private header "did_key.h"
+        private header "did.h"
+        private header "did_wallet.h"
     }
     
     export *
