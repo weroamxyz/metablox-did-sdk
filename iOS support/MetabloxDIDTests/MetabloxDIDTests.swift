@@ -54,6 +54,10 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(didDesc != nil, "DID meta read failed")
         print(didDesc!)
         
+        let didPubkey = didc.readDIDPublicKey()
+        XCTAssert(didPubkey != nil, "DID pubkey read failed")
+        print("Public key: " + didPubkey!)
+        
         let firstDidStr = didc.readDIDString()
         print("DID string 1: " + firstDidStr!)
         XCTAssert(firstDidStr != nil, "DID string read faild")
@@ -64,9 +68,10 @@ class MetabloxDIDTests: XCTestCase {
         let sig = didc.signature(content: content)
         XCTAssert(sig != nil, "DID signature failed")
         
-        print("Signature(Base64): " + sig!.base64EncodedString())
+        print("Signature(Base64): " + sig!.sig.base64EncodedString())
+        print("R: \(sig!.r) " + "S: \(sig!.s) " + "V: \(sig!.v)")
         print("=== Verify signature with DID ===")
-        didc.verifySignature(content: content, signature: sig!) { result in
+        didc.verifySignature(content: content, signature: sig!.0) { result in
             switch result {
             case -1:
                 print("!!! DID ERROR !!!")

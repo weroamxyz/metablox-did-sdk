@@ -60,6 +60,13 @@ public class DIDCore {
         return DIDStr
     }
     
+    public func readDIDPublicKey()-> String? {
+        guard let did = self.loadedDIDPtr else {return nil}
+        guard let meta = did_to_did_meta(did) else {return nil}
+        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyBase58.0))
+        return pubkey
+    }
+    
     // Read DID description from currently loaded DID, formated in JSON string.
     public func readDIDDesc()-> String? {
         guard let did = self.loadedDIDPtr else {return nil}
@@ -76,19 +83,31 @@ public class DIDCore {
     
     private let DIDSignatureLength = 65
     // Sign a content string with the private key of DID and return signature
-    public func signature(content: String)-> Data? {
+    // Return format (sig, r, s, v)
+    public func signature(content: String)-> (sig: Data, r: Data, s: Data, v: UInt8)? {
         guard let did = self.loadedDIDPtr else {return nil}
         
         let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDSignatureLength)
         buffer.initialize(repeating: 0, count: DIDSignatureLength)
         did_sign(did, content, content.lengthOfBytes(using: .utf8), buffer, DIDSignatureLength)
         let sig = Data(bytes: buffer, count: DIDSignatureLength)
+        
         defer {
             buffer.deinitialize(count: DIDSignatureLength)
             buffer.deallocate()
         }
         
-        return sig
+        /*
+          out  signature value
+             out[0..31]  r
+             out[32.63]  s
+             out[64]     v
+         */
+        let r = sig.subdata(in: Range(0...31))
+        let s = sig.subdata(in: Range(32...63))
+        let v = sig[64]
+        
+        return (sig, r, s, v)
     }
     
     // Verify the signature and unsigned content with the current DID public key.
