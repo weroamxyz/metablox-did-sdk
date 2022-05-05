@@ -309,50 +309,65 @@ int did_export_prikey(did_handle did, char *out)
 
     did_context_t *context = (did_context_t *)did;
 
-    char data[128] = {0};
+    char data[321] = {0};
     strcat(data, context->algo);
     strcat(data, ".");
 
-    char priv_key[64] = {0};
-    size_t priv_key_len = 64;
-    b58_encode(context->key_pair.priv, context->key_pair.priv_len, priv_key, &priv_key_len);
+    char pHex[32 * 8 + 1] = {0};
+    memset(pHex, 0, 32 * 8 + 1);
 
-    strcat(data, priv_key);
+    int i = 0;
+    for (i = 0; i < context->key_pair.priv_len; i++)
+    {
+        char strTemp[9] = {0};
+        int j = sprintf(strTemp, "%02x", context->key_pair.priv[i]);
+        strcat(pHex, strTemp);
+    }
+
+    strcat(data, pHex);
     memcpy(out, data, strlen(data));
     return 0;
 }
 
 did_handle did_import_privkey(const char *data)
 {
-    if (data == NULL)
-    {
-        return NULL;
-    }
-    
     did_context_t *handle = (did_context_t *)malloc(sizeof(did_context_t));
     if (handle == NULL)
     {
         return NULL;
     }
     memset(handle, 0, sizeof(did_context_t));
-    printf("\n data len:%d \n", strlen(data));
+    
     char *p = data;
     char algo[64] = {0};
-    char priv_key[64] = {0};
+    char priv_key[128] = {0};
     size_t algo_len = 0;
     size_t priv_key_len = 0;
+
     while (*p != '.' && algo_len < strlen(data))
     {
         algo_len += 1;
         ++p;
     }
-    memcpy(algo, data, algo_len);
+
     memcpy(priv_key, data + algo_len + 1, strlen(data) - algo_len);
+    memcpy(algo, data, algo_len);
 
     char bin_key[64] = {0};
     size_t bin_key_len = 32;
 
-    b58_decode(priv_key, strlen(priv_key), bin_key, &bin_key_len);
+    int i = 0;
+    for (i = 0; i < bin_key_len; i++)
+    {
+        char temp[2] = {0};
+        memcpy(temp, priv_key + 2 * i, 2);
+
+        char tmp = 0;
+        tmp = HexCharToBinBinChar(temp[0]);
+        tmp <<= 4;
+        tmp |= HexCharToBinBinChar(temp[1]);
+        memcpy(&bin_key[i], &tmp, 1);
+    }
 
     import_key_pair(algo, 64, bin_key, &handle->key_pair);
     strcpy(handle->algo, algo);
@@ -366,4 +381,15 @@ did_handle did_import_privkey(const char *data)
 
     b58_encode(hash, 32, handle->did, &base58_len);
     return handle;
+}
+
+char HexCharToBinBinChar(char c)
+{
+    if (c >= '0' && c <= '9')
+        return c - '0';
+    else if (c >= 'a' && c <= 'z')
+        return c - 'a' + 10;
+    else if (c >= 'A' && c <= 'Z')
+        return c - 'A' + 10;
+    return 0xff;
 }
