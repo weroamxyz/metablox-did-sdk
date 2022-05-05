@@ -125,7 +125,7 @@ public class DIDCore {
         }
     }
     
-    private let DIDPrivateKeyLength = 65
+    private let DIDPrivateKeyLength = 128
     // Export private key string from a DID profile decrypting with password
     public func exportPrivateKey(name: String, password: String)-> String? {
         guard true == self.loadDID(name: name, passcode: password) else {
@@ -147,6 +147,7 @@ public class DIDCore {
             buffer.deallocate()
         }
         return privateKeyStr
+        
     }
     
     // Import a DID profile with a profile name and a private key, encrypt with password, and then load it as current hold
