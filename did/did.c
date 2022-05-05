@@ -6,6 +6,7 @@
 #include "common/base64.h"
 #include "common/base58.h"
 #include "common/sha256.h"
+#include <math.h>
 
 typedef struct did_context_tag
 {
@@ -41,6 +42,15 @@ did_handle did_create(const char *algo, rand_func_cb rand_func)
 
     b58_encode(hash, 32, handle->did, &base58_len);
     return handle;
+}
+
+char *getDIDstring(did_handle *did_handl)
+{
+    did_context_t *handle = (did_context_t *)did_handl;
+    char *ret = (char *)malloc(strlen(handle->did) + strlen("did:metablox:") + 1);
+    strcpy(ret, "did:metablox:");
+    strcpy(ret, handle->did);
+    return ret;
 }
 
 void did_destroy(did_handle handle)
@@ -233,18 +243,26 @@ int did_sign(did_handle handle, const char *msg, size_t msg_len, char *out, size
     return key_sign(&context->key_pair, context->algo, msg, msg_len, out, out_len);
 }
 
-int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, const char *sign, size_t sign_len)
+int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, char *sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
         key_pair_t key_pair;
         key_pair.pubkey_len = 64;
         size_t pubkey_len = 64;
-        int result = b58_decode(did_key->publicKeyBase58, strlen(did_key->publicKeyBase58), key_pair.pubkey, &pubkey_len);
-        if (result == 0)
+        int i = 0;
+        for (i = 0; i < strlen(did_key->publicKeyHex) / 2; i++)
         {
-            return result;
+            char temp[2] = {0};
+            memcpy(temp, did_key->publicKeyHex + 2 * i, 2);
+
+            char tmp = 0;
+            tmp = HexCharToBinChar(temp[0]);
+            tmp <<= 4;
+            tmp |= HexCharToBinChar(temp[1]);
+            memcpy(&key_pair.pubkey[i], &tmp, 1);
         }
+        pubkey_len = i;
         key_pair.pubkey_len = (unsigned short)pubkey_len;
 
         return key_verify(&key_pair, "secp256k1", msg, msg_len, sign, sign_len);
@@ -271,8 +289,10 @@ did_meta_t *did_to_did_meta(did_handle handle)
         strcpy(meta->did_keys->relationship, "authentication");
         strcpy(meta->did_keys->id, "keys-1");
         strcpy(meta->did_keys->controller, context->did);
-        size_t base58_len = MAX_KEY_PUBKEY_BASE58_LEN;
-        b58_encode(context->key_pair.pubkey, context->key_pair.pubkey_len, meta->did_keys->publicKeyBase58, &base58_len);
+
+        unsigned char pubKeyHex[129] = {0};
+        did_export_pubkey(handle, pubKeyHex);
+        strcpy(meta->did_keys->publicKeyHex, pubKeyHex);
 
         meta->did_services = NULL;
 
@@ -299,6 +319,67 @@ void did_meta_destroy(did_meta_t *meta)
 
     free(meta);
 }
+/*int did_export_prikey(did_handle did,char * prikey)
+{
+    if(did==NULL)
+    {
+        return -1;
+    }
+    int len =did_serialize(did,NULL,0);
+    len=(len+15)/16*16;
+    if (len <= 0) {
+        return -1;
+    }
+    len = (len + 15) / 16  * 16;
+    char* buffer = (char*)malloc(len);
+    memset(buffer, 0, len);
+    did_serialize(did, buffer, len);
+
+    cJSON* cjson_read=NULL;
+    cJSON* cjson_key_pair=NULL;
+    cJSON* cjson_key_pair_priv=NULL;
+
+    cjson_read = cJSON_Parse(buffer);
+    if(cjson_read==NULL)
+    {
+        free(buffer);
+        return -1;
+    }
+    cjson_key_pair=cJSON_GetObjectItem(cjson_read,"key_pair");
+    if(cjson_key_pair==NULL)
+    {
+        free(buffer);
+        cJSON_Delete(cjson_read);
+        return -1;
+    }
+    cjson_key_pair_priv=cJSON_GetObjectItem(cjson_key_pair,"priv");
+    if(cjson_key_pair_priv==NULL)
+    {
+        free(buffer);
+        cJSON_Delete(cjson_read);
+        return -1;
+    }
+
+    memcpy(prikey,cjson_key_pair_priv->valuestring,strlen(cjson_key_pair_priv->valuestring));
+    free(buffer);
+    cJSON_Delete(cjson_read);
+
+    return 0;
+}
+
+// int did_export_prikey1(did_handle did, priv_key_memo_t* priv_key)
+// {
+//     if(did == NULL)
+//     {
+//         return -1;
+//     }
+//     did_context_t* context = (did_context_t*)did;
+//     strcpy(priv_key->algo, context->algo);
+//    priv_key->priv_key_len = context->key_pair.priv_len;
+//     memcpy(priv_key->priv_key, context->key_pair.priv, priv_key->priv_key_len);
+//     return 0;
+// }
+*/
 
 int did_export_prikey(did_handle did, char *out)
 {
@@ -322,10 +403,36 @@ int did_export_prikey(did_handle did, char *out)
         char strTemp[9] = {0};
         int j = sprintf(strTemp, "%02x", context->key_pair.priv[i]);
         strcat(pHex, strTemp);
+        // printf("\n strTemp:%s",strTemp);
     }
 
     strcat(data, pHex);
     memcpy(out, data, strlen(data));
+    return 0;
+}
+
+int did_export_pubkey(did_handle did, char *out)
+{
+    if (did == NULL)
+    {
+        return -1;
+    }
+
+    did_context_t *context = (did_context_t *)did;
+    // printf("\n context->key_pair.pubkey_len:%d",context->key_pair.pubkey_len);
+    char pHex[129] = {0};
+
+    int i = 0;
+    for (i = 0; i < context->key_pair.pubkey_len; i++)
+    {
+        char strTemp[9] = {0};
+        int j = sprintf(strTemp, "%02x", context->key_pair.pubkey[i]);
+        strcat(pHex, strTemp);
+        // printf("\n strTemp:%s",strTemp);
+    }
+    // printf("\n pHex_len:%d",strlen(pHex));
+
+    memcpy(out, pHex, strlen(pHex));
     return 0;
 }
 
@@ -337,7 +444,7 @@ did_handle did_import_privkey(const char *data)
         return NULL;
     }
     memset(handle, 0, sizeof(did_context_t));
-    
+
     char *p = data;
     char algo[64] = {0};
     char priv_key[128] = {0};
@@ -363,9 +470,9 @@ did_handle did_import_privkey(const char *data)
         memcpy(temp, priv_key + 2 * i, 2);
 
         char tmp = 0;
-        tmp = HexCharToBinBinChar(temp[0]);
+        tmp = HexCharToBinChar(temp[0]);
         tmp <<= 4;
-        tmp |= HexCharToBinBinChar(temp[1]);
+        tmp |= HexCharToBinChar(temp[1]);
         memcpy(&bin_key[i], &tmp, 1);
     }
 
@@ -383,7 +490,7 @@ did_handle did_import_privkey(const char *data)
     return handle;
 }
 
-char HexCharToBinBinChar(char c)
+char HexCharToBinChar(char c)
 {
     if (c >= '0' && c <= '9')
         return c - '0';
