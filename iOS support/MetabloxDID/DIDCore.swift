@@ -63,7 +63,7 @@ public class DIDCore {
     public func readDIDPublicKey()-> String? {
         guard let did = self.loadedDIDPtr else {return nil}
         guard let meta = did_to_did_meta(did) else {return nil}
-        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyBase58.0))
+        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyHex.0))
         return pubkey
     }
     
@@ -125,7 +125,7 @@ public class DIDCore {
         }
     }
     
-    private let DIDPrivateKeyLength = 64
+    private let DIDPrivateKeyLength = 65
     // Export private key string from a DID profile decrypting with password
     public func exportPrivateKey(name: String, password: String)-> String? {
         guard true == self.loadDID(name: name, passcode: password) else {
