@@ -5,6 +5,7 @@
 #include "string.h"
 #include "common/sha256.h"
 #include <stdio.h>
+#include "keccak256/keccak256.h"
 
 int generate_secp256k1_keypair(rand_func_cb rand_func, key_pair_t* key_pair) 
 {
@@ -95,8 +96,8 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
 
 int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, const char* signature)
 {
-    secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
-    if (ctx == NULL) {
+    secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+    if (ctx == NULL){
         return -1;
     }
 
@@ -104,8 +105,7 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
     memcpy(sig.data, signature, 65);
 
     secp256k1_pubkey pubkey;
-    
-    
+
     char hash[32] = {0};
     SHA256_CTX sha256_ctx = {0};
 
@@ -113,16 +113,36 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
     sha256_update(&sha256_ctx, msg, msg_len);
     sha256_final(&sha256_ctx, hash);
 
-    int result = secp256k1_ecdsa_recover(ctx, &pubkey, &sig, hash);
-    if (result == 0) {
+    int result_rec = secp256k1_ecdsa_recover(ctx, &pubkey, &sig, hash);
+    if (result_rec == 0){
         secp256k1_context_destroy(ctx);
         return -1;
     }
-    
+
+    char result[32] = {0};
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, pubkey.data, 64);
+    keccak_final(&sha3_ctx, result);
+
+    char pHex[64] = {0};
+    int i = 0;
+    for (i = 0; i < 32; i++){
+        char strTemp[3] = {0};
+        sprintf(strTemp, "%02x", (unsigned char)result[i]);
+        strcat(pHex, strTemp);
+    }
+
+    char ret[42];
+    ret[0] = '0';
+    ret[1] = 'x';
+    memcpy(ret + 2, pHex + 24, 40);
+
     secp256k1_context_destroy(ctx);
-    
-    result = memcmp(public_key, pubkey.data, 64);
-    
-    if (result == 0) return 0;
+
+    result_rec = memcmp(public_key, ret, 42);
+
+    if (result_rec == 0)
+        return 0;
     return -1;
 }
