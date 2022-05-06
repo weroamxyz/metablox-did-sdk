@@ -7,6 +7,7 @@
 #include "common/base58.h"
 #include "common/sha256.h"
 #include <math.h>
+#include "keccak256/keccak256.h"
 
 typedef struct did_context_tag
 {

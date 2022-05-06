@@ -2,7 +2,7 @@ framework module MetabloxDID {
     umbrella header "MetabloxDID.h"
     
     explicit module DID {
-        header "did_conf.h"
+        private header "did_conf.h"
         private header "key_generator.h"
         private header "did_key.h"
         private header "did.h"

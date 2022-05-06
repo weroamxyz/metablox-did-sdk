@@ -25,6 +25,9 @@
 		00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1139C27CF555D00CD8DB2 /* cJSON.c */; };
 		00B1146927DF2D2700CD8DB2 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1146727DF2D0600CD8DB2 /* libc++.tbd */; };
 		00B1146C27DF2E2900CD8DB2 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1146B27DF2E2900CD8DB2 /* Security.framework */; };
+		964E41AD28259009000305F7 /* keccak256.c in Sources */ = {isa = PBXBuildFile; fileRef = 964E41AB28259008000305F7 /* keccak256.c */; };
+		964E41AE28259009000305F7 /* keccak256.c in Sources */ = {isa = PBXBuildFile; fileRef = 964E41AB28259008000305F7 /* keccak256.c */; };
+		964E41AF28259009000305F7 /* keccak256.h in Headers */ = {isa = PBXBuildFile; fileRef = 964E41AC28259008000305F7 /* keccak256.h */; };
 		966E8D2627D8252F002F4AD0 /* MetabloxDID.h in Headers */ = {isa = PBXBuildFile; fileRef = 966E8D2527D8252F002F4AD0 /* MetabloxDID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		966E8D2A27D99196002F4AD0 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
 		966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1138427CF54D700CD8DB2 /* did_wallet.c */; };
@@ -114,6 +117,8 @@
 		00B1139D27CF555D00CD8DB2 /* cJSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = cJSON.h; path = "../third-party/cJSON/cJSON.h"; sourceTree = "<group>"; };
 		00B1146727DF2D0600CD8DB2 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		00B1146B27DF2E2900CD8DB2 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		964E41AB28259008000305F7 /* keccak256.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = keccak256.c; sourceTree = "<group>"; };
+		964E41AC28259008000305F7 /* keccak256.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = keccak256.h; sourceTree = "<group>"; };
 		966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MetabloxDID.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		966E8D2527D8252F002F4AD0 /* MetabloxDID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MetabloxDID.h; sourceTree = "<group>"; };
 		966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MetabloxDID.modulemap; sourceTree = "<group>"; };
@@ -160,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				00B1139B27CF552B00CD8DB2 /* third_party */,
+				964E41AA28259008000305F7 /* keccak256 */,
 				00B1137A27CF54D700CD8DB2 /* common */,
 				00B1137527CF54D700CD8DB2 /* conf */,
 				00B1137727CF54D700CD8DB2 /* did */,
@@ -292,6 +298,16 @@
 			name = third_party;
 			sourceTree = "<group>";
 		};
+		964E41AA28259008000305F7 /* keccak256 */ = {
+			isa = PBXGroup;
+			children = (
+				964E41AB28259008000305F7 /* keccak256.c */,
+				964E41AC28259008000305F7 /* keccak256.h */,
+			);
+			name = keccak256;
+			path = ../keccak256;
+			sourceTree = "<group>";
+		};
 		966E8D2427D8252F002F4AD0 /* MetabloxDID */ = {
 			isa = PBXGroup;
 			children = (
@@ -322,6 +338,7 @@
 				966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */,
 				966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */,
 				002B5D98281919FF00E17B29 /* secp256k1_key.h in Headers */,
+				964E41AF28259009000305F7 /* keccak256.h in Headers */,
 				966E8D4027DFCEEB002F4AD0 /* key_generator.h in Headers */,
 				966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */,
 			);
@@ -456,6 +473,7 @@
 				00B1139227CF54D700CD8DB2 /* sha256.c in Sources */,
 				00B1139727CF54D700CD8DB2 /* did_key.c in Sources */,
 				00B1139627CF54D700CD8DB2 /* key_generator.c in Sources */,
+				964E41AD28259009000305F7 /* keccak256.c in Sources */,
 				00B1139E27CF555D00CD8DB2 /* cJSON.c in Sources */,
 				00B1139427CF54D700CD8DB2 /* did_wallet.c in Sources */,
 				00B1139027CF54D700CD8DB2 /* aes.c in Sources */,
@@ -471,6 +489,7 @@
 				966E8D2F27D991A7002F4AD0 /* secp256k1_key.c in Sources */,
 				966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */,
 				966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */,
+				964E41AE28259009000305F7 /* keccak256.c in Sources */,
 				966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */,
 				966E8D3E27DFC574002F4AD0 /* DIDCore.swift in Sources */,
 				966E8D3227D991B6002F4AD0 /* base64.c in Sources */,

@@ -118,8 +118,9 @@ public class DIDCore {
             return
         }
         
+        var sign = signature
         let didMeta = did_to_did_meta(did)
-        signature.withUnsafeBytes { (bytes: UnsafePointer<CChar>) in
+        sign.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<CChar>) in
             let result = did_verify(didMeta?.pointee.did_keys, content, content.lengthOfBytes(using: .utf8), bytes, DIDSignatureLength)
             finishHandler(Int(result))
         }

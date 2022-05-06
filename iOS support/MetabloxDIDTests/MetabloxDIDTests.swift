@@ -132,6 +132,26 @@ class MetabloxDIDTests: XCTestCase {
         print("DID Profile namelist: \n\(namelist)")
         XCTAssert(namelist.count == 2, "DID namelist length not as expected")
     }
+    
+    func testDIDImport() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        print("=== Initialized DID store ===")
+        print(storeDir!.path)
+        
+        let profileName = "Imported"
+        let passcode = "123"
+        let privateKey = "secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6"
+        
+        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let pubkey = didc.readDIDPublicKey()
+        XCTAssert(pubkey != nil, "DID pubkey export nil")
+        print("Read pubkey: " + pubkey!)
+        XCTAssert(pubkey == "0xBE1e1dB948CC1f441514aFb8924B67891f1c6889")
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
