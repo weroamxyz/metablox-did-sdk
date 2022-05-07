@@ -349,7 +349,7 @@ int did_export_pubkey(did_handle did, char *eth_address)
 
     did_context_t *context = (did_context_t *)did;
 
-    char result[32] = {0};
+    unsigned char result[32] = {0};
     SHA3_CTX sha3_ctx;
     keccak_init(&sha3_ctx);
     keccak_update(&sha3_ctx, context->key_pair.pubkey, context->key_pair.pubkey_len);
@@ -361,7 +361,7 @@ int did_export_pubkey(did_handle did, char *eth_address)
     {
         char strTemp[3] = {0};
         int j = sprintf(strTemp, "%02x", (unsigned char)result[i]);
-        strcat(pHex, strTemp);
+        memcpy(pHex+2*i,strTemp,2);
     }
 
     char ret[42];
