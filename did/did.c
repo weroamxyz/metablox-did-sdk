@@ -34,13 +34,13 @@ did_handle did_create(const char *algo, rand_func_cb rand_func)
     generate_key_pair(rand_func, algo, &handle->key_pair);
     strcpy(handle->algo, algo);
 
-    char hash[32] = {0};
-    size_t base58_len = 64;
-    SHA256_CTX ctx;
-    sha256_init(&ctx);
-    sha256_update(&ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
-    sha256_final(&ctx, hash);
+	unsigned char hash[32] = {0};
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
+    keccak_final(&sha3_ctx, hash);
 
+    size_t base58_len = 64;
     b58_encode(hash, 32, handle->did, &base58_len);
     return handle;
 }
