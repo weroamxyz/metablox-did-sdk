@@ -251,7 +251,7 @@ int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, char *sign, 
         key_pair_t key_pair;
         key_pair.pubkey_len = 64;
         size_t pubkey_len = 64;
-        memcpy(&key_pair, did_key->publicKeyHex, 42);
+        memcpy(&key_pair.pubkey, did_key->publicKeyHex, 42);
 
         key_pair.pubkey_len = 42;
 
@@ -418,10 +418,11 @@ did_handle did_import_privkey(const char *data)
 
     char hash[32] = {0};
     size_t base58_len = 64;
-    SHA256_CTX ctx;
-    sha256_init(&ctx);
-    sha256_update(&ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
-    sha256_final(&ctx, hash);
+    
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, handle->key_pair.pubkey, handle->key_pair.pubkey_len);
+    keccak_final(&sha3_ctx, hash);
 
     b58_encode(hash, 32, handle->did, &base58_len);
     return handle;
