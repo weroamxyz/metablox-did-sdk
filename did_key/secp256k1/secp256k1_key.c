@@ -130,7 +130,7 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
     for (i = 0; i < 32; i++){
         char strTemp[3] = {0};
         sprintf(strTemp, "%02x", (unsigned char)result[i]);
-        strcat(pHex, strTemp);
+        memcpy(pHex, strTemp, 2);
     }
 
     char ret[42];
