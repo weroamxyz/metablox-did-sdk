@@ -15,7 +15,8 @@ public class DIDCore {
     private var loadedDIDPtr: UnsafeMutableRawPointer? = nil
     
     deinit {
-        
+        wallet_handle_destroy(walletHandlerPtr)
+        did_destroy(loadedDIDPtr)
     }
     
     // Initialize a DIDCore instance by providing a local file path for storage of database
