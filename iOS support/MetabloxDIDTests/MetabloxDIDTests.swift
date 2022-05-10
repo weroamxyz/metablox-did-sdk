@@ -142,7 +142,7 @@ class MetabloxDIDTests: XCTestCase {
         
         let profileName = "Imported"
         let passcode = "123"
-        let privateKey = "secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6"
+        let privateKey = "secp256k1.0f1253ae351d0d7e50575cdb649727d3898e33cf9ec270246581ede934163d43"
         
         let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
@@ -150,7 +150,10 @@ class MetabloxDIDTests: XCTestCase {
         let pubkey = didc.readDIDPublicKey()
         XCTAssert(pubkey != nil, "DID pubkey export nil")
         print("Read pubkey: " + pubkey!)
-        XCTAssert(pubkey == "0xBE1e1dB948CC1f441514aFb8924B67891f1c6889")
+        XCTAssert(pubkey == "0x9c48ea1a45cef7cc82b0d4fc321a1bb1ca79e1d0")
+        
+        let didStr = didc.readDIDString()
+        XCTAssert(didStr == "A9w8BvBvhN6JfGYP42fWdHbAUdUqMjG8fkMEaXuyxpCX")
     }
 
     func testPerformanceExample() throws {
