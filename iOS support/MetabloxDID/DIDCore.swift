@@ -61,8 +61,19 @@ public class DIDCore {
         return DIDStr
     }
     
+    private let pubkeyLength = 45
     public func readDIDPublicKey()-> String? {
         guard let did = self.loadedDIDPtr else {return nil}
+        
+        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: pubkeyLength)
+        buffer.initialize(repeating: 0, count: pubkeyLength)
+        did_export_pubkey(did, buffer)
+        let pubkeyStr = String(cString: buffer, encoding: .utf8)
+        defer {
+            buffer.deinitialize(count: pubkeyLength)
+        }
+        return pubkeyStr
+        
         guard let meta = did_to_did_meta(did) else {return nil}
         let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyHex.0))
         return pubkey
@@ -228,3 +239,8 @@ extension String {
     }
 }
  
+fileprivate extension Data {
+    var hexString: String {
+        return map({ String(format: "%02x", $0) }).joined()
+    }
+}

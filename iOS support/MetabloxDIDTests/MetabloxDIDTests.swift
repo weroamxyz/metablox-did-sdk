@@ -142,7 +142,7 @@ class MetabloxDIDTests: XCTestCase {
         
         let profileName = "Imported"
         let passcode = "123"
-        let privateKey = "secp256k1.0f1253ae351d0d7e50575cdb649727d3898e33cf9ec270246581ede934163d43"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
         
         let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
@@ -150,10 +150,35 @@ class MetabloxDIDTests: XCTestCase {
         let pubkey = didc.readDIDPublicKey()
         XCTAssert(pubkey != nil, "DID pubkey export nil")
         print("Read pubkey: " + pubkey!)
-        XCTAssert(pubkey == "0x9c48ea1a45cef7cc82b0d4fc321a1bb1ca79e1d0")
+        XCTAssert(pubkey?.lowercased() == "0x77Cb9d48A0808c48E2C77F00ae8E26bd7A1E6415".lowercased())
         
         let didStr = didc.readDIDString()
-        XCTAssert(didStr == "A9w8BvBvhN6JfGYP42fWdHbAUdUqMjG8fkMEaXuyxpCX")
+        print("Read did string: " + didStr!)
+        XCTAssert(didStr == "Fdq53BKE7V7Dzt8mky2EGgxVsSA8rzQgJUxzgt3pUhmA")
+    }
+    
+    func testDIDSign() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        print("=== Initialized DID store ===")
+        print(storeDir!.path)
+        
+        let profileName = "Imported"
+        let passcode = "123"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
+        
+        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let contentToSign = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
+        
+        let sig = didc.signature(content: contentToSign)
+        XCTAssert(nil != sig)
+        print(sig!.sig.hexString)
+        XCTAssert(sig!.v == 0)
+        XCTAssert(sig!.r.hexString == "cb7e5f6ea8acf5a8ade2f8a6f5491fe134b5bd31f6013c6877c6dcfb9d604f1d")
+        XCTAssert(sig!.s.hexString == "6de7ade1d141143d93aa6a202705d16a8cf859d588b6cba33493046c9553bd5a")
     }
 
     func testPerformanceExample() throws {
@@ -179,4 +204,10 @@ class MetabloxDIDTests: XCTestCase {
         try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true, attributes: nil)
     }
 
+}
+
+extension Data {
+    var hexString: String {
+        return map({ String(format: "%02x", $0) }).joined()
+    }
 }
