@@ -50,12 +50,10 @@ void         did_meta_destroy(did_meta_t* meta);
 //2022.4.16     meiqiu
 int         did_export_prikey(did_handle handle,char *out);
 did_handle  did_import_privkey(const char *priv_key);
-char        HexCharToBinChar(char c);
-
 
 
 //2022.5.2
-char* getDIDstring(did_handle* did_handl);
+void did_get_didstring(did_handle* did_handl,char* out);
 int did_export_pubkey(did_handle did, char *eth_address);
 
 

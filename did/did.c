@@ -45,13 +45,11 @@ did_handle did_create(const char *algo, rand_func_cb rand_func)
     return handle;
 }
 
-char *getDIDstring(did_handle *did_handl)
+void did_get_didstring(did_handle* did_handl,char* out)
 {
     did_context_t *handle = (did_context_t *)did_handl;
-    char *ret = (char *)malloc(strlen(handle->did) + strlen("did:metablox:") + 1);
-    strcpy(ret, "did:metablox:");
-    strcpy(ret, handle->did);
-    return ret;
+    strcat(out, "did:mettablox:");
+    strcat(out, handle->did);
 }
 
 void did_destroy(did_handle handle)
@@ -249,8 +247,8 @@ int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, char *sign, 
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
         key_pair_t key_pair;
-        key_pair.pubkey_len = 64;
-        size_t pubkey_len = 64;
+        key_pair.pubkey_len = 65;
+        size_t pubkey_len = 65;
         memcpy(&key_pair.pubkey, did_key->publicKeyHex, 42);
 
         key_pair.pubkey_len = 42;
@@ -401,16 +399,11 @@ did_handle did_import_privkey(const char *data)
     size_t bin_key_len = 32;
 
     int i = 0;
+    char* pos = priv_key;
     for (i = 0; i < bin_key_len; i++)
     {
-        char temp[2] = {0};
-        memcpy(temp, priv_key + 2 * i, 2);
-
-        char tmp = 0;
-        tmp = HexCharToBinChar(temp[0]);
-        tmp <<= 4;
-        tmp |= HexCharToBinChar(temp[1]);
-        memcpy(&bin_key[i], &tmp, 1);
+        sscanf(pos, "%2hhx", &bin_key[i]);
+        pos += 2;
     }
 
     import_key_pair(algo, 64, bin_key, &handle->key_pair);
@@ -426,15 +419,4 @@ did_handle did_import_privkey(const char *data)
 
     b58_encode(hash, 32, handle->did, &base58_len);
     return handle;
-}
-
-char HexCharToBinChar(char c)
-{
-    if (c >= '0' && c <= '9')
-        return c - '0';
-    else if (c >= 'a' && c <= 'z')
-        return c - 'a' + 10;
-    else if (c >= 'A' && c <= 'Z')
-        return c - 'A' + 10;
-    return 0xff;
 }

@@ -29,9 +29,12 @@ int generate_secp256k1_keypair(rand_func_cb rand_func, key_pair_t* key_pair)
     int d = secp256k1_ec_pubkey_create(ctx, &pubkey, key);
     
     key_pair->priv_len = 32;
-    key_pair->pubkey_len = 64;
     memcpy(key_pair->priv, key, 32);
-    memcpy(key_pair->pubkey, pubkey.data, 64);
+    
+    key_pair->pubkey_len = 65;
+    size_t outputlen = 65;
+    secp256k1_ec_pubkey_serialize(ctx, key_pair->pubkey, &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+    key_pair->pubkey_len = outputlen;
 
     secp256k1_context_destroy(ctx);
     return 0;
@@ -121,11 +124,15 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
         secp256k1_context_destroy(ctx);
         return -1;
     }
+    char output[65] = {0};
+    size_t outputlen = 65;
+    secp256k1_ec_pubkey_serialize(ctx, output, &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+
 
     char result[32] = {0};
     SHA3_CTX sha3_ctx;
     keccak_init(&sha3_ctx);
-    keccak_update(&sha3_ctx, pubkey.data, 64);
+    keccak_update(&sha3_ctx, output, 65);
     keccak_final(&sha3_ctx, result);
 
     char pHex[64] = {0};
