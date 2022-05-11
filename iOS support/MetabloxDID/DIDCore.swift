@@ -74,9 +74,9 @@ public class DIDCore {
         }
         return pubkeyStr
         
-        guard let meta = did_to_did_meta(did) else {return nil}
-        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyHex.0))
-        return pubkey
+//        guard let meta = did_to_did_meta(did) else {return nil}
+//        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyHex.0))
+//        return pubkey
     }
     
     // Read DID description from currently loaded DID, formated in JSON string.
@@ -236,11 +236,5 @@ extension String {
         return digest.map {
             String(format: "%02hhx", $0)
         }.joined()
-    }
-}
- 
-fileprivate extension Data {
-    var hexString: String {
-        return map({ String(format: "%02x", $0) }).joined()
     }
 }
