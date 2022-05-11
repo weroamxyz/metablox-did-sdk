@@ -50,13 +50,16 @@ int import_secp256k1_keypair(const char* priv_key, key_pair_t* key_pair)
         return -1;
     }
 
+    key_pair->priv_len = 32;
+    memcpy(key_pair->priv, priv_key, 32);
+    
     secp256k1_pubkey pubkey = {0};
     int d = secp256k1_ec_pubkey_create(ctx, &pubkey, priv_key);
-    
-    key_pair->priv_len = 32;
-    key_pair->pubkey_len = 64;
-    memcpy(key_pair->priv, priv_key, 32);
-    memcpy(key_pair->pubkey, pubkey.data, 64);
+    key_pair->pubkey_len = 65;
+    size_t outputlen = 65;
+    secp256k1_ec_pubkey_serialize(ctx, key_pair->pubkey, &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
+    key_pair->pubkey_len = outputlen;
+
 
     secp256k1_context_destroy(ctx);
     return 0;

@@ -4,6 +4,7 @@
 #include "conf/did_conf.h"
 #include <stdlib.h>
 #include <string.h>
+
 // struct
 
 typedef struct VCProof
@@ -70,14 +71,12 @@ extern "C"
     void vc_destroy(vc_handle vc);
     void vp_destroy(vp_handle vp);
 
-    vc_handle new_vc(did_handle did,char **context, int count_text, char *id, char **type, int count_type, char *sub_type, char *issuer,
+    vc_handle new_vc(char **context, int count_text, char *id, char **type, int count_type, char *sub_type, char *issuer,
                      char *issuance_data, char *expiration_data, char *description, char **CredentialSubject, int count_subject, VCProof vcProof, int revoked);
-    vp_handle new_vp(did_handle did,char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof);
+    vp_handle new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof);
     VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_pursose);
     VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose);
 
-    int verifyVC(VC* vc,did_handle did);
-    int verifyVP(VP* vp,did_handle did);
 
     void ConvertVCToBytes(VC *vc, char *out);
     void ConvertVPToBytes(VP *vc, char *out);

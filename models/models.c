@@ -1,14 +1,12 @@
 #include "models/models.h"
-#include "did_key/did_key.h"
 #include "stdlib.h"
 #include "string.h"
 #include "stddef.h"
-#include "did_key/secp256k1/secp256k1_key.h"
 #include "common/sha256.h"
 #include "common/base64.h"
 #include "common/base58.h"
 #include "stdio.h"
-#include "did/did.h"
+
 
 vc_handle create_vc_handle()
 {
@@ -105,7 +103,7 @@ void vp_destroy(vp_handle vp)
        free(vp_hand);
 }
 
-vc_handle new_vc(did_handle did, char **context, int count_text, char *id,
+vc_handle new_vc(char **context, int count_text, char *id,
                  char **type, int count_type, char *sub_type, char *issuer,
                  char *issuance_data, char *expiration_data, char *description,
                  char **CredentialSubject, int count_subject,
@@ -162,24 +160,24 @@ vc_handle new_vc(did_handle did, char **context, int count_text, char *id,
        strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
        vc_handl->revoked = revoked;
 
-       char out[2048] = {0};
-       ConvertVCToBytes(vc_handl, out);
-
-       char hash[32] = {0};
-       SHA256_CTX ctx;
-       sha256_init(&ctx);
-       sha256_update(&ctx, out, strlen(out));
-       sha256_final(&ctx, hash);
-
-       char sig[64] = {0};
-       did_sign(did, hash, 32, sig, 64);
-
-       memcpy(vc_handl->vcProof.JWSSignature, sig, 64);
+//       char out[2048] = {0};
+//       ConvertVCToBytes(vc_handl, out);
+//
+//       char hash[32] = {0};
+//       SHA256_CTX ctx;
+//       sha256_init(&ctx);
+//       sha256_update(&ctx, out, strlen(out));
+//       sha256_final(&ctx, hash);
+//
+//       char sig[64] = {0};
+//       did_sign(did, hash, 32, sig, 64);
+//
+//       memcpy(vc_handl->vcProof.JWSSignature, sig, 64);
 
        return vc_handl;
 }
 
-vp_handle new_vp(did_handle did, char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof)
+vp_handle new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof)
 {
        VP *vp_hand = create_vp_handle();
        int i = 0;
@@ -216,19 +214,19 @@ vp_handle new_vp(did_handle did, char **context, int count_text, char **type, in
        // vp_hand->vpProof.nonce = (char *)malloc(strlen(vpProof->nonce));
        // strcpy(vp_hand->vpProof.nonce, vpProof->nonce);
 
-       char out[2048] = {0};
-       ConvertVPToBytes(vp_hand, out);
-
-       char hash[32] = {0};
-       SHA256_CTX ctx;
-       sha256_init(&ctx);
-       sha256_update(&ctx, out, strlen(out));
-       sha256_final(&ctx, hash);
-
-       char sig[64] = {0};
-       did_sign(did, hash, 32, sig, 64);
-
-       memcpy(vp_hand->vpProof.nonce, sig, 64);
+//       char out[2048] = {0};
+//       ConvertVPToBytes(vp_hand, out);
+//
+//       char hash[32] = {0};
+//       SHA256_CTX ctx;
+//       sha256_init(&ctx);
+//       sha256_update(&ctx, out, strlen(out));
+//       sha256_final(&ctx, hash);
+//
+//       char sig[64] = {0};
+//       did_sign(did, hash, 32, sig, 64);
+//
+//       memcpy(vp_hand->vpProof.nonce, sig, 64);
 
        return vp_hand;
 }
@@ -257,163 +255,151 @@ int CreatJWSSignature(VC *vc, char *sig)
 
 int CreatNonce(VP *vp, char *sig)
 {
-       char pHex[257] = {0};
+    // todo   use base58
+    int sig_base64_len = 0;
+    sig_base64_len = BASE64_ENCODE_OUT_SIZE(64);
+    char *pHex = (char *)malloc(sig_base64_len + 1);
+    memset(pHex, 0, sizeof(sig_base64_len + 1));
+    base64_encode(sig, 64, pHex);
 
-       int i = 0;
-       for (i = 0; i < 64; i++)
-       {
-              char strTemp[9] = {0};
-              int j = sprintf(strTemp, "%02x", (unsigned char)sig[i]);
-              strcat(pHex, strTemp);
-       }
-       // printf("\n strTemp:%s",pHex);
-       memcpy(vp->vpProof.nonce, sig, 64);
-       return 1;
+    // int i = 0;
+    // char pHex[257] = {0};
+    // for (i = 0; i < 64; i++)
+    // {
+    //        char strTemp[9] = {0};
+    //        int j = sprintf(strTemp, "%02x", (unsigned char)sig[i]);
+    //        strcat(pHex, strTemp);
+    // }
+    printf("\n strTemp:%s", pHex);
+    memcpy(vp->vpProof.nonce, pHex, strlen(pHex));
+    return 1;
+    
 }
 
 VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose)
 {
-       VCProof *ret = (VCProof *)malloc(sizeof(VCProof));
-       memset(ret, 0, sizeof(VCProof));
-       strcpy(ret->type, type);
-       strcpy(ret->created, created);
-       strcpy(ret->verification_method, vm);
-       strcpy(ret->proof_purpose, proof_purpose);
-       return ret;
+    VCProof *ret = (VCProof *)malloc(sizeof(VCProof));
+    memset(ret, 0, sizeof(VCProof));
+    strcpy(ret->type, type);
+    strcpy(ret->created, created);
+    strcpy(ret->verification_method, vm);
+    strcpy(ret->proof_purpose, proof_purpose);
+    return ret;
 }
 
 VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose)
 {
-       VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
-       memset(ret, 0, sizeof(VPProof));
-       strcpy(ret->type, type);
-       strcpy(ret->created, created);
-       strcpy(ret->verification_method, vm);
-       strcpy(ret->proof_purpose, proof_purpose);
-       return ret;
+    VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
+    memset(ret, 0, sizeof(VPProof));
+    strcpy(ret->type, type);
+    strcpy(ret->created, created);
+    strcpy(ret->verification_method, vm);
+    strcpy(ret->proof_purpose, proof_purpose);
+    return ret;
 }
 
-int verifyVC(VC *vc, did_handle did)
+void ConvertVCToBytes(VC *vc, char *hashout)
 {
-       did_meta_t *did2_meta = did_to_did_meta(did);
+    int i = 0;
+    char context[2048] = {0};
+    for (i = 0; i < vc->count_context; i++)
+    {
+        strcat(context, vc->context[i]);
+    }
 
-       char out[2048] = {0};
-       ConvertVCToBytes(vc, out);
+    char type[80] = {0};
+    for (i = 0; i < vc->count_type; i++)
+    {
+        strcat(type, vc->type[i]);
+    }
 
-       char hash[32] = {0};
-       SHA256_CTX ctx;
-       sha256_init(&ctx);
-       sha256_update(&ctx, out, strlen(out));
-       sha256_final(&ctx, hash);
-       printf("\n memcmp:%d", memcmp(hash, vc->vcProof.JWSSignature, 64));
-       int verify = did_verify(did2_meta->did_keys, hash, 32, vc->vcProof.JWSSignature, 64);
-       return verify;
+    char CredentialSubject[256] = {0};
+    for (i = 0; i < vc->count_subject; i++)
+    {
+        strcat(CredentialSubject, vc->CredentialSubject[i]);
+    }
+
+    char vcProof[600] = {0};
+    strcat(vcProof, vc->vcProof.type);
+    strcat(vcProof, vc->vcProof.created);
+    strcat(vcProof, vc->vcProof.verification_method);
+    strcat(vcProof, vc->vcProof.proof_purpose);
+    // if (vc->vcProof.JWSSignature != NULL)
+    // {
+    //        strcat(vcProof, vc->vcProof.JWSSignature);
+    // }
+
+    char out[2048]={0};
+    strcat(out, context);
+    strcat(out, type);
+    strcat(out, vc->sub_type);
+    strcat(out, vc->issuer);
+    strcat(out, vc->issuance_data);
+    strcat(out, vc->expiration_data);
+    strcat(out, vc->description);
+    strcat(out, vcProof);
+    char rev[4] = {0};
+    sprintf(rev, "%d", vc->revoked);
+    strcat(out, rev);
+
+    char hash1[32] = {0};
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, out, strlen(out));
+    sha256_final(&ctx, hash1);
+
+    memcpy(hashout,hash1,32);
 }
 
-int verifyVP(VP *vp, did_handle did)
+void ConvertVPToBytes(VP *vp, char *hashout)
 {
-       did_meta_t *did2_meta = did_to_did_meta(did);
+    int i = 0;
+    char context[2048] = {0};
+    for (i = 0; i < vp->count_context; i++)
+    {
+        strcat(context, vp->context[i]);
+    }
 
-       char out[2048] = {0};
-       ConvertVPToBytes(vp, out);
+    char type[80] = {0};
+    for (i = 0; i < vp->count_type; i++)
+    {
+        strcat(type, vp->type[i]);
+    }
 
-       char hash[32] = {0};
-       SHA256_CTX ctx;
-       sha256_init(&ctx);
-       sha256_update(&ctx, out, strlen(out));
-       sha256_final(&ctx, hash);
-       int verify = did_verify(did2_meta->did_keys, hash, 32, vp->vpProof.nonce, 64);
-       return verify;
-}
+    char vp_vector[2048] = {0};
+    for (i = 0; i < vp->count_vc; i++)
+    {
+        if (vp->vc[i] != NULL)
+        {
+            char out[1024] = {0};
+            ConvertVCToBytes(vp->vc[i], out);
+            // printf("\n ConvertVCToBytes:%s",out);
+            strcat(vp_vector, out);
+        }
+    }
 
-void ConvertVCToBytes(VC *vc, char *out)
-{
-       int i = 0;
-       char context[2048] = {0};
-       for (i = 0; i < vc->count_context; i++)
-       {
-              strcat(context, vc->context[i]);
-       }
+    char vpProof[600] = {0};
+    strcat(vpProof, vp->vpProof.type);
+    strcat(vpProof, vp->vpProof.created);
+    strcat(vpProof, vp->vpProof.verification_method);
+    strcat(vpProof, vp->vpProof.proof_purpose);
+    // if (vp->vpProof.nonce != NULL)
+    // {
+    //        strcat(vpProof, vp->vpProof.nonce);
+    // }
 
-       char type[80] = {0};
-       for (i = 0; i < vc->count_type; i++)
-       {
-              strcat(type, vc->type[i]);
-       }
+    char out[2048]={0};
+    strcat(out, context);
+    strcat(out, type);
+    strcat(out, vp_vector);
+    strcat(out, vp->holder);
+    strcat(out, vpProof);
 
-       char CredentialSubject[256] = {0};
-       for (i = 0; i < vc->count_subject; i++)
-       {
-              strcat(CredentialSubject, vc->CredentialSubject[i]);
-       }
+    char hash1[32] = {0};
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, out, strlen(out));
+    sha256_final(&ctx, hash1);
 
-       char vcProof[600] = {0};
-       strcat(vcProof, vc->vcProof.type);
-       strcat(vcProof, vc->vcProof.created);
-       strcat(vcProof, vc->vcProof.verification_method);
-       strcat(vcProof, vc->vcProof.proof_purpose);
-       // if (vc->vcProof.JWSSignature != NULL)
-       // {
-       //        strcat(vcProof, vc->vcProof.JWSSignature);
-       // }
-
-       strcat(out, context);
-       strcat(out, type);
-       strcat(out, vc->sub_type);
-       strcat(out, vc->issuer);
-       strcat(out, vc->issuance_data);
-       strcat(out, vc->expiration_data);
-       strcat(out, vc->description);
-       strcat(out, vcProof);
-       char rev[4] = {0};
-       sprintf(rev, "%d", vc->revoked);
-       strcat(out, rev);
-
-       // memcpy(hashout,hash,32);
-}
-
-void ConvertVPToBytes(VP *vp, char *out)
-{
-       int i = 0;
-       char context[2048] = {0};
-       for (i = 0; i < vp->count_context; i++)
-       {
-              strcat(context, vp->context[i]);
-       }
-
-       char type[80] = {0};
-       for (i = 0; i < vp->count_type; i++)
-       {
-              strcat(type, vp->type[i]);
-       }
-
-       char vp_vector[2048] = {0};
-       for (i = 0; i < vp->count_vc; i++)
-       {
-              if (vp->vc[i] != NULL)
-              {
-                     char out[1024] = {0};
-                     ConvertVCToBytes(vp->vc[i], out);
-                     // printf("\n ConvertVCToBytes:%s",out);
-                     strcat(vp_vector, out);
-              }
-       }
-
-       char vpProof[600] = {0};
-       strcat(vpProof, vp->vpProof.type);
-       strcat(vpProof, vp->vpProof.created);
-       strcat(vpProof, vp->vpProof.verification_method);
-       strcat(vpProof, vp->vpProof.proof_purpose);
-       // if (vp->vpProof.nonce != NULL)
-       // {
-       //        strcat(vpProof, vp->vpProof.nonce);
-       // }
-
-       strcat(out, context);
-       strcat(out, type);
-       strcat(out, vp_vector);
-       strcat(out, vp->holder);
-       strcat(out, vpProof);
-
-       // memcpy(hashout,hash,32);
+    memcpy(hashout,hash1,32);
 }
