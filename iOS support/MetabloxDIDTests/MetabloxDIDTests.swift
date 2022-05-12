@@ -8,7 +8,16 @@
 import XCTest
 import MetabloxDID
 
-
+extension StringProtocol {
+    var hexa: [UInt8] {
+        var startIndex = self.startIndex
+        return (0..<count/2).compactMap { _ in
+            let endIndex = index(after: startIndex)
+            defer { startIndex = index(after: endIndex) }
+            return UInt8(self[startIndex...endIndex], radix: 16)
+        }
+    }
+}
 
 class MetabloxDIDTests: XCTestCase {
     private var storeDir: URL? = nil
@@ -63,15 +72,16 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(firstDidStr != nil, "DID string read faild")
         
         print("=== Sign content with DID ===")
-        let content = "Who is the smartest person in the world?"
+        //let content = "Who is the smartest person in the world?"
+        let content = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
         print("Content: " + content)
-        let sig = didc.signature(content: content)
+        let sig = didc.signature(content: content.hexa)
         XCTAssert(sig != nil, "DID signature failed")
         
         print("Signature(Base64): " + sig!.sig.base64EncodedString())
         print("R: \(sig!.r) " + "S: \(sig!.s) " + "V: \(sig!.v)")
         print("=== Verify signature with DID ===")
-        didc.verifySignature(content: content, signature: sig!.0) { result in
+        didc.verifySignature(content: content.hexa, signature: sig!.0) { result in
             switch result {
             case -1:
                 print("!!! DID ERROR !!!")
@@ -173,7 +183,7 @@ class MetabloxDIDTests: XCTestCase {
         
         let contentToSign = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
         
-        let sig = didc.signature(content: contentToSign)
+        let sig = didc.signature(content: contentToSign.hexa)
         XCTAssert(nil != sig)
         print(sig!.sig.hexString)
         XCTAssert(sig!.v == 0)

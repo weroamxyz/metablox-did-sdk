@@ -68,7 +68,7 @@ int import_secp256k1_keypair(const char* priv_key, key_pair_t* key_pair)
     return 0;
 }
 
-int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *out, size_t out_len) 
+int secp256k1_sign_hash(const char*priv_key, const char* hash, char *out, size_t out_len)
 {
     if (out == NULL) 
     {
@@ -79,45 +79,30 @@ int secp256k1_sign(const char*priv_key, const char* msg, size_t msg_len, char *o
         return -1;
     }
 
-    char hash[32] = {0};
     secp256k1_ecdsa_recoverable_signature signature = {0};
-    SHA256_CTX sha256_ctx = {0};
-
-    sha256_init(&sha256_ctx);
-    sha256_update(&sha256_ctx, msg, msg_len);
-    sha256_final(&sha256_ctx, hash);
-  
     secp256k1_ecdsa_sign_recoverable(ctx, &signature, hash, priv_key, secp256k1_nonce_function_rfc6979, NULL);
     
-    int copy_len = 65;
-    if (copy_len < out_len)
-    {
-        copy_len = out_len;
-    }
-    memcpy(out, signature.data, copy_len);
+    int recv_id = 0;
+    secp256k1_ecdsa_recoverable_signature_serialize_compact(ctx, out, &recv_id, &signature);
+    out[64] = (char)recv_id;
+    
     secp256k1_context_destroy(ctx);
-
-    return copy_len;
+    return 65;
 }
 
-int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, const char* signature)
+int secp256k1_verify_hash(const char* public_key, const char* hash, const char* signature)
 {
     secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
     if (ctx == NULL){
         return -1;
     }
-
+    
+    int recv_id = signature[64];
+    
     secp256k1_ecdsa_recoverable_signature sig;
-    memcpy(sig.data, signature, 65);
+    secp256k1_ecdsa_recoverable_signature_parse_compact(ctx, &sig, signature, recv_id);
 
     secp256k1_pubkey pubkey;
-
-    char hash[32] = {0};
-    SHA256_CTX sha256_ctx = {0};
-
-    sha256_init(&sha256_ctx);
-    sha256_update(&sha256_ctx, msg, msg_len);
-    sha256_final(&sha256_ctx, hash);
 
     int result_rec = secp256k1_ecdsa_recover(ctx, &pubkey, &sig, hash);
     if (result_rec == 0){

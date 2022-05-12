@@ -236,13 +236,13 @@ ERR:
     return NULL;
 }
 
-int did_sign(did_handle handle, const char *msg, size_t msg_len, char *out, size_t out_len)
+int did_sign_hash(did_handle handle, const unsigned char *hash, char *out, size_t out_len)
 {
     did_context_t *context = (did_context_t *)handle;
-    return key_sign(&context->key_pair, context->algo, msg, msg_len, out, out_len);
+    return key_sign_hash(&context->key_pair, context->algo, hash, out, out_len);
 }
 
-int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, char *sign, size_t sign_len)
+int did_verify_hash(did_key_t *did_key, const unsigned char *hash, char *sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
@@ -253,7 +253,7 @@ int did_verify(did_key_t *did_key, const char *msg, size_t msg_len, char *sign, 
 
         key_pair.pubkey_len = 42;
 
-        return key_verify(&key_pair, "secp256k1", msg, msg_len, sign, sign_len);
+        return key_verify_hash(&key_pair, "secp256k1", hash, sign, sign_len);
     }
     else
     {

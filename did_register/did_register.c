@@ -4,6 +4,7 @@
 #include "conf/did_conf.h"
 #include "cJSON/cJSON.h"
 #include "common/base64.h"
+#include "keccak256/keccak256.h"
 
 typedef struct register_context_tag
 {
@@ -145,6 +146,7 @@ char *build_request_body(did_handle did)
     unsigned char sig_base64[128] = {0};
     cJSON *request_root = NULL;
     char *request_text = NULL;
+    char hash[32] = {0};
 
     if (meta == NULL)
     {
@@ -157,7 +159,12 @@ char *build_request_body(did_handle did)
         goto ERR;
     }
 
-    if (did_sign(did, did_text, strlen(did_text), signature, 64) != 64)
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, "HelloWorld", strlen("HelloWorld"));
+    keccak_final(&sha3_ctx, hash);
+    
+    if (did_sign_hash(did, hash, signature, 64) != 64)
     {
         goto ERR;
     }

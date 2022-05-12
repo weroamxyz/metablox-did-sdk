@@ -10,6 +10,7 @@
 #include "did/did.h"
 #include "string.h"
 #include "models/models.h"
+#include "keccak256/keccak256.h"
 
 int main(int argc, const char * argv[]) {
     // insert code here...
@@ -34,14 +35,21 @@ int main(int argc, const char * argv[]) {
     
     // Did signature output
     char sig[65] = {0};
+    unsigned char hash[32] = {0};
+    
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, "HelloWorld", strlen("HelloWorld"));
+    keccak_final(&sha3_ctx, hash);
+    
     // did signature process
-    did_sign(did, "Hello, World!", strlen("Hello, World!"), sig, 65);
+    did_sign_hash(did, hash, sig, 65);
     
     // get did document from storage
     did_meta_t* did2_meta = did_to_did_meta(did2);
     
     // verify signature and unsigned content with public key
-    int verify = did_verify(did2_meta->did_keys, "Hello, World!", strlen("Hello, World!"), sig, 65);
+    int verify = did_verify_hash(did2_meta->did_keys, hash, sig, 65);
     
     
     did_handle handle3 = did_import_privkey("secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09");
@@ -62,11 +70,11 @@ int main(int argc, const char * argv[]) {
     ConvertVPToBytes(vc1, out);
 
     char sig1[64] = {0};
-    did_sign(did, out, 32, sig1, 64);
+    did_sign_hash(did, out, sig1, 64);
     
     CreatJWSSignature(vc1, sig1);
     VC* vc = (VC*)vc1;
-    verify = did_verify(did2_meta->did_keys, out, 32, vc->vcProof.JWSSignature, 64);
+    verify = did_verify_hash(did2_meta->did_keys, out, vc->vcProof.JWSSignature, 64);
 
     //verify=verifyVC(vc1, did);
     printf("\n ------verifyVC:%d",verify);
