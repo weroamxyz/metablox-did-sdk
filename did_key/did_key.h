@@ -20,7 +20,7 @@ extern "C" {
 int key_sign(key_pair_t* key, const char* algo, const char* msg, size_t msg_len, char *out, size_t out_len);
 int key_verify(key_pair_t* key, const char* algo, const char* msg, size_t msg_len, char* sign, size_t sign_len);
 
-
+int key_to_address(key_pair_t* key, const char* algo, char* address);
 #ifdef __cplusplus
 }
 #endif

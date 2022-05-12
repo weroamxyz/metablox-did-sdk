@@ -150,7 +150,7 @@ class MetabloxDIDTests: XCTestCase {
         let pubkey = didc.readDIDPublicKey()
         XCTAssert(pubkey != nil, "DID pubkey export nil")
         print("Read pubkey: " + pubkey!)
-        XCTAssert(pubkey?.lowercased() == "0x77Cb9d48A0808c48E2C77F00ae8E26bd7A1E6415".lowercased())
+        XCTAssert(pubkey == "0x77Cb9d48A0808c48E2C77F00ae8E26bd7A1E6415")
         
         let didStr = didc.readDIDString()
         print("Read did string: " + didStr!)

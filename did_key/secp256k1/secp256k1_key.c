@@ -128,31 +128,50 @@ int secp256k1_verify(const char* public_key, const char* msg, size_t msg_len, co
     size_t outputlen = 65;
     secp256k1_ec_pubkey_serialize(ctx, output, &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
 
-
-    char result[32] = {0};
-    SHA3_CTX sha3_ctx;
-    keccak_init(&sha3_ctx);
-    keccak_update(&sha3_ctx, output, 65);
-    keccak_final(&sha3_ctx, result);
-
-    char pHex[64] = {0};
-    int i = 0;
-    for (i = 0; i < 32; i++){
-        char strTemp[3] = {0};
-        sprintf(strTemp, "%02x", (unsigned char)result[i]);
-        memcpy(pHex + 2 * i, strTemp, 2);
-    }
-
-    char ret[42];
-    ret[0] = '0';
-    ret[1] = 'x';
-    memcpy(ret + 2, pHex + 24, 40);
-
+    char address[41] = {0};
+    secp256k1_key_to_address(output, address);
+    
     secp256k1_context_destroy(ctx);
 
-    result_rec = memcmp(public_key, ret, 42);
+    result_rec = memcmp(public_key, address, 42);
 
     if (result_rec == 0)
         return 0;
     return -1;
+}
+
+int secp256k1_key_to_address(const char* public_key, char* address)
+{
+    char result[32] = {0};
+    SHA3_CTX sha3_ctx;
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, public_key + 1, 64);
+    keccak_final(&sha3_ctx, result);
+    
+    strcpy(address, "0x");
+    for (int i = 0; i < 20; i++){
+        sprintf(address + i * 2 + 2, "%02x", (unsigned char)result[i + 12]);
+    }
+    
+    unsigned char check_hash[32] = {0};
+    keccak_init(&sha3_ctx);
+    keccak_update(&sha3_ctx, address + 2, 40);
+    keccak_final(&sha3_ctx, check_hash);
+    
+    for (int i = 2; i < 42; i++)
+    {
+        unsigned char hash_byte = check_hash[(i - 2) / 2];
+        if ((i % 2) == 0)
+        {
+            hash_byte = hash_byte >> 4;
+        } else {
+            hash_byte = hash_byte & 0xF;
+        }
+        
+        if (address[i] > '9' && hash_byte > 7) {
+            address[i] = address[i] - 32;
+        }
+    }
+    
+    return 42;
 }

@@ -21,3 +21,13 @@ int key_verify(key_pair_t* key, const char* algo, const char* msg, size_t msg_le
         return 0;
     }
 }
+
+int key_to_address(key_pair_t* key, const char* algo, char* address)
+{
+    if (strcmp(algo, "secp256k1") == 0) {
+        return secp256k1_key_to_address(key->pubkey, address);
+    } else {
+        return 0;
+    }
+}
+

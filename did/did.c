@@ -347,26 +347,7 @@ int did_export_pubkey(did_handle did, char *eth_address)
 
     did_context_t *context = (did_context_t *)did;
 
-    unsigned char result[32] = {0};
-    SHA3_CTX sha3_ctx;
-    keccak_init(&sha3_ctx);
-    keccak_update(&sha3_ctx, context->key_pair.pubkey, context->key_pair.pubkey_len);
-    keccak_final(&sha3_ctx, result);
-
-    char pHex[64] = {0};
-    int i = 0;
-    for (i = 0; i < 32; i++)
-    {
-        char strTemp[3] = {0};
-        int j = sprintf(strTemp, "%02x", (unsigned char)result[i]);
-        memcpy(pHex+2*i,strTemp,2);
-    }
-
-    char ret[42];
-    ret[0] = '0';
-    ret[1] = 'x';
-    memcpy(ret + 2, pHex + 24, 40);
-    memcpy(eth_address, ret, 42);
+    key_to_address(&context->key_pair, context->algo, eth_address);
 
     return 0;
 }
