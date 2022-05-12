@@ -96,12 +96,13 @@ public class DIDCore {
     private let DIDSignatureLength = 65
     // Sign a content string with the private key of DID and return signature
     // Return format (sig, r, s, v)
-    public func signature(content: [UInt8])-> (sig: Data, r: Data, s: Data, v: UInt8)? {
+    public func signature(contentHash: Data)-> (sig: Data, r: Data, s: Data, v: UInt8)? {
         guard let did = self.loadedDIDPtr else {return nil}
         
+        let bytes = [UInt8](contentHash)
         let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDSignatureLength)
         buffer.initialize(repeating: 0, count: DIDSignatureLength)
-        did_sign_hash(did, content, buffer, DIDSignatureLength)
+        did_sign_hash(did, bytes, buffer, DIDSignatureLength)
         let sig = Data(bytes: buffer, count: DIDSignatureLength)
         
         defer {
@@ -124,7 +125,8 @@ public class DIDCore {
     
     // Verify the signature and unsigned content with the current DID public key.
     // Return: 0 = fail, 1 = pass, -1 = DIDError
-    public func verifySignature(content: [UInt8], signature: Data, finishHandler:(Int)->()) {
+    public func verifySignature(contentHash: Data, signature: Data, finishHandler:(Int)->()) {
+        let contentUChars = [UInt8](contentHash)
         guard let did = self.loadedDIDPtr else {
             finishHandler(-1)
             return
@@ -133,7 +135,7 @@ public class DIDCore {
         var sign = signature
         let didMeta = did_to_did_meta(did)
         sign.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<CChar>) in
-            let result = did_verify_hash(didMeta?.pointee.did_keys, content,  bytes, DIDSignatureLength)
+            let result = did_verify_hash(didMeta?.pointee.did_keys, contentUChars,  bytes, DIDSignatureLength)
             finishHandler(Int(result))
         }
     }

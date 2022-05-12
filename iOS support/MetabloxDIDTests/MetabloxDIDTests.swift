@@ -8,17 +8,6 @@
 import XCTest
 import MetabloxDID
 
-extension StringProtocol {
-    var hexa: [UInt8] {
-        var startIndex = self.startIndex
-        return (0..<count/2).compactMap { _ in
-            let endIndex = index(after: startIndex)
-            defer { startIndex = index(after: endIndex) }
-            return UInt8(self[startIndex...endIndex], radix: 16)
-        }
-    }
-}
-
 class MetabloxDIDTests: XCTestCase {
     private var storeDir: URL? = nil
     
@@ -72,16 +61,16 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(firstDidStr != nil, "DID string read faild")
         
         print("=== Sign content with DID ===")
-        //let content = "Who is the smartest person in the world?"
-        let content = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
-        print("Content: " + content)
-        let sig = didc.signature(content: content.hexa)
+        let contentToSign = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
+        let dataToSign = Data(hexString: contentToSign)!
+        print("Content to sign: " + contentToSign)
+        let sig = didc.signature(contentHash: dataToSign)
         XCTAssert(sig != nil, "DID signature failed")
         
         print("Signature(Base64): " + sig!.sig.base64EncodedString())
         print("R: \(sig!.r) " + "S: \(sig!.s) " + "V: \(sig!.v)")
         print("=== Verify signature with DID ===")
-        didc.verifySignature(content: content.hexa, signature: sig!.0) { result in
+        didc.verifySignature(contentHash:dataToSign , signature: sig!.0) { result in
             switch result {
             case -1:
                 print("!!! DID ERROR !!!")
@@ -182,8 +171,9 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(didImportResult == true, "DID import failure")
         
         let contentToSign = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
+        let dataToSign = Data(hexString: contentToSign)!
         
-        let sig = didc.signature(content: contentToSign.hexa)
+        let sig = didc.signature(contentHash: dataToSign)
         XCTAssert(nil != sig)
         print(sig!.sig.hexString)
         XCTAssert(sig!.v == 0)
@@ -219,5 +209,66 @@ class MetabloxDIDTests: XCTestCase {
 extension Data {
     var hexString: String {
         return map({ String(format: "%02x", $0) }).joined()
+    }
+    
+    /// Initializes `Data` with a hex string representation.
+    init?(hexString: String) {
+        let string: String
+        if hexString.hasPrefix("0x") {
+            string = String(hexString.dropFirst(2))
+        } else {
+            string = hexString
+        }
+
+        // Check odd length hex string
+        if string.count % 2 != 0 {
+            return nil
+        }
+
+        // Check odd characters
+        if string.contains(where: { !$0.isHexDigit }) {
+            return nil
+        }
+
+        // Convert the string to bytes for better performance
+        guard let stringData = string.data(using: .ascii, allowLossyConversion: true) else {
+            return nil
+        }
+
+        self.init(capacity: string.count / 2)
+        let stringBytes = Array(stringData)
+        for i in stride(from: 0, to: stringBytes.count, by: 2) {
+            guard let high = Data.value(of: stringBytes[i]) else {
+                return nil
+            }
+            if i < stringBytes.count - 1, let low = Data.value(of: stringBytes[i + 1]) {
+                append((high << 4) | low)
+            } else {
+                append(high)
+            }
+        }
+    }
+    
+    /// Converts an ASCII byte to a hex value.
+    private static func value(of nibble: UInt8) -> UInt8? {
+        guard let letter = String(bytes: [nibble], encoding: .ascii) else { return nil }
+        return UInt8(letter, radix: 16)
+    }
+
+    /// Reverses and parses hex string as `Data`
+    static func reverse(hexString: String) -> Data {
+        guard let data = Data(hexString: hexString) else { return Data() }
+        return Data(data.reversed())
+    }
+}
+
+extension StringProtocol {
+    var hexa: [UInt8] {
+        var startIndex = self.startIndex
+        return (0..<count/2).compactMap { _ in
+            let endIndex = index(after: startIndex)
+            defer { startIndex = index(after: endIndex) }
+            return UInt8(self[startIndex...endIndex], radix: 16)
+        }
     }
 }
