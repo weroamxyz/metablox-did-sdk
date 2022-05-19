@@ -246,22 +246,33 @@ int did_verify_hash(did_key_t *did_key, const unsigned char *hash, char *sign, s
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
-        key_pair_t key_pair;
-        key_pair.pubkey_len = 65;
-        size_t pubkey_len = 65;
-        memcpy(&key_pair.pubkey, did_key->publicKeyHex, 42);
-
-        key_pair.pubkey_len = 42;
-
-        return key_verify_hash(&key_pair, "secp256k1", hash, sign, sign_len);
+        return key_verify_hash_with_address(did_key->publicKeyAddress, "secp256k1", hash, sign, sign_len);
     }
     else
     {
-        return 0;
+        return -1;
     }
 }
 
-did_meta_t *did_to_did_meta(did_handle handle)
+int did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len)
+{
+    if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
+    {
+        return key_verify_hash_with_pubkey(pubkey, did_key->publicKeyAddress,"secp256k1", hash, sign, sign_len);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
+int did_get_pubkey(did_handle handle, unsigned char* buffer, size_t buff_len) {
+    did_context_t *context = (did_context_t *)handle;
+    memcpy(buffer, context->key_pair.pubkey, context->key_pair.pubkey_len);
+    return context->key_pair.pubkey_len;
+}
+
+did_meta_t* did_to_did_meta(did_handle handle)
 {
     did_context_t *context = (did_context_t *)handle;
     did_meta_t *meta = (did_meta_t *)malloc(sizeof(did_meta_t));
@@ -280,7 +291,7 @@ did_meta_t *did_to_did_meta(did_handle handle)
 
         unsigned char pubKeyHex[45] = {0};
         did_export_pubkey(handle, pubKeyHex);
-        strcpy(meta->did_keys->publicKeyHex, pubKeyHex);
+        strcpy(meta->did_keys->publicKeyAddress, pubKeyHex);
 
         meta->did_services = NULL;
 

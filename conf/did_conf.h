@@ -9,6 +9,8 @@
 
 #define   MAX_KEY_PUBKEY_BASE58_LEN     (512)
 
+#define   MAX_KEY_ADDRESS_LEN           (50)
+
 #define   MAX_URL_LEN                   (2048)
 
 #define   MAX_RELATIONSHIP_LEN          (64)

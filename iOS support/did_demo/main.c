@@ -71,12 +71,14 @@ int main(int argc, const char * argv[]) {
     
     did_handle did_vc_test = did_import_privkey("secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6");
     
-    vc_handle vc1 = new_vc(context, 2, "http://metablox.com/credentials/1", type, 2, "MiningLicense", "did:metablox:sampleIssuer", "2022-05-19T01:48:31Z", "2032-05-19T01:48:31Z", "Example Wifi Access Credential", subject, 4, *vcProof, 0);
+    VC* vc1 = new_vc(context, 2, "http://metablox.com/credentials/1", type, 2, "MiningLicense", "did:metablox:sampleIssuer", "2022-05-19T01:48:31Z", "2032-05-19T01:48:31Z", "Example Wifi Access Credential", subject, 4, *vcProof, 0);
     
-    char vc1_sign[128] = {0};
-    
-    vc_signature((VC*)vc1, did_vc_test, vc1_sign);
-    
+    vc_signature((VC*)vc1, did_vc_test, vc1->vcProof.JWSSignature);
+    did_meta_t* vc_did_meta = did_to_did_meta(did_vc_test);
+    char vc_did_pubkey[65] = {0};
+    did_get_pubkey(did_vc_test, vc_did_pubkey, 65);
+    verify = vc_verify((VC*)vc1, vc_did_meta, vc_did_pubkey);
+    printf("VC verify result %d\n", verify);
     
     return 0;
 }

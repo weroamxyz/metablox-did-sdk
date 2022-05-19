@@ -9,7 +9,7 @@
 
 static void jws_signature(const char* hash, did_handle did, char *sig);
 
-vc_handle create_vc_handle()
+VC* create_vc_handle()
 {
    VC *vc_handl = (VC *)malloc(sizeof(VC));
    if (vc_handl == NULL)
@@ -18,7 +18,7 @@ vc_handle create_vc_handle()
    return vc_handl;
 }
 
-vp_handle create_vp_handle()
+VP* create_vp_handle()
 {
    VP *vp_hand = (VP *)malloc(sizeof(VP));
    if (vp_hand == NULL)
@@ -104,7 +104,7 @@ void vp_destroy(vp_handle vp)
    free(vp_hand);
 }
 
-vc_handle new_vc(char **context, int count_text, char *id,
+VC* new_vc(char **context, int count_text, char *id,
                  char **type, int count_type, char *sub_type, char *issuer,
                  char *issuance_data, char *expiration_data, char *description,
                  char **CredentialSubject, int count_subject,
@@ -178,7 +178,7 @@ vc_handle new_vc(char **context, int count_text, char *id,
    return vc_handl;
 }
 
-vp_handle new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof)
+VP* new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof)
 {
        VP *vp_hand = create_vp_handle();
        int i = 0;
@@ -260,17 +260,49 @@ void jws_signature(const char* hash, did_handle did, char *sig)
     sprintf(sig, "%s..%s", algo_base64, sign_base64);
 }
 
+int jws_verify(const char* hash, const did_meta_t* did, const char* pubkey, const char* sign_jws)
+{
+    const char* sign_base64 = strrchr(sign_jws, '.');
+    if (sign_base64 == NULL) {
+        return -1;
+    }
+    
+    unsigned char sign[64] = {0};
+    base64_urlraw_decode(sign_base64 + 1, strlen(sign_base64 + 1), sign);
+    
+    const char* algo = "{\"alg\":\"ES256\"}";
+    char algo_base64[64] = {0};
+    base64_urlraw_encode(algo, strlen(algo), algo_base64);
+    
+    const char hash_base64[64] = {0};
+    base64_urlraw_encode(hash, 32, hash_base64);
+    
+    
+    char payload[128] = {0};
+    sprintf(payload, "%s.%s", algo_base64, hash_base64);
+    
+    char payload_hash[32] = {0};
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, payload, strlen(payload));
+    sha256_final(&ctx, payload_hash);
+    
+    return did_verify_hash_with_pubkey(did->did_keys, pubkey, payload_hash, sign, 64);
+}
+
+
 void vc_signature(VC *vc, did_handle did, char *sig)
 {
     unsigned char vc_hash[32] = {0};
     convert_vc_to_bytes(vc, vc_hash);
-    
     jws_signature(vc_hash, did, sig);
 }
 
-int verify_vc(VC *vc, const did_meta_t* did, unsigned char* pubkey)
+int vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey)
 {
-    return 0;
+    unsigned char vc_hash[32] = {0};
+    convert_vc_to_bytes(vc, vc_hash);
+    return jws_verify(vc_hash, did, pubkey, vc->vcProof.JWSSignature);
 }
 
 void vp_signature(VP* vp, did_handle did, char* sig)
@@ -281,7 +313,7 @@ void vp_signature(VP* vp, did_handle did, char* sig)
     jws_signature(vp_hash, did, sig);
 }
 
-int verify_vp(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t* issuers_did, unsigned char* issuers_pubkey)
+int vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t* issuers_did, unsigned char* issuers_pubkey)
 {
     return 0;
 }

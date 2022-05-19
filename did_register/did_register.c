@@ -108,7 +108,7 @@ char *encode_did_meta(did_meta_t *meta)
         goto ERR;
     }
 
-    if (cJSON_AddStringToObject(key_item, "publicKeyHex", meta->did_keys->publicKeyHex) == NULL)
+    if (cJSON_AddStringToObject(key_item, "publicKeyAddress", meta->did_keys->publicKeyAddress) == NULL)
     {
         goto ERR;
     }

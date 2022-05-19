@@ -90,7 +90,7 @@ int secp256k1_sign_hash(const char*priv_key, const char* hash, char *out, size_t
     return 65;
 }
 
-int secp256k1_verify_hash(const char* public_key, const char* hash, const char* signature)
+int secp256k1_verify_hash(const char* input_address, const char* hash, const char* signature)
 {
     secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
     if (ctx == NULL){
@@ -113,17 +113,49 @@ int secp256k1_verify_hash(const char* public_key, const char* hash, const char* 
     size_t outputlen = 65;
     secp256k1_ec_pubkey_serialize(ctx, output, &outputlen, &pubkey, SECP256K1_EC_UNCOMPRESSED);
 
-    char address[41] = {0};
+    char address[42] = {0};
     secp256k1_key_to_address(output, address);
     
     secp256k1_context_destroy(ctx);
 
-    result_rec = memcmp(public_key, address, 42);
+    result_rec = memcmp(input_address, address, 42);
 
     if (result_rec == 0)
         return 0;
     return -1;
 }
+
+int secp256k1_verify_hash_with_pubkey(const char* pubkey, const char* address, const char* hash, const char* signature)
+{
+    char pub_address[MAX_KEY_ADDRESS_LEN] = {0};
+    secp256k1_key_to_address(pubkey, pub_address);
+    
+    if (memcmp(pub_address, address, 42) != 0) {
+        return -1;
+    }
+    
+    secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+    if (ctx == NULL){
+        return -1;
+    }
+        
+    secp256k1_ecdsa_signature sig;
+    secp256k1_ecdsa_signature_parse_compact(ctx, &sig, signature);
+    
+    secp256k1_pubkey pubkey_r;
+    int result_rec = secp256k1_ec_pubkey_parse(ctx, &pubkey_r, pubkey, 65);
+    if (result_rec == 0){
+        secp256k1_context_destroy(ctx);
+        return -1;
+    }
+
+    result_rec = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey_r);
+    secp256k1_context_destroy(ctx);
+    if (result_rec == 1)
+        return 0;
+    return -1;
+}
+
 
 int secp256k1_key_to_address(const char* public_key, char* address)
 {

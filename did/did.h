@@ -3,8 +3,8 @@
 
 #include "unistd.h"
 #ifdef TARGET_OS_IOS
-#include "did_key.h"
-#include "key_generator.h"
+#include "did_key/did_key.h"
+#include "did_key/key_generator.h"
 #else
 #include "did_key/did_key.h"
 #include "did_key/key_generator.h"
@@ -41,8 +41,10 @@ did_handle did_create(const char* algo, rand_func_cb rand_func);
 void       did_destroy(did_handle handle);
 int        did_serialize(did_handle handle, char* buffer, size_t buff_len);
 did_handle did_deserialize(const char* buffer);
+int        did_get_pubkey(did_handle, unsigned char* buffer, size_t buff_len);
 int        did_sign_hash(did_handle handle, const unsigned char* hash, char *out, size_t out_len);
 int        did_verify_hash(did_key_t* did_key, const unsigned char* hash, char* sign, size_t sign_len);
+int        did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len);
 
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  

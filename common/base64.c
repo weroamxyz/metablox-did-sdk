@@ -190,10 +190,10 @@ int base64_urlraw_decode(const char *src, size_t len, unsigned char* out)
     }
     
     for (int i = 0; i < len; i++) {
-        if (out[i] == '-') {
-            out[i] = '+';
-        } else if (out[i] == '_') {
-            out[i] = '/';
+        if (buffer[i] == '-') {
+            buffer[i] = '+';
+        } else if (buffer[i] == '_') {
+            buffer[i] = '/';
         }
     }
     
