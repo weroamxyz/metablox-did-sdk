@@ -2,8 +2,14 @@
 #define __DID_KEY_H__ 
 
 #include "unistd.h"
+#ifdef TARGET_OS_IOS
+#include "did_conf.h"
+#include "key_generator.h"
+#else
 #include "conf/did_conf.h"
 #include "did_key/key_generator.h"
+#endif
+
 
 typedef struct did_key_tag {
     unsigned char  id[MAX_DID_DOC_ELEMENT_ID_LEN];

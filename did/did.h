@@ -3,8 +3,8 @@
 
 #include "unistd.h"
 #ifdef TARGET_OS_IOS
-#include "did_key/did_key.h"
-#include "did_key/key_generator.h"
+#include "did_key.h"
+#include "key_generator.h"
 #else
 #include "did_key/did_key.h"
 #include "did_key/key_generator.h"
