@@ -161,3 +161,43 @@ int base64_decode(const char *in, size_t inlen, unsigned char *out)
 
     return j;
 }
+
+
+int base64_urlraw_encode(const unsigned char *src, size_t len, char *out)
+{
+    int out_len = base64_encode(src, len, out);
+    for (int i = 0; i < out_len; i++) {
+        if (out[i] == '+') {
+            out[i] = '-';
+        } else if (out[i] == '/') {
+            out[i] = '_';
+        } else if (out[i] == '=') {
+            out[i] = 0;
+        }
+    }
+    return strlen(out);
+}
+
+int base64_urlraw_decode(const char *src, size_t len, unsigned char* out)
+{
+    char* buffer = (char *)malloc(strlen(src) + 4);
+    memset(buffer, 0, strlen(src) + 4);
+    strcpy(buffer, src);
+    int padding_num = (strlen(src) + 3) / 4 * 4 - strlen(src);
+    for (int i = 0; i < padding_num; i++)
+    {
+        strcat(buffer, "=");
+    }
+    
+    for (int i = 0; i < len; i++) {
+        if (out[i] == '-') {
+            out[i] = '+';
+        } else if (out[i] == '_') {
+            out[i] = '/';
+        }
+    }
+    
+    int out_len = base64_decode(buffer, strlen(buffer), out);
+    return strlen(out);
+    
+}

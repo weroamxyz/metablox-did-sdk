@@ -56,28 +56,27 @@ int main(int argc, const char * argv[]) {
     
     printf("Hello, World! Verify result %d\n", verify);
     
-    VCProof* vcProof = new_vc_proof("EcdsaSecp2556k1Signature2019", "2022-03-31T12:53:19-07:00", "did:metablox:HFXPiudexfvsJBqABNmBp785YwaKGjo95kmDpBxhMMYo#verification", "Authentication");
+    VCProof* vcProof = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication");
     
-    char* context[2]={"https://www.w3.org/2018/credentials/v1","https://na.did.ai/suites/secp256k1-2019/v1"};
+    char* context[2] = {"https://www.w3.org/2018/credentials/v1","https://ns.did.ai/suites/secp256k1-2019/v1/"};
     
-    char* type[2]={"VerifiableCredential","PermanentResidentCard"};
+    char* type[2] = {"VerifiableCredential","MiningLicense"};
     
-    char* subject[6]={"did:metablox:HFXPiudexdid:metablox:HFXPiudexfvsJBqABNmBp785YwaKGjo95kmDpBxhMMYo","John","Jacobs","Male","Canada","2022-03-22"};
+    char* subject[4] = {
+        //"1",
+        "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+        "TestName",
+        "TestModel",
+        "TestSerial",};
     
-    vc_handle vc1=new_vc(context, 2, "http://metablox.com/credentials/1", type, 2, "PermanentResidentCard", "did:metablox:sampleIssuer", "2022-03-31T12:53:19-07:00", "2022-03-31T12:53:19-07:00", "Government of Example Permanent Resident Card", subject, 6, *vcProof, 0);
-
-    char out[64] = {0};
-    ConvertVPToBytes(vc1, out);
-
-    char sig1[64] = {0};
-    did_sign_hash(did, out, sig1, 64);
+    did_handle did_vc_test = did_import_privkey("secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6");
     
-    CreatJWSSignature(vc1, sig1);
-    VC* vc = (VC*)vc1;
-    verify = did_verify_hash(did2_meta->did_keys, out, vc->vcProof.JWSSignature, 64);
-
-    //verify=verifyVC(vc1, did);
-    printf("\n ------verifyVC:%d",verify);
+    vc_handle vc1 = new_vc(context, 2, "http://metablox.com/credentials/1", type, 2, "MiningLicense", "did:metablox:sampleIssuer", "2022-05-19T01:48:31Z", "2032-05-19T01:48:31Z", "Example Wifi Access Credential", subject, 4, *vcProof, 0);
+    
+    char vc1_sign[128] = {0};
+    
+    vc_signature((VC*)vc1, did_vc_test, vc1_sign);
+    
     
     return 0;
 }

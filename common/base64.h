@@ -13,6 +13,9 @@ extern "C" {
 int base64_encode(const unsigned char *src, size_t len, char *out);
 int base64_decode(const char *src, size_t len, unsigned char* out);
 
+int base64_urlraw_encode(const unsigned char *src, size_t len, char *out);
+int base64_urlraw_decode(const char *src, size_t len, unsigned char* out);
+
 #ifdef __cplusplus 
 }
 #endif 

@@ -7,100 +7,101 @@
 #include "common/base58.h"
 #include "stdio.h"
 
+static void jws_signature(const char* hash, did_handle did, char *sig);
 
 vc_handle create_vc_handle()
 {
-       VC *vc_handl = (VC *)malloc(sizeof(VC));
-       if (vc_handl == NULL)
-              return NULL;
-       memset(vc_handl, 0, sizeof(VC));
-       return vc_handl;
+   VC *vc_handl = (VC *)malloc(sizeof(VC));
+   if (vc_handl == NULL)
+      return NULL;
+   memset(vc_handl, 0, sizeof(VC));
+   return vc_handl;
 }
 
 vp_handle create_vp_handle()
 {
-       VP *vp_hand = (VP *)malloc(sizeof(VP));
-       if (vp_hand == NULL)
-              return NULL;
-       memset(vp_hand, 0, sizeof(VP));
-       return vp_hand;
+   VP *vp_hand = (VP *)malloc(sizeof(VP));
+   if (vp_hand == NULL)
+      return NULL;
+   memset(vp_hand, 0, sizeof(VP));
+   return vp_hand;
 }
 
 void vc_destroy(vc_handle vc)
 {
-       VC *vc_handl = (VC *)vc;
-       if (vc_handl == NULL)
-              return;
+   VC *vc_handl = (VC *)vc;
+   if (vc_handl == NULL)
+       return;
 
-       int i = 0;
-       if (vc_handl->context != NULL && vc_handl->count_context >= 0)
-       {
-              for (i = 0; i < vc_handl->count_context; i++)
-              {
-                     if (vc_handl->context[i] != NULL)
-                            free(vc_handl->context[i]);
-              }
-       }
-       free(vc_handl->context);
-       if (vc_handl->type != NULL && vc_handl->count_type >= 0)
-       {
-              for (i = 0; i < vc_handl->count_type; i++)
-              {
-                     if (vc_handl->type[i] != NULL)
-                            free(vc_handl->type[i]);
-              }
-       }
-       free(vc_handl->type);
-       if (vc_handl->CredentialSubject != NULL && vc_handl->count_subject >= 0)
-       {
-              for (i = 0; i < vc_handl->count_subject; i++)
-              {
-                     if (vc_handl->CredentialSubject[i] != NULL)
-                     {
-                            // if(i<4) ??
-                            // free(vc_handl->CredentialSubject[i]);
-                     }
-              }
-       }
-       // free(vc_handl->CredentialSubject);//?? = why can`t
-       free(vc_handl);
+   int i = 0;
+   if (vc_handl->context != NULL && vc_handl->count_context >= 0)
+   {
+      for (i = 0; i < vc_handl->count_context; i++)
+      {
+         if (vc_handl->context[i] != NULL)
+            free(vc_handl->context[i]);
+      }
+   }
+   free(vc_handl->context);
+   if (vc_handl->type != NULL && vc_handl->count_type >= 0)
+   {
+      for (i = 0; i < vc_handl->count_type; i++)
+      {
+         if (vc_handl->type[i] != NULL)
+            free(vc_handl->type[i]);
+      }
+   }
+   free(vc_handl->type);
+   if (vc_handl->CredentialSubject != NULL && vc_handl->count_subject >= 0)
+   {
+      for (i = 0; i < vc_handl->count_subject; i++)
+      {
+         if (vc_handl->CredentialSubject[i] != NULL)
+         {
+                // if(i<4) ??
+                // free(vc_handl->CredentialSubject[i]);
+         }
+      }
+   }
+   // free(vc_handl->CredentialSubject);//?? = why can`t
+   free(vc_handl);
 }
 
 void vp_destroy(vp_handle vp)
 {
-       VP *vp_hand = (VP *)vp;
-       if (vp_hand == NULL)
-              return;
+   VP *vp_hand = (VP *)vp;
+   if (vp_hand == NULL)
+      return;
 
-       int i = 0;
-       if (vp_hand->context != NULL && vp_hand->count_context >= 0)
-       {
-              for (i = 0; i < vp_hand->count_context; i++)
-              {
-                     if (vp_hand->context[i] != NULL)
-                            free(vp_hand->context[i]);
-              }
-       }
-       free(vp_hand->context);
-       if (vp_hand->type != NULL && vp_hand->count_type >= 0)
-       {
-              for (i = 0; i < vp_hand->count_type; i++)
-              {
-                     if (vp_hand->type[i] != NULL)
-                            free(vp_hand->type[i]);
-              }
-       }
-       free(vp_hand->type);
-       // if (vp_hand->vc != NULL && vp_hand->count_vc >= 0)
-       // {
-       //        for (i = 0; i < vp_hand->count_vc; i++)
-       //        {
-       //               if (vp_hand->type[i] != NULL)
-       //                      vc_destroy(vp_hand->vc[i]);
-       //        }
-       // }
-       // free(vp_hand->vc);
-       free(vp_hand);
+   int i = 0;
+   if (vp_hand->context != NULL && vp_hand->count_context >= 0)
+   {
+      for (i = 0; i < vp_hand->count_context; i++)
+      {
+         if (vp_hand->context[i] != NULL)
+            free(vp_hand->context[i]);
+      }
+   }
+   free(vp_hand->context);
+   if (vp_hand->type != NULL && vp_hand->count_type >= 0)
+   {
+      for (i = 0; i < vp_hand->count_type; i++)
+      {
+         if (vp_hand->type[i] != NULL)
+            free(vp_hand->type[i]);
+      }
+   }
+   free(vp_hand->type);
+   // if (vp_hand->vc != NULL && vp_hand->count_vc >= 0)
+   // {
+   //        for (i = 0; i < vp_hand->count_vc; i++)
+   //        {
+   //               if (vp_hand->type[i] != NULL)
+   //                      vc_destroy(vp_hand->vc[i]);
+   //        }
+   // }
+   // free(vp_hand->vc);
+   free(vp_hand);
 }
 
 vc_handle new_vc(char **context, int count_text, char *id,
@@ -109,56 +110,56 @@ vc_handle new_vc(char **context, int count_text, char *id,
                  char **CredentialSubject, int count_subject,
                  VCProof vcProof, int revoked)
 {
-       VC *vc_handl = create_vc_handle();
-       // todo !!!use memcpy
-       int i = 0;
-       vc_handl->count_context = count_text;
-       vc_handl->context = (char **)malloc(sizeof(char *) * vc_handl->count_context);
-       memset(vc_handl->context, 0, sizeof(sizeof(char *) * vc_handl->count_context));
-       for (i = 0; i < vc_handl->count_context; i++)
-       {
-              vc_handl->context[i] = (char *)malloc(strlen(context[i] + 2));
-              strcpy(vc_handl->context[i], context[i]);
-              // printf("\n vc_handle->contest:%s",vc_handl->context[i]);
-       }
-       // vc_handl->context = context;
+   VC *vc_handl = create_vc_handle();
+   // todo !!!use memcpy
+   int i = 0;
+   vc_handl->count_context = count_text;
+   vc_handl->context = (char **)malloc(sizeof(char *) * vc_handl->count_context);
+   memset(vc_handl->context, 0, sizeof(sizeof(char *) * vc_handl->count_context));
+   for (i = 0; i < vc_handl->count_context; i++)
+   {
+          vc_handl->context[i] = (char *)malloc(strlen(context[i] + 2));
+          strcpy(vc_handl->context[i], context[i]);
+          // printf("\n vc_handle->contest:%s",vc_handl->context[i]);
+   }
+   // vc_handl->context = context;
 
-       strcpy(vc_handl->id, id);
+   strcpy(vc_handl->id, id);
 
-       vc_handl->count_type = count_type;
-       vc_handl->type = (char **)malloc(sizeof(char *) * vc_handl->count_type);
-       memset(vc_handl->type, 0, sizeof(sizeof(char *) * vc_handl->count_type));
-       for (i = 0; i < vc_handl->count_type; i++)
-       {
-              vc_handl->type[i] = (char *)malloc(strlen(type[i] + 2));
-              strcpy(vc_handl->type[i], type[i]);
-              // printf("\n vc_handle->contest:%s",vc_handl->type[i]);
-       }
-       // vc_handl->type = type;
+   vc_handl->count_type = count_type;
+   vc_handl->type = (char **)malloc(sizeof(char *) * vc_handl->count_type);
+   memset(vc_handl->type, 0, sizeof(sizeof(char *) * vc_handl->count_type));
+   for (i = 0; i < vc_handl->count_type; i++)
+   {
+          vc_handl->type[i] = (char *)malloc(strlen(type[i] + 2));
+          strcpy(vc_handl->type[i], type[i]);
+          // printf("\n vc_handle->contest:%s",vc_handl->type[i]);
+   }
+   // vc_handl->type = type;
 
-       strcpy(vc_handl->sub_type, sub_type);
-       strcpy(vc_handl->issuer, issuer);
-       strcpy(vc_handl->issuance_data, issuance_data);
-       strcpy(vc_handl->expiration_data, expiration_data);
-       strcpy(vc_handl->description, description);
+   strcpy(vc_handl->sub_type, sub_type);
+   strcpy(vc_handl->issuer, issuer);
+   strcpy(vc_handl->issuance_data, issuance_data);
+   strcpy(vc_handl->expiration_data, expiration_data);
+   strcpy(vc_handl->description, description);
 
-       vc_handl->count_subject = count_subject;
-       vc_handl->CredentialSubject = (char **)malloc(sizeof(char *) * vc_handl->count_subject);
-       memset(vc_handl->CredentialSubject, 0, sizeof(sizeof(char *) * vc_handl->count_subject));
-       printf("\n vc_handle.subujecCount:%d", vc_handl->count_subject);
-       for (i = 0; i < vc_handl->count_subject; i++)
-       {
-              vc_handl->CredentialSubject[i] = (char *)malloc(strlen(CredentialSubject[i] + 2));
-              strcpy(vc_handl->CredentialSubject[i], CredentialSubject[i]);
-              // printf("\n vc_handle->contest:%s",vc_handl->CredentialSubject[i]);
-       }
-       // vc_handl->CredentialSubject = CredentialSubject;
+   vc_handl->count_subject = count_subject;
+   vc_handl->CredentialSubject = (char **)malloc(sizeof(char *) * vc_handl->count_subject);
+   memset(vc_handl->CredentialSubject, 0, sizeof(sizeof(char *) * vc_handl->count_subject));
+   printf("\n vc_handle.subujecCount:%d", vc_handl->count_subject);
+   for (i = 0; i < vc_handl->count_subject; i++)
+   {
+          vc_handl->CredentialSubject[i] = (char *)malloc(strlen(CredentialSubject[i] + 2));
+          strcpy(vc_handl->CredentialSubject[i], CredentialSubject[i]);
+          // printf("\n vc_handle->contest:%s",vc_handl->CredentialSubject[i]);
+   }
+   // vc_handl->CredentialSubject = CredentialSubject;
 
-       strcpy(vc_handl->vcProof.type, vcProof.type);
-       strcpy(vc_handl->vcProof.created, vcProof.created);
-       strcpy(vc_handl->vcProof.verification_method, vcProof.verification_method);
-       strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
-       vc_handl->revoked = revoked;
+   strcpy(vc_handl->vcProof.type, vcProof.type);
+   strcpy(vc_handl->vcProof.created, vcProof.created);
+   strcpy(vc_handl->vcProof.verification_method, vcProof.verification_method);
+   strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
+   vc_handl->revoked = revoked;
 
 //       char out[2048] = {0};
 //       ConvertVCToBytes(vc_handl, out);
@@ -174,7 +175,7 @@ vc_handle new_vc(char **context, int count_text, char *id,
 //
 //       memcpy(vc_handl->vcProof.JWSSignature, sig, 64);
 
-       return vc_handl;
+   return vc_handl;
 }
 
 vp_handle new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof)
@@ -231,49 +232,58 @@ vp_handle new_vp(char **context, int count_text, char **type, int count_type, VC
        return vp_hand;
 }
 
-int CreatJWSSignature(VC *vc, char *sig)
+void jws_signature(const char* hash, did_handle did, char *sig)
 {
-       // todo   use base58
-       int sig_base64_len = 0;
-       sig_base64_len = BASE64_ENCODE_OUT_SIZE(64);
-       char *pHex = (char *)malloc(sig_base64_len + 1);
-       memset(pHex, 0, sizeof(sig_base64_len + 1));
-       base64_encode(sig, 64, pHex);
-
-       // int i = 0;
-       // char pHex[257] = {0};
-       // for (i = 0; i < 64; i++)
-       // {
-       //        char strTemp[9] = {0};
-       //        int j = sprintf(strTemp, "%02x", (unsigned char)sig[i]);
-       //        strcat(pHex, strTemp);
-       // }
-       printf("\n strTemp:%s", pHex);
-       memcpy(vc->vcProof.JWSSignature, pHex, strlen(pHex));
-       return 1;
+    unsigned char sign[65] = {0};
+    
+    const char* algo = "{\"alg\":\"ES256\"}";
+    char algo_base64[64] = {0};
+    base64_urlraw_encode(algo, strlen(algo), algo_base64);
+    
+    const char hash_base64[64] = {0};
+    base64_urlraw_encode(hash, 32, hash_base64);
+    
+    
+    char payload[128] = {0};
+    sprintf(payload, "%s.%s", algo_base64, hash_base64);
+    
+    char payload_hash[32] = {0};
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, payload, strlen(payload));
+    sha256_final(&ctx, payload_hash);
+    
+    did_sign_hash(did, payload_hash, sign, 65);
+    char sign_base64[128] = {0};
+    base64_urlraw_encode(sign, 64, sign_base64);
+    
+    sprintf(sig, "%s..%s", algo_base64, sign_base64);
 }
 
-int CreatNonce(VP *vp, char *sig)
+void vc_signature(VC *vc, did_handle did, char *sig)
 {
-    // todo   use base58
-    int sig_base64_len = 0;
-    sig_base64_len = BASE64_ENCODE_OUT_SIZE(64);
-    char *pHex = (char *)malloc(sig_base64_len + 1);
-    memset(pHex, 0, sizeof(sig_base64_len + 1));
-    base64_encode(sig, 64, pHex);
-
-    // int i = 0;
-    // char pHex[257] = {0};
-    // for (i = 0; i < 64; i++)
-    // {
-    //        char strTemp[9] = {0};
-    //        int j = sprintf(strTemp, "%02x", (unsigned char)sig[i]);
-    //        strcat(pHex, strTemp);
-    // }
-    printf("\n strTemp:%s", pHex);
-    memcpy(vp->vpProof.nonce, pHex, strlen(pHex));
-    return 1;
+    unsigned char vc_hash[32] = {0};
+    convert_vc_to_bytes(vc, vc_hash);
     
+    jws_signature(vc_hash, did, sig);
+}
+
+int verify_vc(VC *vc, const did_meta_t* did, unsigned char* pubkey)
+{
+    return 0;
+}
+
+void vp_signature(VP* vp, did_handle did, char* sig)
+{
+    unsigned char vp_hash[32] = {0};
+    convert_vp_to_bytes(vp, vp_hash);
+    
+    jws_signature(vp_hash, did, sig);
+}
+
+int verify_vp(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t* issuers_did, unsigned char* issuers_pubkey)
+{
+    return 0;
 }
 
 VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose)
@@ -298,7 +308,7 @@ VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose)
     return ret;
 }
 
-void ConvertVCToBytes(VC *vc, char *hashout)
+void convert_vc_to_bytes(VC *vc, char *hashout)
 {
     int i = 0;
     char context[2048] = {0};
@@ -324,24 +334,21 @@ void ConvertVCToBytes(VC *vc, char *hashout)
     strcat(vcProof, vc->vcProof.created);
     strcat(vcProof, vc->vcProof.verification_method);
     strcat(vcProof, vc->vcProof.proof_purpose);
-    // if (vc->vcProof.JWSSignature != NULL)
-    // {
-    //        strcat(vcProof, vc->vcProof.JWSSignature);
-    // }
 
     char out[2048]={0};
     strcat(out, context);
     strcat(out, type);
-    strcat(out, vc->sub_type);
+    //strcat(out, vc->sub_type);
     strcat(out, vc->issuer);
     strcat(out, vc->issuance_data);
     strcat(out, vc->expiration_data);
     strcat(out, vc->description);
+    strcat(out, CredentialSubject);
     strcat(out, vcProof);
-    char rev[4] = {0};
-    sprintf(rev, "%d", vc->revoked);
-    strcat(out, rev);
-
+    //char rev[4] = {0};
+    //sprintf(rev, "%d", vc->revoked);
+    //strcat(out, rev);
+    printf("out value %s\n", out);
     char hash1[32] = {0};
     SHA256_CTX ctx;
     sha256_init(&ctx);
@@ -351,7 +358,7 @@ void ConvertVCToBytes(VC *vc, char *hashout)
     memcpy(hashout,hash1,32);
 }
 
-void ConvertVPToBytes(VP *vp, char *hashout)
+void convert_vp_to_bytes(VP *vp, char *hashout)
 {
     int i = 0;
     char context[2048] = {0};
@@ -372,7 +379,7 @@ void ConvertVPToBytes(VP *vp, char *hashout)
         if (vp->vc[i] != NULL)
         {
             char out[1024] = {0};
-            ConvertVCToBytes(vp->vc[i], out);
+            convert_vc_to_bytes(vp->vc[i], out);
             // printf("\n ConvertVCToBytes:%s",out);
             strcat(vp_vector, out);
         }
