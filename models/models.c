@@ -313,9 +313,19 @@ void vp_signature(VP* vp, did_handle did, char* sig)
     jws_signature(vp_hash, did, sig);
 }
 
-int vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t* issuers_did, unsigned char* issuers_pubkey)
+int vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t** issuers_did, unsigned char** issuers_pubkey)
 {
-    return 0;
+    for (int i = 0; i < vp->count_vc; i++) {
+        // VC verify error
+        if (vc_verify(vp->vc[i], issuers_did[i], issuers_pubkey[i]) != 0) {
+            return -1;
+        }
+    }
+    
+    unsigned char vp_hash[32] = {0};
+    convert_vp_to_bytes(vp, vp_hash);
+    
+    return jws_verify(vp_hash, holder_did, holder_pubkey, vp->vpProof.JWSSignature);
 }
 
 VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose)

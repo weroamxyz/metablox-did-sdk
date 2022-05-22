@@ -23,7 +23,7 @@ typedef struct VPProof
     char created[30];              // time
     char verification_method[256]; // https://
     char proof_purpose[128];
-    char signature[129];
+    char JWSSignature[129];
     char nonce[64];
 } VPProof;
 
@@ -82,7 +82,7 @@ VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose);
 void vc_signature(VC *vc, did_handle did, char *sig);
 int  vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey);
 void vp_signature(VP *vp, did_handle did, char *sig);
-int  vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t* issuers_did, unsigned char* issuers_pubkey);
+int  vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t** issuers_did, unsigned char** issuers_pubkey);
 
 void convert_vc_to_bytes(VC *vc, char *out);
 void convert_vp_to_bytes(VP *vc, char *out);
