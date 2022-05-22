@@ -1,7 +1,11 @@
 #ifndef __KEY_GENERATOR_H__
 #define __KEY_GENERATOR_H__
 
+#ifdef TARGET_OS_IOS
+#include "did_conf.h"
+#else
 #include "conf/did_conf.h"
+#endif
 
 /**
  * @brief 
