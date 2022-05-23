@@ -161,20 +161,6 @@ VC* new_vc(char **context, int count_text, char *id,
    strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
    vc_handl->revoked = revoked;
 
-//       char out[2048] = {0};
-//       ConvertVCToBytes(vc_handl, out);
-//
-//       char hash[32] = {0};
-//       SHA256_CTX ctx;
-//       sha256_init(&ctx);
-//       sha256_update(&ctx, out, strlen(out));
-//       sha256_final(&ctx, hash);
-//
-//       char sig[64] = {0};
-//       did_sign(did, hash, 32, sig, 64);
-//
-//       memcpy(vc_handl->vcProof.JWSSignature, sig, 64);
-
    return vc_handl;
 }
 
@@ -243,7 +229,6 @@ void jws_signature(const char* hash, did_handle did, char *sig)
     const char hash_base64[64] = {0};
     base64_urlraw_encode(hash, 32, hash_base64);
     
-    
     char payload[128] = {0};
     sprintf(payload, "%s.%s", algo_base64, hash_base64);
     
@@ -277,7 +262,6 @@ int jws_verify(const char* hash, const did_meta_t* did, const char* pubkey, cons
     const char hash_base64[64] = {0};
     base64_urlraw_encode(hash, 32, hash_base64);
     
-    
     char payload[128] = {0};
     sprintf(payload, "%s.%s", algo_base64, hash_base64);
     
@@ -293,22 +277,46 @@ int jws_verify(const char* hash, const did_meta_t* did, const char* pubkey, cons
 
 void vc_signature(VC *vc, did_handle did, char *sig)
 {
-    unsigned char vc_hash[32] = {0};
-    convert_vc_to_bytes(vc, vc_hash);
+    //unsigned char vc_hash[32] = {0};
+    //convert_vc_to_bytes(vc, vc_hash);
+	char out[1024] = {0};
+
+	convert_vc_to_bytes(vc, out);
+	unsigned char vc_hash[32] = {0};
+	SHA256_CTX ctx;
+	sha256_init(&ctx);
+	sha256_update(&ctx, out, strlen(out));
+	sha256_final(&ctx, vc_hash);
+	
     jws_signature(vc_hash, did, sig);
 }
 
 int vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey)
 {
-    unsigned char vc_hash[32] = {0};
-    convert_vc_to_bytes(vc, vc_hash);
+    //unsigned char vc_hash[32] = {0};
+    //convert_vc_to_bytes(vc, vc_hash);
+	char out[1024] = {0};
+	convert_vc_to_bytes(vc, out);
+	unsigned char vc_hash[32] = {0};
+	SHA256_CTX ctx;
+	sha256_init(&ctx);
+	sha256_update(&ctx, out, strlen(out));
+	sha256_final(&ctx, vc_hash);
+	
     return jws_verify(vc_hash, did, pubkey, vc->vcProof.JWSSignature);
 }
 
 void vp_signature(VP* vp, did_handle did, char* sig)
 {
-    unsigned char vp_hash[32] = {0};
-    convert_vp_to_bytes(vp, vp_hash);
+    //unsigned char vp_hash[32] = {0};
+    //convert_vp_to_bytes(vp, vp_hash);
+	char out[2048] = {0};
+	convert_vp_to_bytes(vp, out);
+	unsigned char vp_hash[32] = {0};
+	SHA256_CTX ctx;
+	sha256_init(&ctx);
+	sha256_update(&ctx, out, strlen(out));
+	sha256_final(&ctx, vp_hash);
     
     jws_signature(vp_hash, did, sig);
 }
@@ -322,8 +330,15 @@ int vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey
         }
     }
     
-    unsigned char vp_hash[32] = {0};
-    convert_vp_to_bytes(vp, vp_hash);
+    //unsigned char vp_hash[32] = {0};
+    //convert_vp_to_bytes(vp, vp_hash);
+	char out[2048] = {0};
+	convert_vp_to_bytes(vp, out);
+	unsigned char vp_hash[32] = {0};
+	SHA256_CTX ctx;
+	sha256_init(&ctx);
+	sha256_update(&ctx, out, strlen(out));
+	sha256_final(&ctx, vp_hash);
     
     return jws_verify(vp_hash, holder_did, holder_pubkey, vp->vpProof.JWSSignature);
 }
@@ -339,7 +354,7 @@ VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose)
     return ret;
 }
 
-VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose)
+VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose,char *nonce)
 {
     VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
     memset(ret, 0, sizeof(VPProof));
@@ -347,108 +362,132 @@ VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose)
     strcpy(ret->created, created);
     strcpy(ret->verification_method, vm);
     strcpy(ret->proof_purpose, proof_purpose);
+	strcpy(ret->nonce, nonce);
     return ret;
 }
 
-void convert_vc_to_bytes(VC *vc, char *hashout)
+int cmp_context(const void *a, const void *b)
 {
-    int i = 0;
-    char context[2048] = {0};
-    for (i = 0; i < vc->count_context; i++)
-    {
-        strcat(context, vc->context[i]);
-    }
-
-    char type[80] = {0};
-    for (i = 0; i < vc->count_type; i++)
-    {
-        strcat(type, vc->type[i]);
-    }
-
-    char CredentialSubject[256] = {0};
-    for (i = 0; i < vc->count_subject; i++)
-    {
-        strcat(CredentialSubject, vc->CredentialSubject[i]);
-    }
-
-    char vcProof[600] = {0};
-    strcat(vcProof, vc->vcProof.type);
-    strcat(vcProof, vc->vcProof.created);
-    strcat(vcProof, vc->vcProof.verification_method);
-    strcat(vcProof, vc->vcProof.proof_purpose);
-
-    char out[2048]={0};
-    strcat(out, context);
-    strcat(out, type);
-    //strcat(out, vc->sub_type);
-    strcat(out, vc->issuer);
-    strcat(out, vc->issuance_data);
-    strcat(out, vc->expiration_data);
-    strcat(out, vc->description);
-    strcat(out, CredentialSubject);
-    strcat(out, vcProof);
-    //char rev[4] = {0};
-    //sprintf(rev, "%d", vc->revoked);
-    //strcat(out, rev);
-    printf("out value %s\n", out);
-    char hash1[32] = {0};
-    SHA256_CTX ctx;
-    sha256_init(&ctx);
-    sha256_update(&ctx, out, strlen(out));
-    sha256_final(&ctx, hash1);
-
-    memcpy(hashout,hash1,32);
+	return strcmp((char *)a, (char *)b);
 }
 
-void convert_vp_to_bytes(VP *vp, char *hashout)
+void convert_vc_to_bytes(VC *vc, char *out)
 {
-    int i = 0;
-    char context[2048] = {0};
-    for (i = 0; i < vp->count_context; i++)
-    {
-        strcat(context, vp->context[i]);
-    }
+	int i = 0;
+	char context[vc->count_context][128] = {0};
+	for (i = 0; i < vc->count_context; i++)
+	{
+		strcpy(context[i], vc->context[i]);
+	}
+	qsort(context, vc->count_context, 128, cmp_context);
+	char text[2048] = {0};
+	for (i = 0; i < vc->count_context; i++)
+	{
+		strcat(text, context[i]);
+	}
 
-    char type[80] = {0};
-    for (i = 0; i < vp->count_type; i++)
-    {
-        strcat(type, vp->type[i]);
-    }
+	char type[vc->count_type][64] = {0};
+	for (i = 0; i < vc->count_type; i++)
+	{
+		strcpy(type[i], vc->type[i]);
+	}
+	qsort(context, vc->count_context, 64, cmp_context);
+	char text_type[80] = {0};
+	for (i = 0; i < vc->count_type; i++)
+	{
+		strcat(text_type, type[i]);
+	}
 
-    char vp_vector[2048] = {0};
-    for (i = 0; i < vp->count_vc; i++)
-    {
-        if (vp->vc[i] != NULL)
-        {
-            char out[1024] = {0};
-            convert_vc_to_bytes(vp->vc[i], out);
-            // printf("\n ConvertVCToBytes:%s",out);
-            strcat(vp_vector, out);
-        }
-    }
+	char vcProof[600] = {0};
+	strcat(vcProof, vc->vcProof.type);
+	strcat(vcProof, vc->vcProof.created);
+	strcat(vcProof, vc->vcProof.verification_method);
+	strcat(vcProof, vc->vcProof.proof_purpose);
+	strcat(vcProof, vc->vcProof.JWSSignature);
 
-    char vpProof[600] = {0};
-    strcat(vpProof, vp->vpProof.type);
-    strcat(vpProof, vp->vpProof.created);
-    strcat(vpProof, vp->vpProof.verification_method);
-    strcat(vpProof, vp->vpProof.proof_purpose);
-    // if (vp->vpProof.nonce != NULL)
-    // {
-    //        strcat(vpProof, vp->vpProof.nonce);
-    // }
+	strcat(out, text);
+	strcat(out, text_type);
+	strcat(out, vc->issuer);
+	strcat(out, vc->issuance_data);
+	strcat(out, vc->expiration_data);
+	strcat(out, vc->description);
 
-    char out[2048]={0};
-    strcat(out, context);
-    strcat(out, type);
-    strcat(out, vp_vector);
-    strcat(out, vp->holder);
-    strcat(out, vpProof);
+	if (strcmp("WifiAccess", vc->type[1]) == 0 || strcmp("MiningLicense", vc->type[1]) == 0)
+	{
+		char subject[256] = {0};
+		for (i = 1; i < vc->count_subject; i++)
+		{
+			strcat(subject, vc->CredentialSubject[i]);
+		}
+		strcat(out, subject);
+	}
 
-    char hash1[32] = {0};
-    SHA256_CTX ctx;
-    sha256_init(&ctx);
-    sha256_update(&ctx, out, strlen(out));
-    sha256_final(&ctx, hash1);
+	strcat(out, vcProof);
+}
 
-    memcpy(hashout,hash1,32);
+void convert_vp_to_bytes(VP *vp, char *out)
+{
+	int i = 0;
+	char context[vp->count_context][128] = {0};
+	for (i = 0; i < vp->count_context; i++)
+	{
+		strcpy(context[i], vp->context[i]);
+	}
+	qsort(context, vp->count_context, 128, cmp_context);
+	char text[2048] = {0};
+	for (i = 0; i < vp->count_context; i++)
+	{
+		strcat(text, context[i]);
+	}
+
+	char type[vp->count_type][64] = {0};
+	for (i = 0; i < vp->count_type; i++)
+	{
+		strcpy(type[i], vp->type[i]);
+	}
+	qsort(context, vp->count_context, 64, cmp_context);
+	char text_type[80] = {0};
+	for (i = 0; i < vp->count_type; i++)
+	{
+		strcat(text_type, type[i]);
+	}
+
+	char vc_id[vp->count_vc][128] = {0};
+	for (i = 0; i < vp->count_vc; i++)
+	{
+		if (vp->vc[i] != NULL)
+		{
+			strcat(vc_id[i], vp->vc[i]->id);
+		}
+	}
+	qsort(vc_id, vp->count_vc, 128, cmp_context);
+	char vc_vector[2048] = {0};
+	for (i = 0; i < vp->count_vc; i++)
+	{
+		int j = 0;
+		for (j = 0; j < vp->count_vc; j++)
+		{
+			if (strcmp(vc_id[i], vp->vc[j]->id) == 0)
+			{
+				char out[2048] = {0};
+				convert_vc_to_bytes(vp->vc[j], out);
+
+				strcat(vc_vector, out);
+			}
+		}
+	}
+
+	char vpProof[600] = {0};
+	strcat(vpProof, vp->vpProof.type);
+	strcat(vpProof, vp->vpProof.created);
+	strcat(vpProof, vp->vpProof.verification_method);
+	strcat(vpProof, vp->vpProof.proof_purpose);
+	strcat(vpProof, vp->vpProof.JWSSignature);
+	strcat(vpProof, vp->vpProof.nonce);
+
+	strcat(out, text);
+	strcat(out, text_type);
+	strcat(out, vc_vector);
+	strcat(out, vp->holder);
+	strcat(out, vpProof);
 }
