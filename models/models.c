@@ -314,7 +314,7 @@ int vp_verify(VP *vp, const did_meta_t *holder_did, unsigned char *holder_pubkey
    return jws_verify(vp_hash, holder_did, holder_pubkey, vp->vpProof.JWSSignature);
 }
 
-VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose, char *jws)
+VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws)
 {
    VCProof *ret = (VCProof *)malloc(sizeof(VCProof));
    memset(ret, 0, sizeof(VCProof));
@@ -326,7 +326,7 @@ VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_purpose, 
    return ret;
 }
 
-VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose, char *jws, char *nonce)
+VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce)
 {
    VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
    memset(ret, 0, sizeof(VPProof));

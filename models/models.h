@@ -76,8 +76,8 @@ void vp_destroy(vp_handle vp);
 VC* new_vc(char **context, int count_text, char *id, char **type, int count_type, char *sub_type, char *issuer,
                  char *issuance_data, char *expiration_data, char *description, char **CredentialSubject, int count_subject, VCProof vcProof, int revoked);
 VP* new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof);
-VCProof *new_vc_proof(char *type, char *created, char *vm, char *proof_pursose,char *jws);
-VPProof *new_vp_proof(char *type, char *created, char *vm, char *proof_purpose,char *jws,char *nonce);
+VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_pursose, const char *jws);
+VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce);
 
 void vc_signature(VC *vc, did_handle did, char *sig);
 int  vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey);

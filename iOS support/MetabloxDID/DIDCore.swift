@@ -228,6 +228,46 @@ public class DIDCore {
     }
 }
 
+struct VCModel {
+    var contex: [String]
+    var id: String
+    var type: [String]
+    var sub_type: String
+    var issuer: String
+    var issurance_date: String
+    var expiration_date: String
+    var description: String
+    var credentialSubject: [String]
+    var vcProof: ProofModel
+}
+
+struct VPModel {
+    var contex: [String]
+    var type: [String]
+    var vc: [VCModel]
+    var holder: String
+    var vpProof: ProofModel
+}
+
+struct ProofModel {
+    var type: String
+    var created: String
+    var verification_method: String
+    var proof_purpose: String
+    var JWSSignature: String
+    var nonce: String?
+    
+    func toVCProof()-> UnsafeMutablePointer<VCProof>? {
+        let p = new_vc_proof(type, created, verification_method, proof_purpose, JWSSignature)
+        return p
+    }
+
+    func toVPProof()-> UnsafeMutablePointer<VPProof>? {
+        let p = new_vp_proof(type, created, verification_method, proof_purpose, JWSSignature, nonce)
+        return p
+    }
+}
+
 
 import CryptoKit
 

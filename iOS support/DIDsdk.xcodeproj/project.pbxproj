@@ -9,9 +9,7 @@
 /* Begin PBXBuildFile section */
 		002B5D98281919FF00E17B29 /* secp256k1_key.h in Headers */ = {isa = PBXBuildFile; fileRef = 002B5D97281919FF00E17B29 /* secp256k1_key.h */; };
 		00912D9F282AAD49005AE8FF /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 00912D9D282AAD49005AE8FF /* models.c */; };
-		00912DA0282AAD49005AE8FF /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 00912D9D282AAD49005AE8FF /* models.c */; };
 		00912DA1282AAD49005AE8FF /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 00912D9D282AAD49005AE8FF /* models.c */; };
-		00912DA2282AAD49005AE8FF /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 00912D9E282AAD49005AE8FF /* models.h */; };
 		00B1130327C6170600CD8DB2 /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = 00B1130227C6170600CD8DB2 /* main.c */; };
 		00B1135C27C753D000CD8DB2 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135B27C753D000CD8DB2 /* CoreFoundation.framework */; };
 		00B1135F27C7542000CD8DB2 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00B1135E27C7542000CD8DB2 /* SystemConfiguration.framework */; };
@@ -56,7 +54,7 @@
 		96CE5B0C27E94CEC0035E706 /* MetabloxDIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */; };
 		96CE5B0D27E94CEC0035E706 /* MetabloxDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */; };
 		96F61299282AE13C0094BF79 /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F61297282AE13B0094BF79 /* models.c */; };
-		96F6129A282AE13C0094BF79 /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F61298282AE13B0094BF79 /* models.h */; };
+		96F6129A282AE13C0094BF79 /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F61298282AE13B0094BF79 /* models.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
