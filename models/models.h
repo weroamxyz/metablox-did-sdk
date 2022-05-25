@@ -15,6 +15,7 @@ typedef struct VCProof
     char verification_method[128]; // https://
     char proof_purpose[32];
     char JWSSignature[129];
+    char public_key[65];
 } VCProof;
 
 typedef struct VPProof
@@ -25,6 +26,7 @@ typedef struct VPProof
     char proof_purpose[128];
     char JWSSignature[129];
     char nonce[64];
+    char public_key[65];
 } VPProof;
 
 // vc
@@ -73,9 +75,8 @@ VP* create_vp_handle();
 void vc_destroy(vc_handle vc);
 void vp_destroy(vp_handle vp);
 
-VC* new_vc(char **context, int count_text, char *id, char **type, int count_type, char *sub_type, char *issuer,
-                 char *issuance_data, char *expiration_data, char *description, char **CredentialSubject, int count_subject, VCProof vcProof, int revoked);
-VP* new_vp(char **context, int count_text, char **type, int count_type, VC **vc, int count_vc, char *holder, VPProof *vpProof);
+VC* new_vc(const char **context,const int count_text,const char *id,const char **type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,const char **CredentialSubject,const int count_subject,const VCProof vcProof,const int revoked);
+VP* new_vp(const char **context,const int count_text,const char **type,const int count_type,const VC **vc,const int count_vc,const char *holder,const VPProof *vpProof);
 VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_pursose, const char *jws);
 VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce);
 
@@ -84,8 +85,8 @@ int  vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey);
 void vp_signature(VP *vp, did_handle did, char *sig);
 int  vp_verify(VP* vp, const did_meta_t* holder_did, unsigned char* holder_pubkey, const did_meta_t** issuers_did, unsigned char** issuers_pubkey);
 
-void convert_vc_to_bytes(VC *vc, char *out);
-void convert_vp_to_bytes(VP *vc, char *out);
+void convert_vc_to_bytes(const VC *vc, char *out, int *out_len);
+void convert_vp_to_bytes(const VP *vc, char *out, int *out_len);
 
 #ifdef __cplusplus
 }
