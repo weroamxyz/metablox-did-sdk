@@ -70,7 +70,11 @@ int main(int argc, const char * argv[]) {
     
     did_handle did_vc_test = did_import_privkey("secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6");
     
+<<<<<<< HEAD
     did_meta_t* vc_did_meta = did_to_did_meta(did_vc_test);
+=======
+    VCProof* vcProof = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", NULL, NULL);
+>>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     
     unsigned char vc_did_pubkey[65] = {0};
     did_get_pubkey(did_vc_test, vc_did_pubkey, 65);
