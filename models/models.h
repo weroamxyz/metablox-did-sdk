@@ -75,10 +75,10 @@ VP* create_vp_handle();
 void vc_destroy(vc_handle vc);
 void vp_destroy(vp_handle vp);
 
-VC* new_vc(const char **context,const int count_text,const char *id,const char **type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,const char **CredentialSubject,const int count_subject,const VCProof vcProof,const int revoked);
-VP* new_vp(const char **context,const int count_text,const char **type,const int count_type,const VC **vc,const int count_vc,const char *holder,const VPProof *vpProof);
-VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_pursose, const char *jws);
-VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce);
+VC* new_vc(char * const *context,const int count_text,const char *id, char * const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description, char * const*CredentialSubject,const int count_subject,const VCProof vcProof,const int revoked);
+VP* new_vp(char * const *context,const int count_text, char * const *type, const int count_type, VC * const *vc,const int count_vc,const char *holder,const VPProof *vpProof);
+VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_pursose, const char *jws, const char *public_key);
+VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce, const char *public_key);
 
 void vc_signature(VC *vc, did_handle did, char *sig);
 int  vc_verify(VC *vc, const did_meta_t* did, unsigned char* pubkey);

@@ -92,7 +92,7 @@ void vp_destroy(vp_handle vp)
    free(vp_hand);
 }
 
-VC *new_vc(const char **context,const int count_text,const char *id,const char **type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,const char **CredentialSubject,const int count_subject,const VCProof vcProof,const int revoked)
+VC *new_vc(char * const *context,const int count_text,const char *id, char * const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description, char * const*CredentialSubject, const int count_subject, const VCProof vcProof, const int revoked)
 {
     VC *vc_handl = create_vc_handle();
     int i = 0;
@@ -136,13 +136,14 @@ VC *new_vc(const char **context,const int count_text,const char *id,const char *
     strcpy(vc_handl->vcProof.created, vcProof.created);
     strcpy(vc_handl->vcProof.verification_method, vcProof.verification_method);
     strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
+    strcpy(vc_handl->vcProof.public_key, vcProof.public_key);
     strcpy(vc_handl->vcProof.JWSSignature, vcProof.JWSSignature);
     vc_handl->revoked = revoked;
 
     return vc_handl;
 }
 
-VP *new_vp(const char **context,const int count_text,const char **type,const int count_type,const VC **vc,const int count_vc,const char *holder,const VPProof *vpProof)
+VP *new_vp(char * const *context, const int count_text, char * const *type,const int count_type, VC * const *vc, const int count_vc, const char *holder, const VPProof *vpProof)
 {
     VP *vp_hand = create_vp_handle();
     int i = 0;
@@ -178,6 +179,7 @@ VP *new_vp(const char **context,const int count_text,const char **type,const int
     strcpy(vp_hand->vpProof.verification_method, vpProof->verification_method);
     strcpy(vp_hand->vpProof.proof_purpose, vpProof->proof_purpose);
     strcpy(vp_hand->vpProof.JWSSignature, vpProof->JWSSignature);
+    strcpy(vp_hand->vpProof.public_key, vpProof->public_key);
     strcpy(vp_hand->vpProof.nonce, vpProof->nonce);
 
     return vp_hand;
@@ -334,7 +336,7 @@ int vp_verify(VP *vp, const did_meta_t *holder_did, unsigned char *holder_pubkey
     return jws_verify(vp_hash, holder_did, holder_pubkey, vp->vpProof.JWSSignature);
 }
 
-VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws)
+VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *public_key)
 {
     VCProof *ret = (VCProof *)malloc(sizeof(VCProof));
     memset(ret, 0, sizeof(VCProof));
@@ -346,10 +348,14 @@ VCProof *new_vc_proof(const char *type, const char *created, const char *vm, con
         strcpy(ret->JWSSignature, "");
     else
         strcpy(ret->JWSSignature, jws);
+    if(public_key == NULL)
+        strcpy(ret->public_key, "");
+    else
+        strcpy(ret->public_key, public_key);
     return ret;
 }
 
-VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce)
+VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce, const char *public_key)
 {
     VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
     memset(ret, 0, sizeof(VPProof));
@@ -363,6 +369,10 @@ VPProof *new_vp_proof(const char *type, const char *created, const char *vm, con
         strcpy(ret->JWSSignature, jws);
     
     strcpy(ret->nonce, nonce);
+    if(public_key == NULL)
+        strcpy(ret->public_key, "");
+    else
+        strcpy(ret->public_key, public_key);
     return ret;
 }
 
