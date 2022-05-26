@@ -92,11 +92,7 @@ void vp_destroy(vp_handle vp)
    free(vp_hand);
 }
 
-<<<<<<< HEAD
 VC *new_vc(char *const*context,const int count_text,const char *id,char *const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,char *const*CredentialSubject,const int count_subject,const VCProof *vcProof,const int revoked)
-=======
-VC *new_vc(char * const *context,const int count_text,const char *id, char * const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description, char * const*CredentialSubject, const int count_subject, const VCProof vcProof, const int revoked)
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 {
     VC *vc_handl = create_vc_handle();
     int i = 0;
@@ -136,31 +132,18 @@ VC *new_vc(char * const *context,const int count_text,const char *id, char * con
         strcpy(vc_handl->CredentialSubject[i], CredentialSubject[i]);
     }
 
-<<<<<<< HEAD
     strcpy(vc_handl->vcProof.type, vcProof->type);
     strcpy(vc_handl->vcProof.created, vcProof->created);
     strcpy(vc_handl->vcProof.verification_method, vcProof->verification_method);
     strcpy(vc_handl->vcProof.proof_purpose, vcProof->proof_purpose);
     strcpy(vc_handl->vcProof.JWSSignature, vcProof->JWSSignature);
     memcpy(vc_handl->vcProof.public_key, vcProof->public_key, 65);
-=======
-    strcpy(vc_handl->vcProof.type, vcProof.type);
-    strcpy(vc_handl->vcProof.created, vcProof.created);
-    strcpy(vc_handl->vcProof.verification_method, vcProof.verification_method);
-    strcpy(vc_handl->vcProof.proof_purpose, vcProof.proof_purpose);
-    strcpy(vc_handl->vcProof.public_key, vcProof.public_key);
-    strcpy(vc_handl->vcProof.JWSSignature, vcProof.JWSSignature);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     vc_handl->revoked = revoked;
 
     return vc_handl;
 }
 
-<<<<<<< HEAD
 VP *new_vp(char *const*context,const int count_text,char *const*type,const int count_type,VC *const*vc,const int count_vc,const char *holder,const VPProof *vpProof)
-=======
-VP *new_vp(char * const *context, const int count_text, char * const *type,const int count_type, VC * const *vc, const int count_vc, const char *holder, const VPProof *vpProof)
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 {
     VP *vp_hand = create_vp_handle();
     int i = 0;
@@ -196,13 +179,8 @@ VP *new_vp(char * const *context, const int count_text, char * const *type,const
     strcpy(vp_hand->vpProof.verification_method, vpProof->verification_method);
     strcpy(vp_hand->vpProof.proof_purpose, vpProof->proof_purpose);
     strcpy(vp_hand->vpProof.JWSSignature, vpProof->JWSSignature);
-<<<<<<< HEAD
     strcpy(vp_hand->vpProof.nonce, vpProof->nonce);
     memcpy(vp_hand->vpProof.public_key, vpProof->public_key, 65);
-=======
-    strcpy(vp_hand->vpProof.public_key, vpProof->public_key);
-    strcpy(vp_hand->vpProof.nonce, vpProof->nonce);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 
     return vp_hand;
 }
@@ -261,16 +239,12 @@ int jws_verify(const char *hash, const char *proof_type, const char *pubkey, con
     sha256_update(&ctx, payload, strlen(payload));
     sha256_final(&ctx, payload_hash);
 
-<<<<<<< HEAD
     did_key_t did_keys;
     memset(&did_keys, 0, sizeof(did_key_t));
     strcpy(did_keys.type,"EcdsaSecp256k1VerificationKey2019");
     
     
     return nodid_verify_hash_with_pubkey(&did_keys, pubkey, payload_hash, sign, 64);
-=======
-    return did_verify_hash_with_pubkey(did->did_keys, pubkey, payload_hash, sign, 64);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 }
 
 void vc_signature(VC *vc, did_handle did, char *sig)
@@ -309,12 +283,7 @@ int vc_verify(VC *vc)
     sha256_init(&ctx);
     sha256_update(&ctx, out, out_len);
     sha256_final(&ctx, vc_hash);
-<<<<<<< HEAD
     return jws_verify(vc_hash, vc->vcProof.type, vc->vcProof.public_key, vc->vcProof.JWSSignature);
-=======
-
-    return jws_verify(vc_hash, did, pubkey, vc->vcProof.JWSSignature);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 }
 
 void vp_signature(VP *vp, did_handle did, char *sig)
@@ -327,26 +296,14 @@ void vp_signature(VP *vp, did_handle did, char *sig)
     strcpy(vp->vpProof.JWSSignature, "");
     int out_len = 0;
     convert_vp_to_bytes(vp, out, &out_len);
-<<<<<<< HEAD
     
-=======
-
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     strcpy(vp->vpProof.JWSSignature, vpProof_jws);
     unsigned char vp_hash[32] = {0};
     SHA256_CTX ctx;
     sha256_init(&ctx);
     sha256_update(&ctx, out, out_len);
     sha256_final(&ctx, vp_hash);
-<<<<<<< HEAD
 
-=======
-    //    int i=0;
-    //    for(i=0;i<32;i++)
-    //    {
-    //        printf("\n%2d:%d",i,vp_hash[i]);
-    //    }
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     jws_signature(vp_hash, did, sig);
 }
 
@@ -355,11 +312,7 @@ int vp_verify(VP *vp)
     for (int i = 0; i < vp->count_vc; i++)
     {
         // VC verify error
-<<<<<<< HEAD
         if (vc_verify(vp->vc[i]) != 0)
-=======
-        if (vc_verify(vp->vc[i], issuers_did[i], issuers_pubkey[i]) != 0)
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
         {
             return -1;
         }
@@ -380,17 +333,10 @@ int vp_verify(VP *vp)
     sha256_update(&ctx, out, out_len);
     sha256_final(&ctx, vp_hash);
 
-<<<<<<< HEAD
     return jws_verify(vp_hash, vp->vpProof.type, vp->vpProof.public_key, vp->vpProof.JWSSignature);
 }
 
 VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const unsigned char*pub_key)
-=======
-    return jws_verify(vp_hash, holder_did, holder_pubkey, vp->vpProof.JWSSignature);
-}
-
-VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *public_key)
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 {
     VCProof *ret = (VCProof *)malloc(sizeof(VCProof));
     memset(ret, 0, sizeof(VCProof));
@@ -402,7 +348,6 @@ VCProof *new_vc_proof(const char *type, const char *created, const char *vm, con
         strcpy(ret->JWSSignature, "");
     else
         strcpy(ret->JWSSignature, jws);
-<<<<<<< HEAD
     if(pub_key != NULL)
         memcpy(ret->public_key, pub_key, 65);
     return ret;
@@ -411,18 +356,6 @@ VCProof *new_vc_proof(const char *type, const char *created, const char *vm, con
 VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce, const unsigned char *pub_key)
 {
     VPProof *ret = (VPProof *) malloc (sizeof(VPProof));
-=======
-    if(public_key == NULL)
-        strcpy(ret->public_key, "");
-    else
-        strcpy(ret->public_key, public_key);
-    return ret;
-}
-
-VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce, const char *public_key)
-{
-    VPProof *ret = (VPProof *)malloc(sizeof(VPProof));
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     memset(ret, 0, sizeof(VPProof));
     strcpy(ret->type, type);
     strcpy(ret->created, created);
@@ -432,18 +365,9 @@ VPProof *new_vp_proof(const char *type, const char *created, const char *vm, con
         strcpy(ret->JWSSignature, "");
     else
         strcpy(ret->JWSSignature, jws);
-<<<<<<< HEAD
     if(pub_key != NULL)
         memcpy(ret->public_key, pub_key, 65);
     strcpy(ret->nonce, nonce);
-=======
-    
-    strcpy(ret->nonce, nonce);
-    if(public_key == NULL)
-        strcpy(ret->public_key, "");
-    else
-        strcpy(ret->public_key, public_key);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     return ret;
 }
 
@@ -489,10 +413,7 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
     unsigned long vcProof_before_jws = strlen(vcProof);
     memcpy(vcProof+vcProof_before_jws, vc->vcProof.public_key, 65);
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     strcat(out, text);
     strcat(out, text_type);
     strcat(out, vc->issuer);
@@ -511,14 +432,9 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
             strcat(out, subject);
         }
     }
-<<<<<<< HEAD
     *out_len+=strlen(out) + vcProof_before_jws + 65;//
     memcpy(out+strlen(out), vcProof, vcProof_before_jws + 65);//
 
-=======
-    *out_len+=strlen(out)+vcProof_before_jws+65;
-    memcpy(out+strlen(out), vcProof, vcProof_before_jws+65);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 //  printf("\n -----VC CONVERT \n%s\n -----\n",out);
 //  strcat(out, vcProof);
 }
@@ -526,30 +442,18 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
 void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
 {
     int i = 0;
-<<<<<<< HEAD
     *out_len = 0;
-=======
-    *out_len=0;
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     char context[10][128] = {0};
     for (i = 0; i < vp->count_context; i++)
     {
         strcpy(context[i], vp->context[i]);
     }
     qsort(context, vp->count_context, 128, cmp_context);
-<<<<<<< HEAD
     char text[300] = {0};
-=======
-    char text[2048] = {0};
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     for (i = 0; i < vp->count_context; i++)
     {
         strcat(text, context[i]);
     }
-<<<<<<< HEAD
-=======
-    *out_len += strlen(text);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 
     char type[10][64] = {0};
     for (i = 0; i < vp->count_type; i++)
@@ -562,10 +466,6 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
     {
         strcat(text_type, type[i]);
     }
-<<<<<<< HEAD
-=======
-    *out_len += strlen(text_type);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 
     char vc_id[10][128] = {0};
     for (i = 0; i < vp->count_vc; i++)
@@ -577,10 +477,7 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
     }
     qsort(vc_id, vp->count_vc, 128, cmp_context);
     char vc_vector[2048] = {0};
-<<<<<<< HEAD
     int vc_vec_len = 0;
-=======
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
     for (i = 0; i < vp->count_vc; i++)
     {
         int j = 0;
@@ -589,18 +486,10 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
             if (strcmp(vc_id[i], vp->vc[j]->id) == 0)
             {
                 char vc_out[2048] = {0};
-<<<<<<< HEAD
                 int vc_out_len = 0;
                 convert_vc_to_bytes(vp->vc[j], vc_out, &vc_out_len);
                 memcpy(vc_vector, vc_out, vc_out_len);
                 vc_vec_len += vc_out_len;
-=======
-                //  memcpy(vp->vc[j]->vcProof.public_key, pubkey, 65);
-                int vc_out_len = 0;
-                convert_vc_to_bytes(vp->vc[j], vc_out, &vc_out_len);
-                memcpy(vc_vector, vc_out, vc_out_len);
-                *out_len += vc_out_len;
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
                 //  strcat(vc_vector, out);
             }
         }
@@ -618,7 +507,6 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
 
     strcat(out, text);
     strcat(out, text_type);
-<<<<<<< HEAD
     memcpy(out+strlen(out), vc_vector, vc_vec_len);
     *out_len += strlen(text);
     *out_len += strlen(text_type);
@@ -631,12 +519,4 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
     *out_len += (vpProof_before_nonce + 65);//
     //  strcat(out, vpProof);
 //    printf("\n *****VP convert \n%s\n *****\n",out);
-=======
-    strcat(out, vc_vector);
-    strcat(out, vp->holder);
-    *out_len += (vpProof_before_nonce + 65);
-    memcpy(out+strlen(out), vpProof, vpProof_before_nonce + 65);
-    //  strcat(out, vpProof);
-    //  printf("\n *****VP convert \n%s\n *****\n",out);
->>>>>>> 947f83739f58d554375130c33d6fdbbc1748a44c
 }
