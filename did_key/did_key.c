@@ -31,6 +31,15 @@ int key_verify_hash_with_pubkey(const char* pubkey, const char* address, const c
     }
 }
 
+int key_verify_hash_with_noaddress(const char* pubkey, const char* algo, const char* hash, char* sign, size_t sign_len)
+{
+    if (strcmp(algo, "secp256k1") == 0) {
+        return secp256k1_verify_hash_with_pubkey_noaddress(pubkey, hash, sign);
+    } else {
+        return -1;
+    }
+}
+
 int key_to_address(key_pair_t* key, const char* algo, char* address)
 {
     if (strcmp(algo, "secp256k1") == 0) {

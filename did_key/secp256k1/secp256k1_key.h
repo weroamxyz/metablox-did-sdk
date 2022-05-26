@@ -14,6 +14,7 @@ int secp256k1_sign_hash(const char*priv_key, const char* hash, char *out, size_t
 int secp256k1_verify_hash(const char* input_address, const char* hash, const char* signature);
 
 int secp256k1_verify_hash_with_pubkey(const char* pubkey, const char* address, const char* hash, const char* signature);
+int secp256k1_verify_hash_with_pubkey_noaddress(const char* pubkey, const char* hash, const char* signature);
 
 int secp256k1_key_to_address(const char* public_key, char* address);
 

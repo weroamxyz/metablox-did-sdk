@@ -45,6 +45,7 @@ int        did_get_pubkey(did_handle, unsigned char* buffer, size_t buff_len);
 int        did_sign_hash(did_handle handle, const unsigned char* hash, char *out, size_t out_len);
 int        did_verify_hash(did_key_t* did_key, const unsigned char* hash, char* sign, size_t sign_len);
 int        did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len);
+int        nodid_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len);
 
 did_meta_t*  did_to_did_meta(did_handle handle);
 void         did_meta_destroy(did_meta_t* meta);  

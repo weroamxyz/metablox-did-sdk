@@ -156,6 +156,36 @@ int secp256k1_verify_hash_with_pubkey(const char* pubkey, const char* address, c
     return -1;
 }
 
+int secp256k1_verify_hash_with_pubkey_noaddress(const char* pubkey, const char* hash, const char* signature)
+{
+//    char pub_address[MAX_KEY_ADDRESS_LEN] = {0};
+//    secp256k1_key_to_address(pubkey, pub_address);
+//
+//    if (memcmp(pub_address, address, 42) != 0) {
+//        return -1;
+//    }
+    
+    secp256k1_context *ctx = secp256k1_context_create(SECP256K1_CONTEXT_SIGN | SECP256K1_CONTEXT_VERIFY);
+    if (ctx == NULL){
+        return -1;
+    }
+        
+    secp256k1_ecdsa_signature sig;
+    secp256k1_ecdsa_signature_parse_compact(ctx, &sig, signature);
+    
+    secp256k1_pubkey pubkey_r;
+    int result_rec = secp256k1_ec_pubkey_parse(ctx, &pubkey_r, pubkey, 65);
+    if (result_rec == 0){
+        secp256k1_context_destroy(ctx);
+        return -1;
+    }
+
+    result_rec = secp256k1_ecdsa_verify(ctx, &sig, hash, &pubkey_r);
+    secp256k1_context_destroy(ctx);
+    if (result_rec == 1)
+        return 0;
+    return -1;
+}
 
 int secp256k1_key_to_address(const char* public_key, char* address)
 {

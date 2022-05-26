@@ -27,6 +27,7 @@ int key_sign_hash(key_pair_t* key, const char* algo, const char* hash, char *out
 int key_verify_hash_with_address(const char* address, const char* algo, const char* hash, char* sign, size_t sign_len);
 
 int key_verify_hash_with_pubkey(const char* pubkey, const char* address, const char* algo, const char* hash, char* sign, size_t sign_len);
+int key_verify_hash_with_noaddress(const char* pubkey, const char* algo, const char* hash, char* sign, size_t sign_len);
 
 int key_to_address(key_pair_t* key, const char* algo, char* address);
 #ifdef __cplusplus

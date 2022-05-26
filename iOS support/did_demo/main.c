@@ -50,35 +50,78 @@ int main(int argc, const char * argv[]) {
     
     // verify signature and unsigned content with public key
     int verify = did_verify_hash(did2_meta->did_keys, hash, sig, 65);
+    printf("\n Verify Hello, World! result %d\n", verify);
     
+//    did_handle handle3 = did_import_privkey("secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09");
+    //zPYHK5ZNAzqo2PQ11r54Ku8p2qrwn42ebt7qM4827vAvGuMUV65EKFR7CqmKuvkKJuXPyNrZd8WG3jiqcSzLzpdg9
+//    char* context[2] ={"https://www.w3.org/2018/credentials/v1","https://ns.did.ai/suites/secp256k1-2019/v1/"};
     
-    did_handle handle3 = did_import_privkey("secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09");
-    
-    printf("Hello, World! Verify result %d\n", verify);
-    
-    VCProof* vcProof = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", NULL);
-    
-    char* context[2] = {"https://www.w3.org/2018/credentials/v1","https://ns.did.ai/suites/secp256k1-2019/v1/"};
-    
-    char* type[2] = {"VerifiableCredential","MiningLicense"};
-    
-    char* subject[4] = {
-        //"1",
-        "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
-        "TestName",
-        "TestModel",
-        "TestSerial",};
+//    char* type[2] = {"VerifiableCredential","PermanentResidentCard"};
+//
+//    char* subject[6] = {
+//        //"1",
+//        "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+//        "John",
+//        "Jacobs",
+//        "Male",
+//        "Canada",
+//        "2022-03-22"
+//    };
     
     did_handle did_vc_test = did_import_privkey("secp256k1.dbbd9634560466ac9713e0cf10a575456c8b55388bce0c044f33fc6074dc5ae6");
     
-    VC* vc1 = new_vc(context, 2, "http://metablox.com/credentials/1", type, 2, "MiningLicense", "did:metablox:sampleIssuer", "2022-05-19T01:48:31Z", "2032-05-19T01:48:31Z", "Example Wifi Access Credential", subject, 4, *vcProof, 0);
-    
-    vc_signature((VC*)vc1, did_vc_test, vc1->vcProof.JWSSignature);
     did_meta_t* vc_did_meta = did_to_did_meta(did_vc_test);
-    char vc_did_pubkey[65] = {0};
+    
+    unsigned char vc_did_pubkey[65] = {0};
     did_get_pubkey(did_vc_test, vc_did_pubkey, 65);
-    verify = vc_verify((VC*)vc1, vc_did_meta, vc_did_pubkey);
-    printf("VC verify result %d\n", verify);
+
+    char* context_vc[2] = {"https://www.w3.org/2018/credentials/v1","https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"};
+    
+    char* type_vc[2] = {"VerifiableCredential","PermanentResidentCard"};
+    
+    char* subject_vc[6] = {
+        //"1",
+        "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+        "John",
+        "Jacobs",
+        "Male",
+        "Canada",
+        "2022-03-22"
+    };
+    
+    VCProof* vcProof_vc = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-03-31T12:53:19-07:00", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", NULL, vc_did_pubkey);
+    
+    VC* vc2 = new_vc(context_vc, 2, "http://metablox.com/credentials/1", type_vc, 2, "PermanentResidentCard", "did:metablox:sampleIssuer", "2022-03-31T12:53:19-07:00", "2032-03-31T12:53:19-07:00", "Government of Example Permanent Resident Card", subject_vc, 6, vcProof_vc, 0);
+    
+    vc_signature((VC*)vc2, did_vc_test, vc2->vcProof.JWSSignature);
+    printf("\n--vc proof jws:\n%s\n---",vc2->vcProof.JWSSignature);
+    
+    verify = vc_verify(vc2);
+    printf("\nVC2 verify result %d\n", verify);
+    
+    //-----create vp and verify
+    char* context_vp[2] = {"https://www.w3.org/2018/credentials/v1","https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"};
+    char* type_vp[1] = {"VerifiablePresentation"};
+    char* subject_vp[6] = {
+        //"1",
+        "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+        "John",
+        "Jacobs",
+        "Male",
+        "Canada",
+        "2022-03-22"
+    };
+    VPProof* vpProof = new_vp_proof("EcdsaSecp256k1Signature2019", "2022-03-31T12:53:19-07:00", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", NULL, "sampleNonce", vc_did_pubkey);
+    VC* vc_vector[1] = {vc2};
+    
+    VP* vp = new_vp(context_vp, 2, type_vp, 1, vc_vector, 1, "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX", vpProof);
+    
+    vp_signature((VP*)vp, did_vc_test, vp->vpProof.JWSSignature);
+    printf("\n--vp jws:\n%s\n---",vp->vpProof.JWSSignature);
+
+    
+    verify = vp_verify((VP*)vp);
+    printf("\nVP verify result %d\n", verify);
     
     return 0;
 }

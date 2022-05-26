@@ -266,6 +266,18 @@ int did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey,
     }
 }
 
+int nodid_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len)
+{
+    if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
+    {
+        return key_verify_hash_with_noaddress(pubkey, "secp256k1", hash, sign, sign_len);
+    }
+    else
+    {
+        return -1;
+    }
+}
+
 int did_get_pubkey(did_handle handle, unsigned char* buffer, size_t buff_len) {
     did_context_t *context = (did_context_t *)handle;
     memcpy(buffer, context->key_pair.pubkey, context->key_pair.pubkey_len);
