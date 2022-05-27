@@ -193,10 +193,6 @@ class MetabloxDIDTests: XCTestCase {
     }
     
     func testVCAndVPConstruction() throws {
-        let didCore = DIDCore(storePath: storeDir!)
-        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
-        let didc = didCore!
-        
         let vcp_c = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, "pubkey12353");
         XCTAssert(vcp_c != nil)
         let vcProof = ProofModel(vcProof: vcp_c!)
@@ -211,7 +207,7 @@ class MetabloxDIDTests: XCTestCase {
                        "TestName",
                        "TestModel",
                        "TestSerial"]
-        let vc1 = VCModel(context: context, id: "http://metablox.com/credentials/1", type: type, subType: "MiningLicense", issuer: "did:metablox:sampleIssuer", issuanceDate: "2022-05-19T01:48:31Z", expirationDate: "2032-05-19T01:48:31Z", description: "Example Wifi Access Credential", credentialSubject: subject, vcProof: vcProof, revoked: false)
+        let vc1 = VCCoreModel(context: context, id: "http://metablox.com/credentials/1", type: type, subType: "MiningLicense", issuer: "did:metablox:sampleIssuer", issuanceDate: "2022-05-19T01:48:31Z", expirationDate: "2032-05-19T01:48:31Z", description: "Example Wifi Access Credential", credentialSubject: subject, vcProof: vcProof, revoked: false)
         XCTAssert(vc1.context.count == 2)
         print(vc1)
         
@@ -220,7 +216,7 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(vc1_c?.pointee.vcProof != nil)
         XCTAssert(vc1_c?.pointee.count_context == 2)
         XCTAssert(vc1_c?.pointee.revoked == 0)
-        let vc2 = VCModel(vc: vc1_c!)
+        let vc2 = VCCoreModel(vc: vc1_c!)
         XCTAssert(vc2.context.count == 2)
         XCTAssert(!vc2.vcProof.publicKey.isEmpty)
         print(vc2)
@@ -228,16 +224,50 @@ class MetabloxDIDTests: XCTestCase {
         let vpf_c = new_vp_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, "0000", "vpPubkey");
         let vpf = ProofModel(vpProof: vpf_c!)
         
-        let vp1 = VPModel(context: context, type: type, vc: [vc1], holder: "did:metablox:sampleholder", vpProof: vpf)
+        let vp1 = VPCoreModel(context: context, type: type, vc: [vc1], holder: "did:metablox:sampleholder", vpProof: vpf)
         XCTAssert(vp1.context.count == 2)
         let vp1_c = vp1.toCStruct()
         XCTAssert(vp1_c?.pointee.vc != nil)
-        let vp2 = VPModel(vp: vp1_c!)
+        let vp2 = VPCoreModel(vp: vp1_c!)
         XCTAssert(vp2.context.count == 2)
         XCTAssert(vp2.vc.count == 1)
         XCTAssert(!vp2.vc[0].vcProof.type.isEmpty)
         print(vp2)
         
+    }
+    
+    func testVCVerify() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let passcode = "123"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
+        
+        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let vcproof = ProofModel(type: "EcdsaSecp256k1Signature2019",
+                                 created: "2022-05-27T00:21:03Z",
+                                 verificationMethod: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification",
+                                 proofPurpose: "Authentication",
+                                 publicKey: "",
+                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..1tJjC7OvfkZXOCWFXNJ1xm8bWUSoiNYfEHe5fAEE6LaFGAi_HNLj2SllbfU6IbsKJEY-D70Qb1r84LMZ4Pbxog")
+        let vc = VCCoreModel(context: ["https://ns.did.ai/suites/secp256k1-2019/v1/", "https://www.w3.org/2018/credentials/v1"],
+                             id: "http://metablox.com/credentials/94",
+                             type: ["VerifiableCredential", "WifiAccess"],
+                             subType: "WifiAccess",
+                             issuer: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+                             issuanceDate: "2022-05-27T00:21:03Z",
+                             expirationDate: "2032-05-27T00:21:03Z",
+                             description: "Example Wifi Access Credential",
+                             credentialSubject: ["did:metablox:HNXrdVz8caA48HtyPMWcnBSCyuxfwSzZgPeDVQ2H9RcK", "User"],
+                             vcProof: vcproof,
+                             revoked: false
+                            )
+        let verifyR = didc.verifyVC(vc)
+        XCTAssert(verifyR)
     }
 
     func testPerformanceExample() throws {

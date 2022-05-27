@@ -54,14 +54,19 @@ public class DIDCore {
         return true
     }
     
-    public func readDIDString()-> String? {
-        guard let did = self.loadedDIDPtr else {return nil}
-        guard let meta = did_to_did_meta(did) else {return nil}
-        let DIDStr = String(cString: &meta.pointee.did.0, encoding: .utf8)
-        return DIDStr
+    // Read did string from loaded didptr
+    public func readDIDString(withSchemaPrefix: Bool = false)-> String? {
+        guard let did = self.loadedDIDPtr,
+              let meta = did_to_did_meta(did),
+              let DIDStr = String(cString: &meta.pointee.did.0, encoding: .utf8)
+        else {
+            return nil
+        }
+        return withSchemaPrefix ? "did:metablox:" + DIDStr : DIDStr
     }
     
     private let pubkeyLength = 45
+    // Read publickey string from loaded didptr, in the format of address
     public func readDIDPublicKey()-> String? {
         guard let did = self.loadedDIDPtr else {return nil}
         
@@ -73,10 +78,6 @@ public class DIDCore {
             buffer.deinitialize(count: pubkeyLength)
         }
         return pubkeyStr
-        
-//        guard let meta = did_to_did_meta(did) else {return nil}
-//        let pubkey = String(validatingUTF8: &(meta.pointee.did_keys.pointee.publicKeyHex.0))
-//        return pubkey
     }
     
     // Read DID description from currently loaded DID, formated in JSON string.
@@ -223,196 +224,60 @@ public class DIDCore {
         
         return true
     }
-}
-
-public struct VCModel {
-    public init(context: [String], id: String, type: [String], subType: String, issuer: String, issuanceDate: String, expirationDate: String, description: String, credentialSubject: [String], vcProof: ProofModel, revoked: Bool) {
-        self.context = context
-        self.id = id
-        self.type = type
-        self.subType = subType
-        self.issuer = issuer
-        self.issuanceDate = issuanceDate
-        self.expirationDate = expirationDate
-        self.description = description
-        self.credentialSubject = credentialSubject
-        self.vcProof = vcProof
-        self.revoked = revoked
-    }
     
-    public var context: [String]
-    public var id: String
-    public var type: [String]
-    public var subType: String
-    public var issuer: String
-    public var issuanceDate: String
-    public var expirationDate: String
-    public var description: String
-    public var credentialSubject: [String]
-    public var vcProof: ProofModel
-    public var revoked: Bool
-}
-
-extension VCModel {
-    public init(vc: UnsafeMutablePointer<VC>) {
-        context = toArray(ptr: vc.pointee.context, length: Int(vc.pointee.count_context))
-        id = String(cString: &vc.pointee.id.0, encoding: .utf8) ?? ""
-        type = toArray(ptr: vc.pointee.type, length: Int(vc.pointee.count_type))
-        subType = String(cString: &vc.pointee.sub_type.0, encoding: .utf8) ?? ""
-        issuer = String(cString: &vc.pointee.issuer.0, encoding: .utf8) ?? ""
-        issuanceDate = String(cString: &vc.pointee.issuance_data.0, encoding: .utf8) ?? ""
-        expirationDate = String(cString: &vc.pointee.expiration_data.0, encoding: .utf8) ?? ""
-        description = String(cString: &vc.pointee.description.0, encoding: .utf8) ?? ""
-        credentialSubject = toArray(ptr: vc.pointee.CredentialSubject, length: Int(vc.pointee.count_subject))
-        vcProof = ProofModel(vcProof: &vc.pointee.vcProof)
-        revoked = (vc.pointee.revoked != 0)
-    }
-    
-    public func toCStruct() -> UnsafeMutablePointer<VC>? {
-        let contextptr = UnsafePointer(toDoublePtr(strArr: context))
-        let typeptr = UnsafePointer(toDoublePtr(strArr: type))
-        let credentialSubjectPtr =  UnsafePointer(toDoublePtr(strArr: credentialSubject))
-        let vc = new_vc(contextptr, Int32(context.count), id, typeptr, Int32(type.count), subType, issuer, issuanceDate, expirationDate, description, credentialSubjectPtr, Int32(credentialSubject.count), vcProof.toVCProof()!.pointee, revoked ? 1 : 0)
-        return vc
-    }
-}
-
-public struct VPModel {
-    public init(context: [String], type: [String], vc: [VCModel], holder: String, vpProof: ProofModel) {
-        self.context = context
-        self.type = type
-        self.vc = vc
-        self.holder = holder
-        self.vpProof = vpProof
-    }
-    
-    public var context: [String]
-    public var type: [String]
-    public var vc: [VCModel]
-    public var holder: String
-    public var vpProof: ProofModel
-}
-
-extension VPModel {
-    public init(vp: UnsafeMutablePointer<VP>) {
-        context = toArray(ptr: vp.pointee.context, length: Int(vp.pointee.count_context))
-        type = toArray(ptr: vp.pointee.type, length: Int(vp.pointee.count_type))
-        holder = String(cString: &vp.pointee.holder.0, encoding: .utf8) ?? ""
-        vc = []
-        let vcCount = Int(vp.pointee.count_vc)
-        for i in 0..<vcCount {
-            let vcPtr = vp.pointee.vc[i]
-            let c = VCModel(vc: vcPtr!)
-            vc.append(c)
+    // Verify the content and signature of a VC
+    public func verifyVC(_ vc: VCCoreModel) -> Bool {
+        let vc_c = vc.toCStruct()
+        let r = vc_verify(vc_c)
+        defer {
+            vc_destroy(vc_c)
         }
-        vpProof = ProofModel(vpProof: &vp.pointee.vpProof)
+        return r == 0
     }
     
-    public func toCStruct() -> UnsafeMutablePointer<VP>? {
-        let contextptr = UnsafePointer(toDoublePtr(strArr: context))
-        let typeptr = UnsafePointer(toDoublePtr(strArr: type))
-        
-        let vcPtr = UnsafeMutablePointer<UnsafeMutablePointer<VC>?>.allocate(capacity: vc.count)
-        var vcArr = vc.map {
-            $0.toCStruct()
+    // Verify the content and signatures of a VP
+    public func verifyVP(_ vp: VPCoreModel) -> Bool {
+        let vp_c = vp.toCStruct()
+        let r = vp_verify(vp_c)
+        defer {
+            vp_destroy(vp_c)
         }
-        vcArr.append(nil)
-        vcPtr.initialize(from: vcArr, count: vc.count)
-        
-        let vp = new_vp(contextptr, Int32(context.count), typeptr, Int32(type.count), UnsafePointer(vcPtr), Int32(vc.count), holder, vpProof.toVPProof())
-        
-        return vp
-    }
-}
-
-public struct ProofModel {
-    public init(type: String, created: String, verificationMethod: String, proofPurpose: String, publicKey: String, JWSSignature: String, nonce: String? = nil) {
-        self.type = type
-        self.created = created
-        self.verificationMethod = verificationMethod
-        self.proofPurpose = proofPurpose
-        self.publicKey = publicKey
-        self.JWSSignature = JWSSignature
-        self.nonce = nonce
+        return r == 0
     }
     
-    public var type: String
-    public var created: String
-    public var verificationMethod: String
-    public var proofPurpose: String
-    public var publicKey: String
-    public var JWSSignature: String
-    public var nonce: String?
-    
-    public init(vcProof: UnsafeMutablePointer<VCProof>) {
-        type = String(cString: &vcProof.pointee.type.0, encoding: .utf8) ?? ""
-        created = String(cString: &vcProof.pointee.created.0, encoding: .utf8) ?? ""
-        verificationMethod = String(cString: &vcProof.pointee.verification_method.0, encoding: .utf8) ?? ""
-        proofPurpose = String(cString: &vcProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
-        publicKey = String(cString: &vcProof.pointee.public_key.0, encoding: .utf8) ?? ""
-        JWSSignature = String(cString: &vcProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
-        nonce = nil
-    }
-    
-    public init(vpProof: UnsafeMutablePointer<VPProof>) {
-        type = String(cString: &vpProof.pointee.type.0, encoding: .utf8) ?? ""
-        created = String(cString: &vpProof.pointee.created.0, encoding: .utf8) ?? ""
-        verificationMethod = String(cString: &vpProof.pointee.verification_method.0, encoding: .utf8) ?? ""
-        proofPurpose = String(cString: &vpProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
-        publicKey = String(cString: &vpProof.pointee.public_key.0, encoding: .utf8) ?? ""
-        JWSSignature = String(cString: &vpProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
-        nonce = String(cString: &vpProof.pointee.nonce.0, encoding: .utf8)
-    }
-    
-    public func toVCProof()-> UnsafeMutablePointer<VCProof>? {
-        let p = new_vc_proof(type, created, verificationMethod, proofPurpose, JWSSignature, publicKey)
-        return p
-    }
-
-    public func toVPProof()-> UnsafeMutablePointer<VPProof>? {
-        let p = new_vp_proof(type, created, verificationMethod, proofPurpose, JWSSignature, nonce ?? "", publicKey)
-        return p
-    }
-}
-
-
-import CryptoKit
-
-extension String {
-    func MD5() -> String {
-        let digest = Insecure.MD5.hash(data: self.data(using: .utf8) ?? Data())
-
-        return digest.map {
-            String(format: "%02hhx", $0)
-        }.joined()
-    }
-}
-
-func toArray(ptr: UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>?, length: Int) -> [String] {
-    var arr:[String] = []
-    guard ptr != nil else {
-        return arr
-    }
-    for i in 0..<length {
-        if let cptr = ptr![i] {
-            let str = String(cString: cptr, encoding: .utf8) ?? ""
-            arr.append(str)
-        } else {
-            arr.append("")
+    // Generate and sign a VP with a VC
+    public func generateVPAndSign(vc: VCCoreModel) -> VPCoreModel? {
+        guard let didPtr = self.loadedDIDPtr,
+              let didStr = self.readDIDString(withSchemaPrefix: true),
+              let pubkey = self.readDIDPublicKey()
+        else {
+            return nil
         }
         
+        let createdTime = Date.now.ISO8601Format()
+        let nonce = String(Date.now.timeIntervalSince1970)
+        let vpProof = ProofModel(type: "EcdsaSecp256k1Signature2019",
+                                 created: createdTime,
+                                 verificationMethod: didStr + "#verification",
+                                 proofPurpose: "Authentication",
+                                 publicKey: pubkey,
+                                 JWSSignature: "",
+                                 nonce: nonce)
+        let context = ["https://www.w3.org/2018/credentials/v1",
+                       "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"]
+        let type = ["VerifiablePresentation"]
+        let vp = VPCoreModel(context: context, type: type, vc: [vc], holder: didStr, vpProof: vpProof)
+        guard let vp_c = vp.toCStruct() else { return nil }
+        
+        vp_signature(vp_c, didPtr, &vp_c.pointee.vpProof.JWSSignature.0)
+        
+        let vp2 = VPCoreModel(vp: vp_c)
+        defer {
+            vp_destroy(vp_c)
+        }
+        
+        return vp2
     }
-    return arr
 }
 
-func toDoublePtr(strArr: [String]) -> UnsafeMutablePointer<UnsafeMutablePointer<CChar>?> {
-    var cStrs = strArr.map { str in
-        strdup(str)
-    }
-    cStrs.append(nil)
-    
-    let ptr = UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>.allocate(capacity: cStrs.count)
-    ptr.initialize(from: &cStrs, count: cStrs.count)
-    
-    return ptr
-}
+

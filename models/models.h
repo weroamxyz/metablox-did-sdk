@@ -1,8 +1,15 @@
 #ifndef __MODELS_H__
 #define __MODELS_H__
 //#include
+
+#ifdef TARGET_OS_IOS
+#include "did_conf.h"
+#include "did.h"
+#else
 #include "conf/did_conf.h"
 #include "did/did.h"
+#endif
+
 #include <stdlib.h>
 #include <string.h>
 

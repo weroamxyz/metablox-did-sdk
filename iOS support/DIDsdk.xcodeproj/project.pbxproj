@@ -53,6 +53,8 @@
 		966E8D4127DFCF13002F4AD0 /* did_conf.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B1137627CF54D700CD8DB2 /* did_conf.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		96CE5B0C27E94CEC0035E706 /* MetabloxDIDTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */; };
 		96CE5B0D27E94CEC0035E706 /* MetabloxDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */; };
+		96E2ADBE283FFBD300F28C91 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E2ADBD283FFBD300F28C91 /* DataModel.swift */; };
+		96E2ADC0283FFC0E00F28C91 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E2ADBF283FFC0E00F28C91 /* Utils.swift */; };
 		96F61299282AE13C0094BF79 /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F61297282AE13B0094BF79 /* models.c */; };
 		96F6129A282AE13C0094BF79 /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F61298282AE13B0094BF79 /* models.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
@@ -132,6 +134,8 @@
 		966E8D3C27DFC367002F4AD0 /* DIDCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIDCore.swift; sourceTree = "<group>"; };
 		96CE5B0927E94CEC0035E706 /* MetabloxDIDTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MetabloxDIDTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetabloxDIDTests.swift; sourceTree = "<group>"; };
+		96E2ADBD283FFBD300F28C91 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
+		96E2ADBF283FFC0E00F28C91 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
 		96F61297282AE13B0094BF79 /* models.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = models.c; sourceTree = "<group>"; };
 		96F61298282AE13B0094BF79 /* models.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = models.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -332,6 +336,8 @@
 			isa = PBXGroup;
 			children = (
 				966E8D3C27DFC367002F4AD0 /* DIDCore.swift */,
+				96E2ADBD283FFBD300F28C91 /* DataModel.swift */,
+				96E2ADBF283FFC0E00F28C91 /* Utils.swift */,
 				966E8D3827DFBA38002F4AD0 /* MetabloxDID.modulemap */,
 				966E8D2527D8252F002F4AD0 /* MetabloxDID.h */,
 			);
@@ -521,9 +527,11 @@
 				966E8D2F27D991A7002F4AD0 /* secp256k1_key.c in Sources */,
 				966E8D2C27D9919D002F4AD0 /* did_register.c in Sources */,
 				966E8D2B27D99199002F4AD0 /* did_wallet.c in Sources */,
+				96E2ADBE283FFBD300F28C91 /* DataModel.swift in Sources */,
 				964E41AE28259009000305F7 /* keccak256.c in Sources */,
 				966E8D2E27D991A3002F4AD0 /* key_generator.c in Sources */,
 				966E8D3E27DFC574002F4AD0 /* DIDCore.swift in Sources */,
+				96E2ADC0283FFC0E00F28C91 /* Utils.swift in Sources */,
 				966E8D3227D991B6002F4AD0 /* base64.c in Sources */,
 				966E8D2A27D99196002F4AD0 /* main.c in Sources */,
 				966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */,
@@ -741,7 +749,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -793,7 +801,7 @@
 				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -835,7 +843,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = ../;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.app1.MetabloxDIDTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -857,7 +865,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
 				HEADER_SEARCH_PATHS = ../;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.metablox.app1.MetabloxDIDTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
