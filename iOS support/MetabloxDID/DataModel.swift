@@ -108,6 +108,7 @@ extension VPCoreModel {
     }
 }
 
+let pubkeyLength = 65
 public struct ProofModel {
     public init(type: String, created: String, verificationMethod: String, proofPurpose: String, publicKey: String, JWSSignature: String, nonce: String? = nil) {
         self.type = type
@@ -132,7 +133,7 @@ public struct ProofModel {
         created = String(cString: &vcProof.pointee.created.0, encoding: .utf8) ?? ""
         verificationMethod = String(cString: &vcProof.pointee.verification_method.0, encoding: .utf8) ?? ""
         proofPurpose = String(cString: &vcProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
-        publicKey = String(cString: &vcProof.pointee.public_key.0, encoding: .utf8) ?? ""
+        publicKey = Data(bytes: &vcProof.pointee.public_key.0, count: pubkeyLength).base64EncodedString()
         JWSSignature = String(cString: &vcProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
         nonce = nil
     }
@@ -142,18 +143,26 @@ public struct ProofModel {
         created = String(cString: &vpProof.pointee.created.0, encoding: .utf8) ?? ""
         verificationMethod = String(cString: &vpProof.pointee.verification_method.0, encoding: .utf8) ?? ""
         proofPurpose = String(cString: &vpProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
-        publicKey = String(cString: &vpProof.pointee.public_key.0, encoding: .utf8) ?? ""
+        publicKey = Data(bytes: &vpProof.pointee.public_key.0, count: pubkeyLength).base64EncodedString()
         JWSSignature = String(cString: &vpProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
         nonce = String(cString: &vpProof.pointee.nonce.0, encoding: .utf8)
     }
     
     public func toVCProof()-> UnsafeMutablePointer<VCProof>? {
-        let p = new_vc_proof(type, created, verificationMethod, proofPurpose, JWSSignature, publicKey)
+        let pubkey = Data(base64Encoded: publicKey)?.toBytesCopy()
+        defer {
+            pubkey?.deallocate()
+        }
+        let p = new_vc_proof(type, created, verificationMethod, proofPurpose, JWSSignature, pubkey)
         return p
     }
 
     public func toVPProof()-> UnsafeMutablePointer<VPProof>? {
-        let p = new_vp_proof(type, created, verificationMethod, proofPurpose, JWSSignature, nonce ?? "", publicKey)
+        let pubkey = Data(base64Encoded: publicKey)?.toBytesCopy()
+        defer {
+            pubkey?.deallocate()
+        }
+        let p = new_vp_proof(type, created, verificationMethod, proofPurpose, JWSSignature, nonce ?? "", pubkey)
         return p
     }
 }

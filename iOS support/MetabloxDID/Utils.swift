@@ -18,6 +18,14 @@ extension String {
     }
 }
 
+extension Data {
+    public func toBytesCopy() -> UnsafeMutablePointer<CUnsignedChar> {
+        let bytes = UnsafeMutablePointer<CUnsignedChar>.allocate(capacity: self.count)
+        self.copyBytes(to: bytes, count: self.count)
+        return bytes
+    }
+}
+
 func toArray(ptr: UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>?, length: Int) -> [String] {
     var arr:[String] = []
     guard ptr != nil else {
@@ -30,7 +38,6 @@ func toArray(ptr: UnsafeMutablePointer<UnsafeMutablePointer<CChar>?>?, length: I
         } else {
             arr.append("")
         }
-        
     }
     return arr
 }

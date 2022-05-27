@@ -70,21 +70,8 @@ class MetabloxDIDTests: XCTestCase {
         print("Signature(Base64): " + sig!.sig.base64EncodedString())
         print("R: \(sig!.r) " + "S: \(sig!.s) " + "V: \(sig!.v)")
         print("=== Verify signature with DID ===")
-        didc.verifySignature(contentHash:dataToSign , signature: sig!.0) { result in
-            switch result {
-            case -1:
-                print("!!! DID ERROR !!!")
-                break
-            case 0:
-                print("--- DID signature verify pass ---")
-                break
-            default:
-                print("!!! unknown return \(result) !!!")
-                break
-            }
-            
-            XCTAssert(result == 0, "DID signature verify failure")
-        }
+        let vr = didc.verifySignature(contentHash:dataToSign , signature: sig!.0)
+        XCTAssert(vr, "DID signature verify failure")
         
         // Export did1
         let privatekey1 = didc.exportPrivateKey(name: didname, password: didpass)
@@ -193,13 +180,21 @@ class MetabloxDIDTests: XCTestCase {
     }
     
     func testVCAndVPConstruction() throws {
-        let vcp_c = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, "pubkey12353");
+        let pubkey = "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY="
+        let pubkeyBytes = Data(base64Encoded: pubkey)!.toBytesCopy()
+        defer {
+            pubkeyBytes.deallocate()
+        }
+        let vcp_c = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, pubkeyBytes);
         XCTAssert(vcp_c != nil)
         let vcProof = ProofModel(vcProof: vcp_c!)
         XCTAssert(vcProof.JWSSignature == "")
+        XCTAssert(vcProof.publicKey == pubkey)
         print(vcProof)
         let vcp_c_2 = vcProof.toVCProof()
         XCTAssert(vcp_c_2?.pointee.type != nil)
+        let recoveredPubkey = Data(bytes: &vcp_c_2!.pointee.public_key.0, count: 65).base64EncodedString()
+        XCTAssert(recoveredPubkey == pubkey)
         
         let context = ["https://www.w3.org/2018/credentials/v1","https://ns.did.ai/suites/secp256k1-2019/v1/"]
         let type = ["VerifiableCredential","MiningLicense"]
@@ -269,6 +264,15 @@ class MetabloxDIDTests: XCTestCase {
         
         let verifyR = didc.verifyVC(vc)
         XCTAssert(verifyR)
+        
+        let vp = didc.generateVPAndSign(vc: vc)
+        print(vp)
+        XCTAssert(vp != nil)
+        XCTAssert(vp!.vc.count == 1)
+        XCTAssert(vp!.vc.first?.vcProof.publicKey == "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=")
+        
+        let verifyVR = didc.verifyVP(vp!)
+        XCTAssert(verifyVR)
     }
 
     func testPerformanceExample() throws {

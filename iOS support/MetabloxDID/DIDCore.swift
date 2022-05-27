@@ -75,7 +75,22 @@ public class DIDCore {
         did_export_pubkey(did, buffer)
         let pubkeyStr = String(cString: buffer, encoding: .utf8)
         defer {
-            buffer.deinitialize(count: pubkeyLength)
+            buffer.deallocate()
+        }
+        return pubkeyStr
+    }
+    
+    // Read publckey string from loaded didptr, in the format of base64 string of raw bytes
+    public func readRawPublickeyInBase64() -> String? {
+        guard let did = self.loadedDIDPtr else {return nil}
+        
+        let bufferLength = 65
+        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: bufferLength)
+        buffer.initialize(repeating: 0, count: bufferLength)
+        did_get_pubkey(did, buffer, bufferLength)
+        let pubkeyStr = Data(bytes: buffer, count: bufferLength).base64EncodedString()
+        defer {
+            buffer.deallocate()
         }
         return pubkeyStr
     }
@@ -126,19 +141,19 @@ public class DIDCore {
     
     // Verify the signature and unsigned content with the current DID public key.
     // Return: 0 = fail, 1 = pass, -1 = DIDError
-    public func verifySignature(contentHash: Data, signature: Data, finishHandler:(Int)->()) {
+    public func verifySignature(contentHash: Data, signature: Data) -> Bool {
         let contentUChars = [UInt8](contentHash)
         guard let did = self.loadedDIDPtr else {
-            finishHandler(-1)
-            return
+            return false
         }
         
-        var sign = signature
         let didMeta = did_to_did_meta(did)
-        sign.withUnsafeMutableBytes { (bytes: UnsafeMutablePointer<CChar>) in
-            let result = did_verify_hash(didMeta?.pointee.did_keys, contentUChars,  bytes, DIDSignatureLength)
-            finishHandler(Int(result))
+        let bytes = signature.toBytesCopy()
+        defer {
+            bytes.deallocate()
         }
+        let result = did_verify_hash(didMeta?.pointee.did_keys, contentUChars,  bytes, DIDSignatureLength)
+        return result == 0
     }
     
     private let DIDPrivateKeyLength = 128
@@ -249,13 +264,21 @@ public class DIDCore {
     public func generateVPAndSign(vc: VCCoreModel) -> VPCoreModel? {
         guard let didPtr = self.loadedDIDPtr,
               let didStr = self.readDIDString(withSchemaPrefix: true),
-              let pubkey = self.readDIDPublicKey()
+              let pubkey = self.readRawPublickeyInBase64()
         else {
             return nil
         }
         
-        let createdTime = Date.now.ISO8601Format()
-        let nonce = String(Date.now.timeIntervalSince1970)
+        let createdTime: String
+        if #available(iOS 15.0, *) {
+            createdTime = Date.now.ISO8601Format()
+        } else {
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "en_US_POSIX")
+            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+            createdTime = formatter.string(from: Date())
+        }
+        let nonce = String(Date().timeIntervalSince1970)
         let vpProof = ProofModel(type: "EcdsaSecp256k1Signature2019",
                                  created: createdTime,
                                  verificationMethod: didStr + "#verification",
