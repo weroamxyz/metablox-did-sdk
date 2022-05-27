@@ -249,23 +249,24 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(didImportResult == true, "DID import failure")
         
         let vcproof = ProofModel(type: "EcdsaSecp256k1Signature2019",
-                                 created: "2022-05-27T00:21:03Z",
+                                 created: "2022-05-27T02:33:24Z",
                                  verificationMethod: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification",
                                  proofPurpose: "Authentication",
-                                 publicKey: "",
-                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..1tJjC7OvfkZXOCWFXNJ1xm8bWUSoiNYfEHe5fAEE6LaFGAi_HNLj2SllbfU6IbsKJEY-D70Qb1r84LMZ4Pbxog")
-        let vc = VCCoreModel(context: ["https://ns.did.ai/suites/secp256k1-2019/v1/", "https://www.w3.org/2018/credentials/v1"],
-                             id: "http://metablox.com/credentials/94",
-                             type: ["VerifiableCredential", "WifiAccess"],
-                             subType: "WifiAccess",
+                                 publicKey: "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=",
+                                 JWSSignature: "yJhbGciOiJFUzI1NiJ9..7m6Ulyg-t08Bj7ZBBR6kVz12drhjcbwJbP8OIDKRxjKfhi20Do4wXztk_CO3y9ex5AGqCjWLSTMQGNUfue_rmg")
+        let vc = VCCoreModel(context: ["https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#", "https://www.w3.org/2018/credentials/v1"],
+                             id: "http://metablox.com/credentials/97",
+                             type: ["MiningLicense", "VerifiableCredential"],
+                             subType: "",
                              issuer: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
-                             issuanceDate: "2022-05-27T00:21:03Z",
-                             expirationDate: "2032-05-27T00:21:03Z",
-                             description: "Example Wifi Access Credential",
-                             credentialSubject: ["did:metablox:HNXrdVz8caA48HtyPMWcnBSCyuxfwSzZgPeDVQ2H9RcK", "User"],
+                             issuanceDate: "2022-05-27T02:26:08Z",
+                             expirationDate: "2032-05-27T02:26:08Z",
+                             description: "Example Mining License Credential",
+                             credentialSubject: ["did:metablox:HNXrdVz8caA48HtyPMWcnBSCyuxfwSzZgPeDVQ2H9RcK", "", "", ""],
                              vcProof: vcproof,
                              revoked: false
                             )
+        
         let verifyR = didc.verifyVC(vc)
         XCTAssert(verifyR)
     }

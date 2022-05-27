@@ -55,8 +55,7 @@
 		96CE5B0D27E94CEC0035E706 /* MetabloxDID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 966E8D2327D8252F002F4AD0 /* MetabloxDID.framework */; };
 		96E2ADBE283FFBD300F28C91 /* DataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E2ADBD283FFBD300F28C91 /* DataModel.swift */; };
 		96E2ADC0283FFC0E00F28C91 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96E2ADBF283FFC0E00F28C91 /* Utils.swift */; };
-		96F61299282AE13C0094BF79 /* models.c in Sources */ = {isa = PBXBuildFile; fileRef = 96F61297282AE13B0094BF79 /* models.c */; };
-		96F6129A282AE13C0094BF79 /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 96F61298282AE13B0094BF79 /* models.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		96E2ADC12840736500F28C91 /* models.h in Headers */ = {isa = PBXBuildFile; fileRef = 00912D9E282AAD49005AE8FF /* models.h */; settings = {ATTRIBUTES = (Private, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -136,8 +135,6 @@
 		96CE5B0B27E94CEC0035E706 /* MetabloxDIDTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetabloxDIDTests.swift; sourceTree = "<group>"; };
 		96E2ADBD283FFBD300F28C91 /* DataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataModel.swift; sourceTree = "<group>"; };
 		96E2ADBF283FFC0E00F28C91 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
-		96F61297282AE13B0094BF79 /* models.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = models.c; sourceTree = "<group>"; };
-		96F61298282AE13B0094BF79 /* models.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = models.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,7 +188,6 @@
 				964E41AA28259008000305F7 /* keccak256 */,
 				00B1137A27CF54D700CD8DB2 /* common */,
 				00B1137527CF54D700CD8DB2 /* conf */,
-				96F61296282AE13B0094BF79 /* models */,
 				00B1137727CF54D700CD8DB2 /* did */,
 				00B1138627CF54D700CD8DB2 /* did_key */,
 				00B1137227CF54D600CD8DB2 /* did_register */,
@@ -352,16 +348,6 @@
 			path = MetabloxDIDTests;
 			sourceTree = "<group>";
 		};
-		96F61296282AE13B0094BF79 /* models */ = {
-			isa = PBXGroup;
-			children = (
-				96F61297282AE13B0094BF79 /* models.c */,
-				96F61298282AE13B0094BF79 /* models.h */,
-			);
-			name = models;
-			path = ../models;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -371,7 +357,7 @@
 			files = (
 				966E8D2627D8252F002F4AD0 /* MetabloxDID.h in Headers */,
 				966E8D3927DFC2AF002F4AD0 /* did.h in Headers */,
-				96F6129A282AE13C0094BF79 /* models.h in Headers */,
+				96E2ADC12840736500F28C91 /* models.h in Headers */,
 				966E8D3A27DFC2AF002F4AD0 /* did_wallet.h in Headers */,
 				966E8D3F27DFCEEB002F4AD0 /* did_key.h in Headers */,
 				002B5D98281919FF00E17B29 /* secp256k1_key.h in Headers */,
@@ -537,7 +523,6 @@
 				966E8D2D27D991A1002F4AD0 /* did_key.c in Sources */,
 				966E8D3527D991BD002F4AD0 /* cJSON.c in Sources */,
 				966E8D3027D991AB002F4AD0 /* did.c in Sources */,
-				96F61299282AE13C0094BF79 /* models.c in Sources */,
 				966E8D3127D991B4002F4AD0 /* aes.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
