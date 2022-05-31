@@ -290,12 +290,13 @@ void vp_signature(VP *vp, did_handle did, char *sig)
 {
     // unsigned char vp_hash[32] = {0};
     // convert_vp_to_bytes(vp, vp_hash);
-    unsigned char out[1000] = {0};
+    unsigned char out[4096] = {0};
     char vpProof_jws[128] = {0};
     strcpy(vpProof_jws, vp->vpProof.JWSSignature);
     strcpy(vp->vpProof.JWSSignature, "");
     int out_len = 0;
     convert_vp_to_bytes(vp, out, &out_len);
+    printf("VP bytes:\n %s\n", out);
     
     strcpy(vp->vpProof.JWSSignature, vpProof_jws);
     unsigned char vp_hash[32] = {0};
@@ -320,7 +321,7 @@ int vp_verify(VP *vp)
 
     // unsigned char vp_hash[32] = {0};
     // convert_vp_to_bytes(vp, vp_hash);
-    char out[2048] = {0};
+    char out[4096] = {0};
     char vpProof_jws[128] = {0};
     strcpy(vpProof_jws, vp->vpProof.JWSSignature);
     strcpy(vp->vpProof.JWSSignature, "");
