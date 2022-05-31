@@ -261,7 +261,7 @@ public class DIDCore {
     }
     
     // Generate and sign a VP with a VC
-    public func generateVPAndSign(vc: VCCoreModel) -> VPCoreModel? {
+    public func generateVPAndSign(vc: VCCoreModel, nonce: String? = nil) -> VPCoreModel? {
         guard let didPtr = self.loadedDIDPtr,
               let didStr = self.readDIDString(withSchemaPrefix: true),
               let pubkey = self.readRawPublickeyInBase64()
@@ -278,14 +278,14 @@ public class DIDCore {
             formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
             createdTime = formatter.string(from: Date())
         }
-        let nonce = String(Date().timeIntervalSince1970)
-        let vpProof = ProofModel(type: "EcdsaSecp256k1Signature2019",
+        let newNonce = nonce ?? String(Date().timeIntervalSince1970)
+        let vpProof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
                                  created: createdTime,
                                  verificationMethod: didStr + "#verification",
                                  proofPurpose: "Authentication",
                                  publicKey: pubkey,
                                  JWSSignature: "",
-                                 nonce: nonce)
+                                 nonce: newNonce)
         let context = ["https://www.w3.org/2018/credentials/v1",
                        "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"]
         let type = ["VerifiablePresentation"]

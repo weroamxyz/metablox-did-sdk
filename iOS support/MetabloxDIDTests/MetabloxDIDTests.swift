@@ -187,7 +187,7 @@ class MetabloxDIDTests: XCTestCase {
         }
         let vcp_c = new_vc_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, pubkeyBytes);
         XCTAssert(vcp_c != nil)
-        let vcProof = ProofModel(vcProof: vcp_c!)
+        let vcProof = CoreProofModel(vcProof: vcp_c!)
         XCTAssert(vcProof.JWSSignature == "")
         XCTAssert(vcProof.publicKey == pubkey)
         print(vcProof)
@@ -217,7 +217,7 @@ class MetabloxDIDTests: XCTestCase {
         print(vc2)
         
         let vpf_c = new_vp_proof("EcdsaSecp256k1Signature2019", "2022-05-19T01:48:31Z", "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification", "Authentication", nil, "0000", "vpPubkey");
-        let vpf = ProofModel(vpProof: vpf_c!)
+        let vpf = CoreProofModel(vpProof: vpf_c!)
         
         let vp1 = VPCoreModel(context: context, type: type, vc: [vc1], holder: "did:metablox:sampleholder", vpProof: vpf)
         XCTAssert(vp1.context.count == 2)
@@ -243,12 +243,12 @@ class MetabloxDIDTests: XCTestCase {
         let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
-        let vcproof = ProofModel(type: "EcdsaSecp256k1Signature2019",
+        let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
                                  created: "2022-05-27T02:33:24Z",
                                  verificationMethod: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification",
                                  proofPurpose: "Authentication",
                                  publicKey: "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=",
-                                 JWSSignature: "yJhbGciOiJFUzI1NiJ9..7m6Ulyg-t08Bj7ZBBR6kVz12drhjcbwJbP8OIDKRxjKfhi20Do4wXztk_CO3y9ex5AGqCjWLSTMQGNUfue_rmg")
+                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..nkzhEKQQQrgrrrMBiFeiwP1wGKJ5NoXk2awh_HRq8c0WHtRF_mtjsSpMmJpf1v-3AIBrylTDtnfYSktQxbGToQ")
         let vc = VCCoreModel(context: ["https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#", "https://www.w3.org/2018/credentials/v1"],
                              id: "http://metablox.com/credentials/97",
                              type: ["MiningLicense", "VerifiableCredential"],
@@ -265,12 +265,12 @@ class MetabloxDIDTests: XCTestCase {
         let verifyR = didc.verifyVC(vc)
         XCTAssert(verifyR)
         
-        let vp = didc.generateVPAndSign(vc: vc)
+        let vp = didc.generateVPAndSign(vc: vc, nonce: "123456")
         print(vp)
         XCTAssert(vp != nil)
         XCTAssert(vp!.vc.count == 1)
         XCTAssert(vp!.vc.first?.vcProof.publicKey == "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=")
-        
+        XCTAssert(vp!.type.count == 1)
         let verifyVR = didc.verifyVP(vp!)
         XCTAssert(verifyVR)
     }
