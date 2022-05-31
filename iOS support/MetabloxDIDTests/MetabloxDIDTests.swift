@@ -274,6 +274,49 @@ class MetabloxDIDTests: XCTestCase {
         let verifyVR = didc.verifyVP(vp!)
         XCTAssert(verifyVR)
     }
+    
+    func testVCVerify2() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let passcode = "123"
+        let privateKey = "secp256k1.eab9376db6d94b0dfdad84076f257d6bd1102344f3cd0332731cf1cd066cd2a0"
+        
+        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
+                                 created: "2022-05-31T06:35:51Z",
+                                 verificationMethod: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX#verification",
+                                 proofPurpose: "Authentication",
+                                 publicKey: "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=",
+                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..VaDsrXG-hbjXDd9ALjVduSoBnbLuY-nvOA6ctFH7NUUF6NYzQiPTDcU50t1XnIrst9shuos-OqkpbRJDOwzb0Q")
+        let vc = VCCoreModel(context: ["https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#", "https://www.w3.org/2018/credentials/v1"],
+                             id: "http://metablox.com/credentials/102",
+                             type: ["VerifiableCredential", "WifiAccess"],
+                             subType: "",
+                             issuer: "did:metablox:7rb6LjVKYSEf4LLRqbMQGgdeE8MYXkfS7dhjvJzUckEX",
+                             issuanceDate: "2022-05-30T18:59:10Z",
+                             expirationDate: "2032-05-30T18:59:10Z",
+                             description: "Example Wifi Access Credential",
+                             credentialSubject: ["did:metablox:GkcBPtjRsrVYBZChQpxCG6jBzfLGYzMsQjpwVXEQSeAW", "User"],
+                             vcProof: vcproof,
+                             revoked: false
+                            )
+        
+        let verifyR = didc.verifyVC(vc)
+        XCTAssert(verifyR)
+        
+        let vpModel = didc.generateVPAndSign(vc: vc, nonce: "11")
+        
+        let jsonData = try JSONEncoder().encode(vpModel!)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        
+        print ("Model data")
+        print(jsonString)
+    }
 
     func testPerformanceExample() throws {
         // This is an example of a performance test case.

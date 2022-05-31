@@ -242,7 +242,7 @@ int did_sign_hash(did_handle handle, const unsigned char *hash, char *out, size_
     return key_sign_hash(&context->key_pair, context->algo, hash, out, out_len);
 }
 
-int did_verify_hash(did_key_t *did_key, const unsigned char *hash, char *sign, size_t sign_len)
+int did_verify_hash(did_key_t *did_key, const unsigned char *hash, unsigned char *sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
@@ -254,7 +254,7 @@ int did_verify_hash(did_key_t *did_key, const unsigned char *hash, char *sign, s
     }
 }
 
-int did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len)
+int did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, unsigned char* sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {
@@ -266,7 +266,7 @@ int did_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey,
     }
 }
 
-int nodid_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, char* sign, size_t sign_len)
+int nodid_verify_hash_with_pubkey(did_key_t* did_key, const unsigned char* pubkey, const unsigned char* hash, unsigned char* sign, size_t sign_len)
 {
     if (strcmp(did_key->type, "EcdsaSecp256k1VerificationKey2019") == 0)
     {

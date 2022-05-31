@@ -381,28 +381,16 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
 {
     int i = 0;
     *out_len = 0;
-    char context[10][128] = {0};
-    for (i = 0; i < vc->count_context; i++)
-    {
-        strcpy(context[i], vc->context[i]);
-    }
-    qsort(context, vc->count_context, 128, cmp_context);
     char text[2048] = {0};
     for (i = 0; i < vc->count_context; i++)
     {
-        strcat(text, context[i]);
+        strcat(text, vc->context[i]);
     }
 
-    char type[10][64] = {0};
+    char text_type[128] = {0};
     for (i = 0; i < vc->count_type; i++)
     {
-        strcpy(type[i], vc->type[i]);
-    }
-    qsort(type, vc->count_type, 64, cmp_context);
-    char text_type[80] = {0};
-    for (i = 0; i < vc->count_type; i++)
-    {
-        strcat(text_type, type[i]);
+        strcat(text_type, vc->type[i]);
     }
 
     char vcProof[600] = {0};
@@ -413,7 +401,6 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
     strcat(vcProof, vc->vcProof.JWSSignature);
     unsigned long vcProof_before_jws = strlen(vcProof);
     memcpy(vcProof+vcProof_before_jws, vc->vcProof.public_key, 65);
-
 
     strcat(out, text);
     strcat(out, text_type);
@@ -426,7 +413,7 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
         if (strcmp("WifiAccess", vc->type[1]) == 0 || strcmp("MiningLicense", vc->type[1]) == 0)
         {
             char subject[256] = {0};
-            for (i = 1; i < vc->count_subject; i++)
+            for (i = 0; i < vc->count_subject; i++)
             {
                 strcat(subject, vc->CredentialSubject[i]);
             }
@@ -444,56 +431,28 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
 {
     int i = 0;
     *out_len = 0;
-    char context[10][128] = {0};
+    
+    char text[512] = {0};
     for (i = 0; i < vp->count_context; i++)
     {
-        strcpy(context[i], vp->context[i]);
-    }
-    qsort(context, vp->count_context, 128, cmp_context);
-    char text[300] = {0};
-    for (i = 0; i < vp->count_context; i++)
-    {
-        strcat(text, context[i]);
+        strcat(text, vp->context[i]);
     }
 
-    char type[10][64] = {0};
+    char text_type[128] = {0};
     for (i = 0; i < vp->count_type; i++)
     {
-        strcpy(type[i], vp->type[i]);
-    }
-    qsort(type, vp->count_type, 64, cmp_context);
-    char text_type[80] = {0};
-    for (i = 0; i < vp->count_type; i++)
-    {
-        strcat(text_type, type[i]);
+        strcat(text_type, vp->type[i]);
     }
 
-    char vc_id[10][128] = {0};
-    for (i = 0; i < vp->count_vc; i++)
-    {
-        if (vp->vc[i] != NULL)
-        {
-            strcat(vc_id[i], vp->vc[i]->id);
-        }
-    }
-    qsort(vc_id, vp->count_vc, 128, cmp_context);
     char vc_vector[2048] = {0};
     int vc_vec_len = 0;
     for (i = 0; i < vp->count_vc; i++)
     {
-        int j = 0;
-        for (j = 0; j < vp->count_vc; j++)
-        {
-            if (strcmp(vc_id[i], vp->vc[j]->id) == 0)
-            {
-                char vc_out[2048] = {0};
-                int vc_out_len = 0;
-                convert_vc_to_bytes(vp->vc[j], vc_out, &vc_out_len);
-                memcpy(vc_vector, vc_out, vc_out_len);
-                vc_vec_len += vc_out_len;
-                //  strcat(vc_vector, out);
-            }
-        }
+        char vc_out[2048] = {0};
+        int vc_out_len = 0;
+        convert_vc_to_bytes(vp->vc[i], vc_out, &vc_out_len);
+        memcpy(vc_vector, vc_out, vc_out_len);
+        vc_vec_len += vc_out_len;
     }
 
     char vpProof[600] = {0};

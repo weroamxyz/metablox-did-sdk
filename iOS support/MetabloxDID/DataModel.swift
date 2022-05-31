@@ -8,7 +8,7 @@
 import Foundation
 import MetabloxDID.DID
 
-public struct VCCoreModel {
+public struct VCCoreModel : Codable {
     public init(context: [String], id: String, type: [String], subType: String, issuer: String, issuanceDate: String, expirationDate: String, description: String, credentialSubject: [String], vcProof: CoreProofModel, revoked: Bool) {
         self.context = context
         self.id = id
@@ -60,7 +60,7 @@ extension VCCoreModel {
     }
 }
 
-public struct VPCoreModel {
+public struct VPCoreModel: Codable{
     public init(context: [String], type: [String], vc: [VCCoreModel], holder: String, vpProof: CoreProofModel) {
         self.context = context
         self.type = type
@@ -109,7 +109,7 @@ extension VPCoreModel {
 }
 
 let pubkeyLength = 65
-public struct CoreProofModel {
+public struct CoreProofModel : Codable {
     public init(type: String, created: String, verificationMethod: String, proofPurpose: String, publicKey: String, JWSSignature: String, nonce: String? = nil) {
         self.type = type
         self.created = created

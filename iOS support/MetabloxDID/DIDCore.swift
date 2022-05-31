@@ -85,7 +85,7 @@ public class DIDCore {
         guard let did = self.loadedDIDPtr else {return nil}
         
         let bufferLength = 65
-        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: bufferLength)
+        let buffer: UnsafeMutablePointer<UInt8> = .allocate(capacity: bufferLength)
         buffer.initialize(repeating: 0, count: bufferLength)
         did_get_pubkey(did, buffer, bufferLength)
         let pubkeyStr = Data(bytes: buffer, count: bufferLength).base64EncodedString()
@@ -271,7 +271,8 @@ public class DIDCore {
         
         let createdTime: String
         if #available(iOS 15.0, *) {
-            createdTime = Date.now.ISO8601Format()
+            //createdTime = Date.now.ISO8601Format()
+            createdTime = "2022-05-31T06:35:51Z"
         } else {
             let formatter = DateFormatter()
             formatter.locale = Locale(identifier: "en_US_POSIX")
