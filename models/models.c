@@ -296,7 +296,7 @@ void vp_signature(VP *vp, did_handle did, char *sig)
     strcpy(vp->vpProof.JWSSignature, "");
     int out_len = 0;
     convert_vp_to_bytes(vp, out, &out_len);
-    printf("VP bytes:\n %s\n", out);
+    printf("VP bytes:length=%d\n %s\n", out_len, out);
     
     strcpy(vp->vpProof.JWSSignature, vpProof_jws);
     unsigned char vp_hash[32] = {0};
