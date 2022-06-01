@@ -318,6 +318,54 @@ class MetabloxDIDTests: XCTestCase {
         print(jsonString)
     }
 
+    func testVpVerify2() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let passcode = "123"
+        let privateKey = "secp256k1.eab9376db6d94b0dfdad84076f257d6bd1102344f3cd0332731cf1cd066cd2a0"
+        
+        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
+                                 created: "2022-06-01T01:41:25-04:00",
+                                 verificationMethod: "did:metablox:V612aF8NKhDm2KEq9V43WhemArcRnx5LvxK35fQyzmX#verification",
+                                 proofPurpose: "Authentication",
+                                 publicKey: "BKdG5rdV8sjkBKiBG+f0O2NGeKmcYXGVHrOWLVe343UMxPb1w/kvvK7r8z5sITjXkoBwQBpy0oa2sb5qy9k656Q=",
+                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..lRfECEA4W6z4tJfO4ctMab0fSHzppGju2yQKfjDaudYjSQ6rEoN9jO8hOhuvP1vlTqOptaLEzI5sr9ElmaEbCw")
+        let vc = VCCoreModel(context: ["https://www.w3.org/2018/credentials/v1","https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"],
+                             id: "http://metablox.com/credentials/1",
+                             type: ["VerifiableCredential", "MiningLicense"],
+                             subType: "",
+                             issuer: "did:metablox:V612aF8NKhDm2KEq9V43WhemArcRnx5LvxK35fQyzmX",
+                             issuanceDate: "2022-06-01 05:41:25",
+                             expirationDate: "2032-06-01 05:41:25",
+                             description: "MiningLicenseCredential",
+                             credentialSubject: ["did:metablox:7w3VndqhPNrf5yzVfZnwTiGrctYULdRdnsEVZ5Zt5YWa", "Test", "test", "test"],
+                             vcProof: vcproof,
+                             revoked: false
+                            )
+        
+        let verifyR = didc.verifyVC(vc)
+        XCTAssert(verifyR)
+        
+        
+        let vpproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
+                                 created: "2022-06-01T14:00:21+08:00",
+                                 verificationMethod: "did:metablox:7w3VndqhPNrf5yzVfZnwTiGrctYULdRdnsEVZ5Zt5YWa#verification",
+                                 proofPurpose: "Authentication",
+                                 publicKey: "BBMnHMAZHT8T1aTogPqyXfO6tsf/mvnpN212NYg6nQuc2rSQPi4ITOT/ANHBfpdnMaLrIl+Wx2neDtuR22wlaRA=",
+                                 JWSSignature: "eyJhbGciOiJFUzI1NiJ9..IujdBxE2avjFB6c5LMZBUyoEZNn6x8u4LXm3YhZth-EJQNqQPtHTQhMH7Jvt5Mjx_v8xeTekhhlI0oVfWPY7kQ",
+                                 nonce: "1")
+        
+        let vp = VPCoreModel(context: ["https://www.w3.org/2018/credentials/v1","https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"], type: ["VerifiablePresentation"], vc: [vc], holder: "did:metablox:7w3VndqhPNrf5yzVfZnwTiGrctYULdRdnsEVZ5Zt5YWa", vpProof: vpproof)
+        let verifyVP = didc.verifyVP(vp)
+        XCTAssert(verifyVP)
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         measure {
