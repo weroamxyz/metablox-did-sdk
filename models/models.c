@@ -5,9 +5,50 @@
 #include "common/sha256.h"
 #include "common/base64.h"
 #include "common/base58.h"
+#include "cJSON/cJSON.h"
 #include "stdio.h"
 
 static void jws_signature(const unsigned char *hash, did_handle did, char *sig);
+
+wifi_access_info *cretae_wifi_access(const char *credential_id, const char *id, const char *type)
+{
+    wifi_access_info *ret = (wifi_access_info *)malloc(sizeof(wifi_access_info));
+    strcpy(ret->CredentialID, credential_id);
+    strcpy(ret->ID, id);
+    strcpy(ret->Type, type);
+    return ret;
+}
+
+mining_license_info *create_mining_license(const char *credential_id, const char *id, const char *name, const char *model, const char *serial)
+{
+    mining_license_info *ret = (mining_license_info *)malloc(sizeof(mining_license_info));
+    strcpy(ret->CredentialID, credential_id);
+    strcpy(ret->ID, id);
+    strcpy(ret->Model, model);
+    strcpy(ret->Name, name);
+    strcpy(ret->Serial, serial);
+    return ret;
+}
+
+staking_vc_info *create_staking_vc(const char *credential_id, const char *id)
+{
+    staking_vc_info *ret = (staking_vc_info *)malloc(sizeof(staking_vc_info));
+    strcpy(ret->CredentialID, credential_id);
+    strcpy(ret->ID, id);
+    return ret;
+}
+
+subject_info *create_subject(const char *id, const char *given_name, const char *family_name, const char *gender, const char *birth_country, const char *birth_date)
+{
+    subject_info *ret = (subject_info *)malloc(sizeof(subject_info));
+    strcpy(ret->ID, id);
+    strcpy(ret->GivenName, given_name);
+    strcpy(ret->FamilyName, family_name);
+    strcpy(ret->Gender, gender);
+    strcpy(ret->BirthCountry, birth_country);
+    strcpy(ret->BirthDate, birth_date);
+    return ret;
+}
 
 VC *create_vc_handle()
 {
@@ -92,7 +133,7 @@ void vp_destroy(vp_handle vp)
    free(vp_hand);
 }
 
-VC *new_vc(char *const*context,const int count_text,const char *id,char *const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,char *const*CredentialSubject,const int count_subject,const VCProof *vcProof,const int revoked)
+VC *new_vc(char *const *context, const int count_text, const char *id, char *const *type, const int count_type, const char *issuer, const char *issuance_data, const char *expiration_data, const char *description, void *CredentialSubject, const int count_subject, const VCProof *vcProof, const int revoked)
 {
     VC *vc_handl = create_vc_handle();
     int i = 0;
@@ -116,21 +157,12 @@ VC *new_vc(char *const*context,const int count_text,const char *id,char *const*t
         strcpy(vc_handl->type[i], type[i]);
     }
 
-    strcpy(vc_handl->sub_type, sub_type);
     strcpy(vc_handl->issuer, issuer);
     strcpy(vc_handl->issuance_data, issuance_data);
     strcpy(vc_handl->expiration_data, expiration_data);
     strcpy(vc_handl->description, description);
 
-    vc_handl->count_subject = count_subject;
-    vc_handl->CredentialSubject = (char **)malloc(sizeof(char *) * vc_handl->count_subject);
-    memset(vc_handl->CredentialSubject, 0, sizeof(sizeof(char *) * vc_handl->count_subject));
-
-    for (i = 0; i < vc_handl->count_subject; i++)
-    {
-        vc_handl->CredentialSubject[i] = (char *)malloc(strlen(CredentialSubject[i]) + 2);
-        strcpy(vc_handl->CredentialSubject[i], CredentialSubject[i]);
-    }
+    vc_handl->CredentialSubject = CredentialSubject;
 
     strcpy(vc_handl->vcProof.type, vcProof->type);
     strcpy(vc_handl->vcProof.created, vcProof->created);
@@ -242,7 +274,6 @@ int jws_verify(const char *hash, const char *proof_type, const char *pubkey, con
     did_key_t did_keys;
     memset(&did_keys, 0, sizeof(did_key_t));
     strcpy(did_keys.type,"EcdsaSecp256k1VerificationKey2019");
-    
     
     return nodid_verify_hash_with_pubkey(&did_keys, pubkey, payload_hash, sign, 64);
 }
@@ -372,11 +403,6 @@ VPProof *new_vp_proof(const char *type, const char *created, const char *vm, con
     return ret;
 }
 
-int cmp_context(const void *a, const void *b)
-{
-    return strcmp((char *)a, (char *)b);
-}
-
 void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
 {
     int i = 0;
@@ -400,7 +426,7 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
     strcat(vcProof, vc->vcProof.proof_purpose);
     strcat(vcProof, vc->vcProof.JWSSignature);
     unsigned long vcProof_before_jws = strlen(vcProof);
-    memcpy(vcProof+vcProof_before_jws, vc->vcProof.public_key, 65);
+    memcpy(vcProof + vcProof_before_jws, vc->vcProof.public_key, 65);
 
     strcat(out, text);
     strcat(out, text_type);
@@ -408,23 +434,39 @@ void convert_vc_to_bytes(const VC *vc, char *out, int *out_len)
     strcat(out, vc->issuance_data);
     strcat(out, vc->expiration_data);
     strcat(out, vc->description);
-    if(vc->count_type>=2)
+    if (vc->count_type >= 2)
     {
-        if (strcmp("WifiAccess", vc->type[1]) == 0 || strcmp("MiningLicense", vc->type[1]) == 0)
+        if (strcmp("WifiAccess", vc->type[1]) == 0)
         {
+            wifi_access_info *wifi = (wifi_access_info *)vc->CredentialSubject;
             char subject[256] = {0};
-            for (i = 0; i < vc->count_subject; i++)
-            {
-                strcat(subject, vc->CredentialSubject[i]);
-            }
+            strcat(subject, wifi->ID);
+            strcat(subject, wifi->Type);
+            strcat(out, subject);
+        }
+        if (strcmp("MiningLicense", vc->type[1]) == 0)
+        {
+            mining_license_info *mining = (mining_license_info *)vc->CredentialSubject;
+            char subject[256] = {0};
+            strcat(subject, mining->ID);
+            strcat(subject, mining->Name);
+            strcat(subject, mining->Model);
+            strcat(subject, mining->Serial);
+            strcat(out, subject);
+        }
+        if (strcmp("StakingVC", vc->type[1]) == 0)
+        {
+            staking_vc_info *staking = (staking_vc_info *)vc->CredentialSubject;
+            char subject[256] = {0};
+            strcat(subject, staking->ID);
             strcat(out, subject);
         }
     }
-    *out_len+=strlen(out) + vcProof_before_jws + 65;//
-    memcpy(out+strlen(out), vcProof, vcProof_before_jws + 65);//
+    *out_len += strlen(out) + vcProof_before_jws + 65;           //
+    memcpy(out + strlen(out), vcProof, vcProof_before_jws + 65); //
 
-//  printf("\n -----VC CONVERT \n%s\n -----\n",out);
-//  strcat(out, vcProof);
+    //  printf("\n -----VC CONVERT \n%s\n -----\n",out);
+    //  strcat(out, vcProof);
 }
 
 void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
@@ -479,4 +521,200 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
     *out_len += (vpProof_before_nonce + 65);//
     //  strcat(out, vpProof);
 //    printf("\n *****VP convert \n%s\n *****\n",out);
+}
+
+void vc_to_json(VC *vc, char *out)
+{
+    cJSON *vc_root = NULL;
+    cJSON *cjson_context = NULL;
+    cJSON *cjson_type = NULL;
+    cJSON *cjson_credentialSubject = NULL;
+    cJSON *cjson_proof = NULL;
+    char *print = NULL;
+
+    vc_root = cJSON_CreateObject();
+
+    cjson_context = cJSON_CreateArray();
+    cjson_type = cJSON_CreateArray();
+    cjson_credentialSubject = cJSON_CreateObject();
+    cjson_proof = cJSON_CreateObject();
+
+    int i = 0;
+    // context
+    for (i = 0; i < vc->count_context; i++)
+    {
+        if (cJSON_AddItemToArray(cjson_context, cJSON_CreateString(vc->context[i])) == NULL)
+            goto RET;
+    }
+    if (cJSON_AddItemToObject(vc_root, "@context", cjson_context) == NULL)
+        goto RET;
+    // id
+    if (cJSON_AddStringToObject(vc_root, "id", vc->id) == NULL)
+        goto RET;
+    // type
+    for (i = 0; i < vc->count_type; i++)
+    {
+        if (cJSON_AddItemToArray(cjson_type, cJSON_CreateString(vc->type[i])) == NULL)
+            goto RET;
+    }
+    if (cJSON_AddItemToObject(vc_root, "type", cjson_type) == NULL)
+        goto RET;
+    // issuer
+    if (cJSON_AddStringToObject(vc_root, "issuer", vc->issuer) == NULL)
+        goto RET;
+    // issranceDate
+    if (cJSON_AddStringToObject(vc_root, "issuanceDate", vc->issuance_data) == NULL)
+        goto RET;
+    // expirationDate
+    if (cJSON_AddStringToObject(vc_root, "expirationDate", vc->expiration_data) == NULL)
+        goto RET;
+    // description
+    if (cJSON_AddStringToObject(vc_root, "description", vc->description) == NULL)
+        goto RET;
+    // credentialSubject
+    if (vc->count_type >= 2)
+    {
+        if (strcmp("WifiAccess", vc->type[1]) == 0)
+        {
+            wifi_access_info *wifi = (wifi_access_info *)vc->CredentialSubject;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "id", wifi->ID) == NULL)
+                goto RET;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "type", wifi->Type) == NULL)
+                goto RET;
+            if (cJSON_AddItemToObject(vc_root, "credentialSubject", cjson_credentialSubject) == NULL)
+                goto RET;
+        }
+        if (strcmp("MiningLicense", vc->type[1]) == 0)
+        {
+            mining_license_info *mining = (mining_license_info *)vc->CredentialSubject;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "id", mining->ID) == NULL)
+                goto RET;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "name", mining->Name) == NULL)
+                goto RET;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "model", mining->Model) == NULL)
+                goto RET;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "serial", mining->Serial) == NULL)
+                goto RET;
+            if (cJSON_AddItemToObject(vc_root, "credentialSubject", cjson_credentialSubject) == NULL)
+                goto RET;
+        }
+        if (strcmp("StakingVC", vc->type[1]) == 0)
+        {
+            staking_vc_info *staking = (staking_vc_info *)vc->CredentialSubject;
+            if (cJSON_AddStringToObject(cjson_credentialSubject, "id", staking->ID) == NULL)
+                goto RET;
+            if (cJSON_AddItemToObject(vc_root, "credentialSubject", cjson_credentialSubject) == NULL)
+                goto RET;
+        }
+    }
+    //    proof
+    if (cJSON_AddStringToObject(cjson_proof, "type", vc->vcProof.type) == NULL)
+        goto RET;
+    if (cJSON_AddStringToObject(cjson_proof, "created", vc->vcProof.created) == NULL)
+        goto RET;
+    if (cJSON_AddStringToObject(cjson_proof, "verificationMethod", vc->vcProof.verification_method) == NULL)
+        goto RET;
+    if (cJSON_AddStringToObject(cjson_proof, "proofPurpose", vc->vcProof.proof_purpose) == NULL)
+        goto RET;
+    if (cJSON_AddStringToObject(cjson_proof, "jws", vc->vcProof.JWSSignature) == NULL)
+        goto RET;
+    if (cJSON_AddStringToObject(cjson_proof, "publicKeyString", vc->vcProof.public_key) == NULL)
+        goto RET;
+    if (cJSON_AddItemToObject(vc_root, "proof", cjson_proof) == NULL)
+        goto RET;
+    // revoked
+    if (cJSON_AddBoolToObject(vc_root, "revoked", vc->revoked) == NULL)
+        goto RET;
+
+    print = cJSON_PrintUnformatted(vc_root);
+    strcat(out, print);
+
+RET:
+    if (vc_root != NULL)
+    {
+        cJSON_Delete(vc_root);
+    }
+    if (print != NULL)
+        cJSON_free(print);
+}
+
+VC *json_to_vc(const char *buffer)
+{
+    cJSON *vc_json = NULL;
+    cJSON *cjson_context = NULL;
+    cJSON *cjson_type = NULL;
+    cJSON *cjson_credentialSubject = NULL;
+    cJSON *cjson_proof = NULL;
+    int count_context = 0, count_type = 0;
+
+    vc_json = cJSON_Parse(buffer);
+
+    cjson_context = cJSON_GetObjectItem(vc_json, "@context");
+    count_context = cJSON_GetArraySize(cjson_context);
+    char *context[10] = {0};
+    for (int i = 0; i < count_context; i++)
+    {
+        context[i] = cJSON_GetArrayItem(cjson_context, i)->valuestring;
+    }
+
+    char *id = cJSON_GetObjectItem(vc_json, "id")->valuestring;
+
+    cjson_type = cJSON_GetObjectItem(vc_json, "type");
+    count_type = cJSON_GetArraySize(cjson_type);
+    char *type[10] = {0};
+    for (int i = 0; i < count_type; i++)
+    {
+        type[i] = cJSON_GetArrayItem(cjson_type, i)->valuestring;
+    }
+
+    char *issuer = cJSON_GetObjectItem(vc_json, "issuer")->valuestring;
+    char *issuer_date = cJSON_GetObjectItem(vc_json, "issuanceDate")->valuestring;
+    char *expir_date = cJSON_GetObjectItem(vc_json, "expirationDate")->valuestring;
+    char *description = cJSON_GetObjectItem(vc_json, "description")->valuestring;
+
+    cJSON *subject = NULL;
+    subject = cJSON_GetObjectItem(vc_json, "credentialSubject");
+    void *credentialSubject = NULL;
+    if (count_type >= 2 && subject != NULL)
+    {
+        if (strcmp("WifiAccess", type[1]) == 0)
+        {
+            char *sub_id = cJSON_GetObjectItem(subject, "id")->valuestring;
+            char *sub_type = cJSON_GetObjectItem(subject, "type")->valuestring;
+            credentialSubject = cretae_wifi_access("", sub_id, sub_type);
+        }
+        if (strcmp("MiningLicense", type[1]) == 0)
+        {
+            char *sub_id = cJSON_GetObjectItem(subject, "id")->valuestring;
+            char *sub_name = cJSON_GetObjectItem(subject, "name")->valuestring;
+            char *sub_model = cJSON_GetObjectItem(subject, "model")->valuestring;
+            char *sub_serial = cJSON_GetObjectItem(subject, "serial")->valuestring;
+            credentialSubject = create_mining_license("", sub_id, sub_name, sub_model, sub_serial);
+        }
+        if (strcmp("StakingVC", type[1]) == 0)
+        {
+            char *sub_id = cJSON_GetObjectItem(subject, "id")->valuestring;
+            credentialSubject = create_staking_vc("", sub_id);
+        }
+    }
+
+    cJSON *proof = cJSON_GetObjectItem(vc_json, "proof");
+    char *proof_type = cJSON_GetObjectItem(proof, "type")->valuestring;
+    char *proof_created = cJSON_GetObjectItem(proof, "created")->valuestring;
+    char *proof_vm = cJSON_GetObjectItem(proof, "verificationMethod")->valuestring;
+    char *proof_pur = cJSON_GetObjectItem(proof, "proofPurpose")->valuestring;
+    char *proof_jws = cJSON_GetObjectItem(proof, "jws")->valuestring;
+    char *proof_pubkey = cJSON_GetObjectItem(proof, "publicKeyString")->valuestring;
+
+    int revoked = cJSON_GetObjectItem(vc_json, "revoked")->valueint;
+
+    VCProof *vc_proof = new_vc_proof(proof_type, proof_created, proof_vm, proof_pur, proof_jws, proof_pubkey);
+
+    VC *ret = new_vc(context, count_context, id, type, count_type, issuer, issuer_date, expir_date, description, credentialSubject, 6, vc_proof, revoked);
+
+    if (vc_json != NULL)
+    {
+        cJSON_Delete(vc_json);
+    }
+    return ret;
 }
