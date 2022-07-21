@@ -269,16 +269,11 @@ public class DIDCore {
             return nil
         }
         
-        let createdTime: String
-        if #available(iOS 15.0, *) {
-            //createdTime = Date.now.ISO8601Format()
-            createdTime = "2022-05-31T06:35:51Z"
-        } else {
-            let formatter = DateFormatter()
-            formatter.locale = Locale(identifier: "en_US_POSIX")
-            formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-            createdTime = formatter.string(from: Date())
-        }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let createdTime = formatter.string(from: Date())
+        
         let newNonce = nonce ?? String(Date().timeIntervalSince1970)
         let vpProof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
                                  created: createdTime,
