@@ -27,14 +27,14 @@ public class DIDCore {
         self.walletHandlerPtr = wallet_handle_create(name, storePath.path)
     }
     
-    // Create a DID record stored in store path, tagged with 'name' and encrypted with 'passcode'.
+    // Create a DID record stored in store path, tagged with 'name' and encrypted with default 'passcode'. 
     @discardableResult
-    public func createDID(name: String, passcode: String)-> Bool {
+    public func createDID(name: String, passcode: String = "")-> Bool {
         guard let newDidPtr = did_create("secp256k1", nil) else {return false}
         return self.storeDID(didPtr: newDidPtr, name: name, passcode: passcode)
     }
     
-    private func storeDID(didPtr: UnsafeMutableRawPointer, name: String, passcode: String)-> Bool {
+    private func storeDID(didPtr: UnsafeMutableRawPointer, name: String, passcode: String="")-> Bool {
         // Use MD5 for password bit length complement
         let pass = passcode.MD5()
         let result = wallet_store_did(self.walletHandlerPtr, didPtr, name, pass)
@@ -46,7 +46,7 @@ public class DIDCore {
     
     // Load the DID from storage using 'name' and 'passcode' for decryption
     @discardableResult
-    public func loadDID(name: String, passcode:String)-> Bool {
+    public func loadDID(name: String, passcode:String = "")-> Bool {
         // Use MD5 for password bit length complement
         let pass = passcode.MD5()
         guard let did = wallet_load_did(self.walletHandlerPtr, name, pass) else {return false}
@@ -62,6 +62,7 @@ public class DIDCore {
         else {
             return nil
         }
+        
         return withSchemaPrefix ? "did:metablox:" + DIDStr : DIDStr
     }
     
@@ -107,6 +108,30 @@ public class DIDCore {
             buffer.deallocate()
         }
         return serializedDoc
+    }
+    
+    // Generate DID document from currently loaded DID, and supply extra information
+    public func generateDIDDocument() -> (String, String, String)? {
+        
+        guard let did = self.loadedDIDPtr,
+              let meta = did_to_did_meta(did)
+        else {
+            return nil
+        }
+        
+        let controller = String(cString: &meta.pointee.controller.0, encoding: .utf8)
+        
+        let pubKey = readRawPublickeyInBase64()
+        
+        let type = String(cString: &meta.pointee.did_keys.pointee.type.0)
+        
+        guard let controller = controller, let pubKey = pubKey else { return nil }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let dateTime = formatter.string(from: Date())
+        
+        return (controller, pubKey, type)
     }
     
     private let DIDSignatureLength = 65
@@ -157,9 +182,9 @@ public class DIDCore {
     }
     
     private let DIDPrivateKeyLength = 128
-    // Export private key string from a DID profile decrypting with password
-    public func exportPrivateKey(name: String, password: String)-> String? {
-        guard true == self.loadDID(name: name, passcode: password) else {
+    // Export private key string from a DID profile decrypting
+    public func exportPrivateKey(name: String)-> String? {
+        guard true == self.loadDID(name: name) else {
             return nil
         }
         
@@ -182,16 +207,16 @@ public class DIDCore {
     }
     
     // Import a DID profile with a profile name and a private key, encrypt with password, and then load it as current hold
-    public func importDID(name: String, password: String, privateKey: String)-> Bool {
+    public func importDID(name: String, privateKey: String)-> Bool {
         guard let didPtr = did_import_privkey(privateKey) else {
             return false
         }
         
-        guard true == self.storeDID(didPtr: didPtr, name: name, passcode: password) else {
+        guard true == self.storeDID(didPtr: didPtr, name: name) else {
             return false
         }
         
-        return self.loadDID(name: name, passcode: password)
+        return self.loadDID(name: name)
     }
     
     // Get profile name list from storage

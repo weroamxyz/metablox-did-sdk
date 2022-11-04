@@ -74,7 +74,7 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(vr, "DID signature verify failure")
         
         // Export did1
-        let privatekey1 = didc.exportPrivateKey(name: didname, password: didpass)
+        let privatekey1 = didc.exportPrivateKey(name: didname)
         XCTAssert(privatekey1 != nil, "DID privateKey export failure")
         print("PrivateKey exported: " + privatekey1!)
         
@@ -82,11 +82,11 @@ class MetabloxDIDTests: XCTestCase {
         let didName2 = "DioDio"
         let didPass2 = "111111"
         
-        let didImportResult = didc.importDID(name: didName2, password: didPass2, privateKey: privatekey1!)
+        let didImportResult = didc.importDID(name: didName2, privateKey: privatekey1!)
         XCTAssert(didImportResult == true, "DID import failure")
         
         // Export did2
-        let privatekey2 = didc.exportPrivateKey(name: didName2, password: didPass2)
+        let privatekey2 = didc.exportPrivateKey(name: didName2)
         XCTAssert(privatekey2 != nil, "DID privateKey export failure")
         print("PrivateKey 2 exported: " + privatekey2!)
         XCTAssert(privatekey1 == privatekey2, "DID private keys not the same after import")
@@ -104,13 +104,13 @@ class MetabloxDIDTests: XCTestCase {
         
         let changeNameResult = didc.changeProfileName(name: didName2, newName: didName3)
         XCTAssert(changeNameResult == true, "DID name change failure")
-        let export3 = didc.exportPrivateKey(name: didName3, password: didPass2)
+        let export3 = didc.exportPrivateKey(name: didName3)
         XCTAssert(export3 != nil, "DID privateKey export failure after change name")
         
         // Change password
         let changePassResult = didc.changePassword(name: didName3, oldPassword: didPass2, newPassword: didPass3)
         XCTAssert(changePassResult == true, "DID pass change failure")
-        let export4 = didc.exportPrivateKey(name: didName3, password: didPass3)
+        let export4 = didc.exportPrivateKey(name: didName3)
         XCTAssert(export4 != nil, "DID privateKey export failure after change pass")
         
         // Test namelist
@@ -130,7 +130,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode = "123"
         let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
         
-        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
         let pubkey = didc.readDIDPublicKey()
@@ -146,7 +146,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode2 = "123456"
         let privateKey2 = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
         
-        let didImportResult2 = didc.importDID(name: profileName2, password: passcode2, privateKey: privateKey2)
+        let didImportResult2 = didc.importDID(name: profileName2, privateKey: privateKey2)
         XCTAssert(didImportResult2 == true, "DID import failure")
         
         let namelist = didc.profileNameList()
@@ -165,7 +165,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode = "123"
         let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
         
-        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
         let contentToSign = "3a4f827566f436bd96c2809d43329f2f8cf2997af8738f449988665526ce4ab0"
@@ -240,7 +240,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode = "123"
         let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
         
-        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
         let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
@@ -284,7 +284,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode = "123"
         let privateKey = "secp256k1.eab9376db6d94b0dfdad84076f257d6bd1102344f3cd0332731cf1cd066cd2a0"
         
-        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
         let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
@@ -327,7 +327,7 @@ class MetabloxDIDTests: XCTestCase {
         let passcode = "123"
         let privateKey = "secp256k1.eab9376db6d94b0dfdad84076f257d6bd1102344f3cd0332731cf1cd066cd2a0"
         
-        let didImportResult = didc.importDID(name: profileName, password: passcode, privateKey: privateKey)
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
         let vcproof = CoreProofModel(type: "EcdsaSecp256k1Signature2019",
