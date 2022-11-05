@@ -366,6 +366,36 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(verifyVP)
     }
     
+    func testDIDDocument() {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!!DID store init fail!!!")
+        let didc = didCore!
+        print("=== Initialized DID store ===")
+        print(storeDir!.path)
+        
+        let didname = "PiuPiu"
+        print("=== Create new DID with name '\(didname)' ===")
+        let createdFlag = didc.createDID(name: didname)
+        XCTAssert(createdFlag == true, "DID create failed")
+        let loadedFlag = didc.loadDID(name: didname)
+        XCTAssert(loadedFlag == true, "DID load failed")
+        print("=== Load DID with name '\(didname)' ===")
+        
+        let didDoc = didc.generateDIDDocument()
+        XCTAssert(didDoc != nil, "DID Document created failed")
+        XCTAssert(didDoc?.context.count == 2)
+        XCTAssert(!didDoc!.id.isEmpty)
+        XCTAssert(!didDoc!.createdDate.isEmpty)
+        XCTAssert(!didDoc!.updatedDate.isEmpty)
+        XCTAssert(didDoc?.version == 1.0)
+        XCTAssert(!didDoc!.verificationMethod.id.isEmpty)
+        XCTAssert(didDoc?.verificationMethod.type == "EcdsaSecp256k1VerificationKey2019")
+        XCTAssert(!didDoc!.verificationMethod.controller.isEmpty)
+        XCTAssert(!didDoc!.verificationMethod.publicKeyMultibase.isEmpty)
+        XCTAssert(!didDoc!.authentication.isEmpty)
+        
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         measure {

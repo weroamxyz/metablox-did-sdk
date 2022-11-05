@@ -7,6 +7,60 @@
 
 import Foundation
 import MetabloxDID.DID
+import HandyJSON
+
+public struct DIDDocumentModel: Codable {
+    
+    public init(context: [String], id: String, createdDate: String, updatedDate: String, version: Float, vertificationMethod: VerificationMethodModel, authentication: String) {
+        self.context = context
+        self.id = id
+        self.createdDate = createdDate
+        self.updatedDate = updatedDate
+        self.version = version
+        self.verificationMethod = vertificationMethod
+        self.authentication = authentication
+    }
+    
+    public var context: [String]
+    public var id: String
+    public var createdDate: String
+    public var updatedDate: String
+    public var version: Float
+    public var verificationMethod: VerificationMethodModel
+    public var authentication: String
+    
+    func toJSON(_ encoder: JSONEncoder = JSONEncoder()) throws -> String {
+        let data = try encoder.encode(self)
+        let result = String(decoding: data, as: UTF8.self)
+        return result
+    }
+    
+    static func deserialize(json: String, _ decoder: JSONDecoder = JSONDecoder()) throws -> DIDDocumentModel? {
+        let jsonData = Data(json.utf8)
+        do {
+            let didDoc = try decoder.decode(DIDDocumentModel.self, from: jsonData)
+            return didDoc
+        } catch {
+            print(error.localizedDescription)
+        }
+        return nil
+    }
+}
+
+public struct VerificationMethodModel: Codable {
+    
+    public init(id: String, type: String, controller: String, publicKeyMultiplebase: String) {
+        self.id = id
+        self.type = type
+        self.controller = controller
+        self.publicKeyMultibase = publicKeyMultiplebase
+    }
+    
+    public var id: String
+    public var type: String
+    public var controller: String
+    public var publicKeyMultibase: String
+}
 
 public struct VCCoreModel : Codable {
     public init(context: [String], id: String, type: [String], subType: String, issuer: String, issuanceDate: String, expirationDate: String, description: String, credentialSubject: [String], vcProof: CoreProofModel, revoked: Bool) {

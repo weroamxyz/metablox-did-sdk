@@ -111,7 +111,7 @@ public class DIDCore {
     }
     
     // Generate DID document from currently loaded DID, and supply extra information
-    public func generateDIDDocument() -> (String, String, String)? {
+    public func generateDIDDocument() -> DIDDocumentModel? {
         
         guard let did = self.loadedDIDPtr,
               let meta = did_to_did_meta(did)
@@ -119,19 +119,45 @@ public class DIDCore {
             return nil
         }
         
-        let controller = String(cString: &meta.pointee.controller.0, encoding: .utf8)
-        
         let pubKey = readRawPublickeyInBase64()
         
         let type = String(cString: &meta.pointee.did_keys.pointee.type.0)
         
-        guard let controller = controller, let pubKey = pubKey else { return nil }
+        let didStr = readDIDString(withSchemaPrefix: true)
+        
+        guard let pubKey = pubKey, let didStr = didStr else { return nil }
         
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        let dateTime = formatter.string(from: Date())
+        let now = formatter.string(from: Date())
         
-        return (controller, pubKey, type)
+        let context = ["https://w3id.org/did/v1",
+                       "https://ns.did.ai/suites/secp256k1-2019/v1/"]
+        let id = didStr
+        let version: Float = 1.0
+        
+        let veri_id = String(format: "%@#%@", didStr, "verification")
+        let veri_type = type
+        let veri_controller = didStr
+        let veri_pubKeyMul = pubKey
+        let veri_method: VerificationMethodModel = VerificationMethodModel(
+            id: veri_id,
+            type: veri_type,
+            controller: veri_controller,
+            publicKeyMultiplebase: veri_pubKeyMul)
+        let authen = veri_id
+        
+        let didDoc = DIDDocumentModel(
+            context: context,
+            id: id,
+            createdDate: now,
+            updatedDate: now,
+            version: version,
+            vertificationMethod: veri_method,
+            authentication: authen)
+        
+        
+        return didDoc
     }
     
     private let DIDSignatureLength = 65
