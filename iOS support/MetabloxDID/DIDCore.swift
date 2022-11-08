@@ -44,7 +44,7 @@ public class DIDCore {
         return true
     }
     
-    // Load the DID from storage using 'name' and 'passcode' for decryption
+    // Load the DID from storage using 'name' and default 'passcode' for decryption
     @discardableResult
     public func loadDID(name: String, passcode:String = "")-> Bool {
         // Use MD5 for password bit length complement

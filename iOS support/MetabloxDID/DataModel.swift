@@ -28,23 +28,6 @@ public struct DIDDocumentModel: Codable {
     public var version: Float
     public var verificationMethod: VerificationMethodModel
     public var authentication: String
-    
-    func toJSON(_ encoder: JSONEncoder = JSONEncoder()) throws -> String {
-        let data = try encoder.encode(self)
-        let result = String(decoding: data, as: UTF8.self)
-        return result
-    }
-    
-    static func deserialize(json: String, _ decoder: JSONDecoder = JSONDecoder()) throws -> DIDDocumentModel? {
-        let jsonData = Data(json.utf8)
-        do {
-            let didDoc = try decoder.decode(DIDDocumentModel.self, from: jsonData)
-            return didDoc
-        } catch {
-            print(error.localizedDescription)
-        }
-        return nil
-    }
 }
 
 public struct VerificationMethodModel: Codable {
