@@ -219,7 +219,60 @@ class MetabloxDIDTests: XCTestCase {
         
     }
     
-    func testVCVerify() throws {
+    func testGenerateAndSignVC() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
+        
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let id = "http://metablox.com/credentials/1"
+        let specific_license = "MiningLicense"
+        let description = "Mining License Credential"
+        
+        let vc = didc.generateVCAndSign(id, specific_license, description)
+    
+        XCTAssert(vc != nil)
+        XCTAssert(vc!.context.count == 2)
+        
+        let pubKey = didc.readRawPublickeyInBase64()
+        XCTAssert(vc!.vcProof.publicKey == pubKey)
+        XCTAssert(vc!.type.count == 2)
+        let verifyVCR = didc.verifyVC(vc!)
+        XCTAssert(verifyVCR)
+    }
+    
+    func testGenerateAndSignVP() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
+        
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let id = "http://metablox.com/credentials/1"
+        let specific_license = "MiningLicense"
+        let description = "Mining License Credential"
+        
+        let vc = didc.generateVCAndSign(id, specific_license, description)
+        XCTAssert(vc != nil)
+        XCTAssert(didc.verifyVC(vc!))
+        
+        let vp = didc.generateVPAndSign(vc: vc!, nonce: "123456")
+        XCTAssert(vp != nil)
+        XCTAssert(vp!.context.count == 2)
+        XCTAssertEqual(vp!.vpProof.nonce, "123456")
+        XCTAssert(didc.verifyVP(vp!))
+    }
+    
+    func testVCAndVPVerify() throws {
         let didCore = DIDCore(storePath: storeDir!)
         XCTAssert(didCore != nil, "!!! DID store init fail !!!")
         let didc = didCore!
@@ -253,7 +306,6 @@ class MetabloxDIDTests: XCTestCase {
         XCTAssert(verifyR)
         
         let vp = didc.generateVPAndSign(vc: vc, nonce: "123456")
-        print(vp)
         XCTAssert(vp != nil)
         XCTAssert(vp!.vc.count == 1)
         XCTAssert(vp!.vc.first?.vcProof.publicKey == "BGdZhu52Vj0rOtjcqxqIStzN3pweos4x6l8rjnSUKbqcxgio2y8DZmG0YGMTILPRXTgQwwKQxKaRBqhy9wD2dHY=")

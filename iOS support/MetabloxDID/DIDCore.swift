@@ -311,6 +311,57 @@ public class DIDCore {
         return r == 0
     }
     
+    // Generate and sign a VC
+    public func generateVCAndSign(_ id: String, _ specific_license: String, _ description: String) -> VCCoreModel? {
+        guard let didPtr = self.loadedDIDPtr,
+              let didStr = self.readDIDString(withSchemaPrefix: true),
+              let pubkey = self.readRawPublickeyInBase64()
+        else {
+            return nil
+        }
+        
+        let pr_type = "EcdsaSecp256k1Signature2019"
+        let pr_vm = "#verification"
+        let pr_purpose = "Authentication"
+        let vcProof = CoreProofModel(type: pr_type,
+                                     created: createdTime(),
+                                     verificationMethod: String(format: "%@%@", didStr, pr_vm),
+                                     proofPurpose: pr_purpose,
+                                     publicKey: pubkey,
+                                     JWSSignature: "")
+        let context = ["https://www.w3.org/2018/credentials/v1",
+                       "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020#"]
+        let type = ["VerifiableCredential", specific_license]
+        
+        guard let expiredDate = expiredDate(until_years: 1) else { return nil }
+        
+        let subject = [didStr, "User"]
+        
+        
+        let vc = VCCoreModel(context: context,
+                             id: id,
+                             type: type,
+                             subType: "",
+                             issuer: didStr,
+                             issuanceDate: createdTime(),
+                             expirationDate: expiredDate,
+                             description: description,
+                             credentialSubject: subject,
+                             vcProof: vcProof,
+                             revoked: false)
+        guard let vc_c = vc.toCStruct() else { return nil }
+        
+        vc_signature(vc_c, didPtr, &vc_c.pointee.vcProof.JWSSignature.0)
+        
+        let vc2 = VCCoreModel(vc: vc_c)
+        
+        defer {
+            vc_destroy(vc_c)
+        }
+        
+        return vc2
+    }
+    
     // Generate and sign a VP with a VC
     public func generateVPAndSign(vc: VCCoreModel, nonce: String? = nil) -> VPCoreModel? {
         guard let didPtr = self.loadedDIDPtr,
@@ -347,6 +398,28 @@ public class DIDCore {
         }
         
         return vp2
+    }
+    
+    // MARK: - Utilities
+    private func createdTime() -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let createdTime = formatter.string(from: Date())
+        
+        return createdTime
+    }
+    
+    private func expiredDate(until_years: Int) -> String? {
+        let currentDate = Date()
+        var dateComponent = DateComponents()
+        dateComponent.year = until_years
+        guard let futureDate = Calendar.current.date(byAdding: dateComponent, to: currentDate) else { return nil }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let expiredDate = formatter.string(from: futureDate)
+        return expiredDate
     }
 }
 

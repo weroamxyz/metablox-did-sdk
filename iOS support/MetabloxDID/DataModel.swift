@@ -7,7 +7,6 @@
 
 import Foundation
 import MetabloxDID.DID
-import HandyJSON
 
 public struct DIDDocumentModel: Codable {
     

@@ -293,12 +293,15 @@ void vp_signature(VP *vp, did_handle did, char *sig)
     unsigned char out[4096] = {0};
     char vpProof_jws[128] = {0};
     strcpy(vpProof_jws, vp->vpProof.JWSSignature);
+    printf("vpProof_jws: %s\n", vpProof_jws);
     strcpy(vp->vpProof.JWSSignature, "");
+    printf("vp->vpProof.JWSSignature: %s\n", vp->vpProof.JWSSignature);
     int out_len = 0;
     convert_vp_to_bytes(vp, out, &out_len);
     printf("VP bytes:length=%d\n %s\n", out_len, out);
     
     strcpy(vp->vpProof.JWSSignature, vpProof_jws);
+    printf("vp->vpProof.JWSSignature: %s\n", vp->vpProof.JWSSignature);
     unsigned char vp_hash[32] = {0};
     SHA256_CTX ctx;
     sha256_init(&ctx);
