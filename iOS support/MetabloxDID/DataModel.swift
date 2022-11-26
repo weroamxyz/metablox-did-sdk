@@ -7,6 +7,7 @@
 
 import Foundation
 import MetabloxDID.DID
+import CoreAudio
 
 public struct DIDDocumentModel: Codable {
     
@@ -200,5 +201,38 @@ public struct CoreProofModel : Codable {
         }
         let p = new_vp_proof(type, created, verificationMethod, proofPurpose, JWSSignature, nonce ?? "", pubkey)
         return p
+    }
+}
+
+
+public struct QOSCoreModel: Codable {
+    
+    public init(nonce: String, bandwidth: String, rssi: String, packetLose: String, jws: String) {
+        self.nonce = nonce
+        self.bandwidth = bandwidth
+        self.rssi = rssi
+        self.packetLose = packetLose
+        self.jwsSignature = jws
+    }
+    
+    public var nonce: String
+    public var bandwidth: String
+    public var rssi: String
+    public var packetLose: String
+    public var jwsSignature: String
+}
+
+extension QOSCoreModel {
+    public init(qos: UnsafeMutablePointer<QOS>) {
+        nonce = String(cString: &qos.pointee.nonce.0, encoding: .utf8) ?? ""
+        bandwidth = String(cString: &qos.pointee.bandwidth.0, encoding: .utf8) ?? ""
+        rssi = String(cString: &qos.pointee.rssi.0, encoding: .utf8) ?? ""
+        packetLose = String(cString: &qos.pointee.packLose.0, encoding: .utf8) ?? ""
+        jwsSignature = String(cString: &qos.pointee.JWSSignature.0, encoding: .utf8) ?? ""
+    }
+    
+    public func toCStruct() -> UnsafeMutablePointer<QOS>? {
+        let qos = new_qos(nonce, bandwidth, rssi, packetLose, jwsSignature)
+        return qos
     }
 }

@@ -433,6 +433,25 @@ class MetabloxDIDTests: XCTestCase {
         
     }
     
+    func testGenerateAndSignQOS() throws {
+        let didCore = DIDCore(storePath: storeDir!)
+        XCTAssert(didCore != nil, "!!! DID store init fail !!!")
+        let didc = didCore!
+        
+        let profileName = "Imported"
+        let privateKey = "secp256k1.2e6ad25111f09beb080d556b4ebb824bace0e16c84336c8addb0655cdbaade09"
+        
+        let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
+        XCTAssert(didImportResult == true, "DID import failure")
+        
+        let qos = didc.generateQOSAndSign(nonce: "_123123asfakj");
+        
+        XCTAssert(qos != nil)
+        XCTAssertFalse(qos!.jwsSignature.isEmpty)
+        
+        print(qos!.jwsSignature)
+    }
+    
     func testPerformanceExample() throws {
         // This is an example of a performance test case.
         measure {

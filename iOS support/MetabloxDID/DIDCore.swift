@@ -337,7 +337,6 @@ public class DIDCore {
         
         let subject = [didStr, "User"]
         
-        
         let vc = VCCoreModel(context: context,
                              id: id,
                              type: type,
@@ -399,6 +398,24 @@ public class DIDCore {
         
         return vp2
     }
+    
+    // generate QOS (Quality Of Service)
+    public func generateQOSAndSign(nonce: String, _ bandwidth: String = "", _ rssi: String = "", _ packetLose: String = "", _ jws: String = "") -> QOSCoreModel? {
+        guard let didPtr = self.loadedDIDPtr else { return nil}
+        let qos = QOSCoreModel(nonce: nonce, bandwidth: bandwidth, rssi: rssi, packetLose: packetLose, jws: jws)
+        guard let qos_c = qos.toCStruct() else { return nil }
+        
+        qos_signature(qos_c, didPtr, &qos_c.pointee.JWSSignature.0)
+        
+        let qos2 = QOSCoreModel(qos: qos_c)
+        
+        defer {
+            qos_destroy(qos_c)
+        }
+        
+        return qos2
+    }
+    
     
     // MARK: - Utilities
     private func createdTime() -> String {

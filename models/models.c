@@ -27,6 +27,15 @@ VP *create_vp_handle()
     return vp_hand;
 }
 
+QOS *create_qos_handle()
+{
+    QOS *qos_hand = (QOS *)malloc(sizeof(QOS));
+    if (qos_hand == NULL)
+        return NULL;
+    memset(qos_hand, 0, sizeof(QOS));
+    return qos_hand;
+}
+
 void vc_destroy(vc_handle vc)
 {
     VC *vc_handl = (VC *)vc;
@@ -90,6 +99,15 @@ void vp_destroy(vp_handle vp)
     }
    free(vp_hand->type);
    free(vp_hand);
+}
+
+void qos_destroy(qos_handle qos)
+{
+    QOS *qos_hand = (QOS *)qos;
+    if (qos_hand == NULL)
+        return;
+    
+    free(qos_hand->nonce);
 }
 
 VC *new_vc(char *const*context,const int count_text,const char *id,char *const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,char *const*CredentialSubject,const int count_subject,const VCProof *vcProof,const int revoked)
@@ -293,15 +311,10 @@ void vp_signature(VP *vp, did_handle did, char *sig)
     unsigned char out[4096] = {0};
     char vpProof_jws[128] = {0};
     strcpy(vpProof_jws, vp->vpProof.JWSSignature);
-    printf("vpProof_jws: %s\n", vpProof_jws);
     strcpy(vp->vpProof.JWSSignature, "");
-    printf("vp->vpProof.JWSSignature: %s\n", vp->vpProof.JWSSignature);
     int out_len = 0;
     convert_vp_to_bytes(vp, out, &out_len);
-    printf("VP bytes:length=%d\n %s\n", out_len, out);
-    
     strcpy(vp->vpProof.JWSSignature, vpProof_jws);
-    printf("vp->vpProof.JWSSignature: %s\n", vp->vpProof.JWSSignature);
     unsigned char vp_hash[32] = {0};
     SHA256_CTX ctx;
     sha256_init(&ctx);
@@ -482,4 +495,56 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
     *out_len += (vpProof_before_nonce + 65);//
     //  strcat(out, vpProof);
 //    printf("\n *****VP convert \n%s\n *****\n",out);
+}
+
+QOS *new_qos(const char *nonce, const char *bandwidth, const char *rssi, const char *packLose, const char *jws)
+{
+    QOS *qos_handl = create_qos_handle();
+    strcpy(qos_handl->nonce, nonce);
+    strcpy(qos_handl->bandwidth, bandwidth);
+    strcpy(qos_handl->rssi, rssi);
+    strcpy(qos_handl->packLose, packLose);
+    
+    if(jws == NULL)
+        strcpy(qos_handl->JWSSignature, "");
+    else
+        strcpy(qos_handl->JWSSignature, jws);
+    
+    return qos_handl;
+}
+
+void qos_signature(QOS *qos, did_handle did, char *sig)
+{
+    char out[1024] = {0};
+    char qos_jws[128] = {0};
+    strcpy(qos_jws, qos->JWSSignature);
+    strcpy(qos->JWSSignature, "");
+    int out_len = 0;
+    convert_qos_to_bytes(qos, out, &out_len);
+    strcpy(qos->JWSSignature, qos_jws);
+    unsigned char qos_hash[32] = {0};
+    SHA256_CTX ctx;
+    sha256_init(&ctx);
+    sha256_update(&ctx, out, out_len);
+    sha256_final(&ctx, qos_hash);
+    
+    jws_signature(qos_hash, did, sig);
+}
+
+void convert_qos_to_bytes(const QOS *qos, char *out, int *out_len)
+{
+    *out_len = 0;
+    char qosContent[100] = {0};
+    strcat(qosContent, qos->nonce);
+    strcat(qosContent, qos->bandwidth);
+    strcat(qosContent, qos->rssi);
+    strcat(qosContent, qos->packLose);
+    strcat(qosContent, qos->JWSSignature);
+    
+    unsigned long qosContent_before_jws = strlen(qosContent);
+    
+    strcat(out, qosContent);
+    *out_len+=qosContent_before_jws;
+    
+    printf("\n -----QOS CONVERT \n%s\n-----",out);
 }
