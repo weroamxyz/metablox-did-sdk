@@ -207,11 +207,12 @@ public struct CoreProofModel : Codable {
 
 public struct QOSCoreModel: Codable {
     
-    public init(nonce: String, bandwidth: String, rssi: String, packetLose: String, jws: String) {
-        self.nonce = nonce
+    public init(bandwidth: String, rssi: String, packetLose: String, latency: String, nonce: String, jws: String) {
         self.bandwidth = bandwidth
         self.rssi = rssi
         self.packetLose = packetLose
+        self.latency = latency
+        self.nonce = nonce
         self.jwsSignature = jws
     }
     
@@ -219,6 +220,7 @@ public struct QOSCoreModel: Codable {
     public var bandwidth: String
     public var rssi: String
     public var packetLose: String
+    public var latency: String
     public var jwsSignature: String
 }
 
@@ -228,11 +230,12 @@ extension QOSCoreModel {
         bandwidth = String(cString: &qos.pointee.bandwidth.0, encoding: .utf8) ?? ""
         rssi = String(cString: &qos.pointee.rssi.0, encoding: .utf8) ?? ""
         packetLose = String(cString: &qos.pointee.packLose.0, encoding: .utf8) ?? ""
+        latency = String(cString: &qos.pointee.latency.0, encoding: .utf8) ?? ""
         jwsSignature = String(cString: &qos.pointee.JWSSignature.0, encoding: .utf8) ?? ""
     }
     
     public func toCStruct() -> UnsafeMutablePointer<QOS>? {
-        let qos = new_qos(nonce, bandwidth, rssi, packetLose, jwsSignature)
+        let qos = new_qos(nonce, bandwidth, rssi, packetLose, latency, jwsSignature)
         return qos
     }
 }

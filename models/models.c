@@ -107,7 +107,7 @@ void qos_destroy(qos_handle qos)
     if (qos_hand == NULL)
         return;
     
-    free(qos_hand->nonce);
+//    free(qos_hand->nonce);
 }
 
 VC *new_vc(char *const*context,const int count_text,const char *id,char *const*type,const int count_type,const char *sub_type,const char *issuer,const char *issuance_data,const char *expiration_data,const char *description,char *const*CredentialSubject,const int count_subject,const VCProof *vcProof,const int revoked)
@@ -497,13 +497,14 @@ void convert_vp_to_bytes(const VP *vp, char *out,int *out_len)
 //    printf("\n *****VP convert \n%s\n *****\n",out);
 }
 
-QOS *new_qos(const char *nonce, const char *bandwidth, const char *rssi, const char *packLose, const char *jws)
+QOS *new_qos(const char *nonce, const char *bandwidth, const char *rssi, const char *packLose, const char *latency, const char *jws)
 {
     QOS *qos_handl = create_qos_handle();
-    strcpy(qos_handl->nonce, nonce);
     strcpy(qos_handl->bandwidth, bandwidth);
     strcpy(qos_handl->rssi, rssi);
     strcpy(qos_handl->packLose, packLose);
+    strcpy(qos_handl->latency, latency);
+    strcpy(qos_handl->nonce, nonce);
     
     if(jws == NULL)
         strcpy(qos_handl->JWSSignature, "");
@@ -527,7 +528,6 @@ void qos_signature(QOS *qos, did_handle did, char *sig)
     sha256_init(&ctx);
     sha256_update(&ctx, out, out_len);
     sha256_final(&ctx, qos_hash);
-    
     jws_signature(qos_hash, did, sig);
 }
 
@@ -535,10 +535,12 @@ void convert_qos_to_bytes(const QOS *qos, char *out, int *out_len)
 {
     *out_len = 0;
     char qosContent[100] = {0};
-    strcat(qosContent, qos->nonce);
+    
     strcat(qosContent, qos->bandwidth);
     strcat(qosContent, qos->rssi);
     strcat(qosContent, qos->packLose);
+    strcat(qosContent, qos->latency);
+    strcat(qosContent, qos->nonce);
     strcat(qosContent, qos->JWSSignature);
     
     unsigned long qosContent_before_jws = strlen(qosContent);

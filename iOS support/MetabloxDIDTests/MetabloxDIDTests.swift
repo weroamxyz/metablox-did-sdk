@@ -444,7 +444,8 @@ class MetabloxDIDTests: XCTestCase {
         let didImportResult = didc.importDID(name: profileName, privateKey: privateKey)
         XCTAssert(didImportResult == true, "DID import failure")
         
-        let qos = didc.generateQOSAndSign(nonce: "_123123asfakj");
+        let qosObj = QOSCoreModel(bandwidth: "_123123asfakj", rssi: "", packetLose: "", latency: "", nonce: "", jws: "")
+        let qos = didc.generateQOSAndSign(nonce: qosObj.nonce, bandwidth: qosObj.bandwidth, rssi: qosObj.rssi, packetLose: qosObj.packetLose, latency: qosObj.latency, jws: qosObj.jwsSignature);
         
         XCTAssert(qos != nil)
         XCTAssertFalse(qos!.jwsSignature.isEmpty)
