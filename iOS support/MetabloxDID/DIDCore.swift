@@ -153,7 +153,7 @@ public class DIDCore {
             createdDate: now,
             updatedDate: now,
             version: version,
-            vertificationMethod: veri_method,
+            vertificationMethod: [veri_method],
             authentication: authen)
         
         
@@ -439,5 +439,6 @@ public class DIDCore {
         return expiredDate
     }
 }
+
 
 

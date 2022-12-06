@@ -11,11 +11,11 @@ import CoreAudio
 
 public struct DIDDocumentModel: Codable {
     
-    public init(context: [String], id: String, createdDate: String, updatedDate: String, version: Float, vertificationMethod: VerificationMethodModel, authentication: String) {
+    public init(context: [String], id: String, createdDate: String, updatedDate: String, version: Float, vertificationMethod: [VerificationMethodModel], authentication: String) {
         self.context = context
         self.id = id
-        self.createdDate = createdDate
-        self.updatedDate = updatedDate
+        self.created = createdDate
+        self.updated = updatedDate
         self.version = version
         self.verificationMethod = vertificationMethod
         self.authentication = authentication
@@ -23,11 +23,21 @@ public struct DIDDocumentModel: Codable {
     
     public var context: [String]
     public var id: String
-    public var createdDate: String
-    public var updatedDate: String
+    public var created: String
+    public var updated: String
     public var version: Float
-    public var verificationMethod: VerificationMethodModel
+    public var verificationMethod: [VerificationMethodModel]
     public var authentication: String
+    
+    enum CodingKeys: String, CodingKey {
+        case context = "@context"
+        case id
+        case created
+        case updated
+        case version
+        case verificationMethod
+        case authentication
+    }
 }
 
 public struct VerificationMethodModel: Codable {

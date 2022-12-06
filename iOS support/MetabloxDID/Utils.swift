@@ -53,3 +53,29 @@ func toDoublePtr(strArr: [String]) -> UnsafeMutablePointer<UnsafeMutablePointer<
     
     return ptr
 }
+
+extension Encodable {
+    func encode() -> String? {
+        do {
+            let jsonData = try JSONEncoder().encode(self)
+            let jsonString = String(data: jsonData, encoding: .utf8)
+            return jsonString
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+}
+
+extension String {
+    func decode<T: Decodable>() -> T? {
+        do {
+            guard let data = self.data(using: .utf8) else { return nil }
+            let decoded = try JSONDecoder().decode(T.self, from: data)
+            return decoded
+        } catch {
+            print(error)
+        }
+        return nil
+    }
+}
