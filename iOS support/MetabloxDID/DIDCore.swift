@@ -400,9 +400,9 @@ public class DIDCore {
     }
     
     // generate QOS (Quality Of Service)
-    public func generateQOSAndSign(nonce: String, bandwidth: String, rssi: String, packetLose: String, latency: String, jws: String) -> QOSCoreModel? {
+    public func generateQOSAndSign(nonce: String, bandwidth: String, rssi: String, packetLose: String, jws: String) -> QOSCoreModel? {
         guard let didPtr = self.loadedDIDPtr else { return nil}
-        let qos = QOSCoreModel(bandwidth: bandwidth, rssi: rssi, packetLose: packetLose, latency: latency, nonce: nonce, jws: jws)
+        let qos = QOSCoreModel(bandwidth: bandwidth, rssi: rssi, packetLose: packetLose, nonce: nonce, jws: jws)
         guard let qos_c = qos.toCStruct() else { return nil }
         
         qos_signature(qos_c, didPtr, &qos_c.pointee.JWSSignature.0)

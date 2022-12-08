@@ -74,7 +74,6 @@ typedef struct quality_of_service
     char bandwidth[64];
     char rssi[64];
     char packLose[64];
-    char latency[64];
     char nonce[64];
     char JWSSignature[129];
 } QOS;
@@ -100,7 +99,7 @@ VC* new_vc(char* const*context,const int count_text,const char *id,char* const*,
 VP* new_vp(char* const*context,const int count_text,char* const*type,const int count_type,VC* const*vc,const int count_vc,const char *holder,const VPProof *vpProof);
 VCProof *new_vc_proof(const char *type, const char *created, const char *vm, const char *proof_pursose, const char *jws, const unsigned char*pub_key);
 VPProof *new_vp_proof(const char *type, const char *created, const char *vm, const char *proof_purpose, const char *jws, const char *nonce, const unsigned char*pub_key);
-QOS *new_qos(const char *nonce, const char *bandwidth, const char *rssi, const char *packLose, const char *latency, const char *jws);
+QOS *new_qos(const char *nonce, const char *bandwidth, const char *rssi, const char *packLose, const char *jws);
 
 void vc_signature(VC *vc, did_handle did, char *sig);
 int  vc_verify(VC *vc);
