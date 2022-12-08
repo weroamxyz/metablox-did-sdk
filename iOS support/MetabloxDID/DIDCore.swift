@@ -190,6 +190,23 @@ public class DIDCore {
         return (sig, r, s, v)
     }
     
+    public func signature2(contentHash: Data) -> Data? {
+        guard let did = self.loadedDIDPtr else { return nil }
+        
+        let bytes = [UInt8](contentHash)
+        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDSignatureLength)
+        buffer.initialize(repeating: 0, count: DIDSignatureLength)
+        did_sign_hash(did, bytes, buffer, DIDSignatureLength)
+        let sig = Data(bytes: buffer, count: DIDSignatureLength)
+        
+        defer {
+            buffer.deinitialize(count: DIDSignatureLength)
+            buffer.deallocate()
+        }
+        
+        return sig
+    }
+    
     // Verify the signature and unsigned content with the current DID public key.
     // Return: 0 = fail, 1 = pass, -1 = DIDError
     public func verifySignature(contentHash: Data, signature: Data) -> Bool {
