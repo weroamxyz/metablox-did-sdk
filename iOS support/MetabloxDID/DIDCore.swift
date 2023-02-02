@@ -63,6 +63,15 @@ public class DIDCore {
             return nil
         }
         
+        /*
+         // use for Xcode 14.2 and later
+        let DIDStr = withUnsafePointer(to: &meta.pointee.did) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+         */
+        
         return withSchemaPrefix ? "did:metablox:" + DIDStr : DIDStr
     }
     
