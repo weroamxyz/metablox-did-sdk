@@ -57,20 +57,16 @@ public class DIDCore {
     // Read did string from loaded didptr
     public func readDIDString(withSchemaPrefix: Bool = false)-> String? {
         guard let did = self.loadedDIDPtr,
-              let meta = did_to_did_meta(did),
-              let DIDStr = String(cString: &meta.pointee.did.0, encoding: .utf8)
+              let meta = did_to_did_meta(did)
         else {
             return nil
         }
-        
-        /*
-         // use for Xcode 14.2 and later
+    
         let DIDStr = withUnsafePointer(to: &meta.pointee.did) {
             $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
                 String(cString: pointer)
             }
         }
-         */
         
         return withSchemaPrefix ? "did:metablox:" + DIDStr : DIDStr
     }
@@ -130,7 +126,13 @@ public class DIDCore {
         
         let pubKey = readRawPublickeyInBase64()
         
-        let type = String(cString: &meta.pointee.did_keys.pointee.type.0)
+        let type = withUnsafePointer(to: &meta.pointee.did_keys.pointee.type.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        
+        print("TYPE: \(type)")
         
         let didStr = readDIDString(withSchemaPrefix: true)
         
@@ -173,6 +175,33 @@ public class DIDCore {
     // Sign a content string with the private key of DID and return signature
     // Return format (sig, r, s, v)
     public func signature(contentHash: Data)-> (sig: Data, r: Data, s: Data, v: UInt8)? {
+        guard let did = self.loadedDIDPtr else {return nil}
+        
+        let bytes = [UInt8](contentHash)
+        let buffer: UnsafeMutablePointer<CChar> = .allocate(capacity: DIDSignatureLength)
+        buffer.initialize(repeating: 0, count: DIDSignatureLength)
+        did_sign_hash(did, bytes, buffer, DIDSignatureLength)
+        let sig = Data(bytes: buffer, count: DIDSignatureLength)
+        
+        defer {
+            buffer.deinitialize(count: DIDSignatureLength)
+            buffer.deallocate()
+        }
+        
+        /*
+          out  signature value
+             out[0..31]  r
+             out[32.63]  s
+             out[64]     v
+         */
+        let r = sig.subdata(in: Range(0...31))
+        let s = sig.subdata(in: Range(32...63))
+        let v = sig[64]
+        
+        return (sig, r, s, v)
+    }
+    
+    public func nonceSignature(contentHash: Data)-> (sig: Data, r: Data, s: Data, v: UInt8)? {
         guard let did = self.loadedDIDPtr else {return nil}
         
         let bytes = [UInt8](contentHash)

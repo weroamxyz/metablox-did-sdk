@@ -86,13 +86,37 @@ public struct VCCoreModel : Codable {
 extension VCCoreModel {
     public init(vc: UnsafeMutablePointer<VC>) {
         context = toArray(ptr: vc.pointee.context, length: Int(vc.pointee.count_context))
-        id = String(cString: &vc.pointee.id.0, encoding: .utf8) ?? ""
+        id = withUnsafePointer(to: &vc.pointee.id.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
         type = toArray(ptr: vc.pointee.type, length: Int(vc.pointee.count_type))
-        subType = String(cString: &vc.pointee.sub_type.0, encoding: .utf8) ?? ""
-        issuer = String(cString: &vc.pointee.issuer.0, encoding: .utf8) ?? ""
-        issuanceDate = String(cString: &vc.pointee.issuance_data.0, encoding: .utf8) ?? ""
-        expirationDate = String(cString: &vc.pointee.expiration_data.0, encoding: .utf8) ?? ""
-        description = String(cString: &vc.pointee.description.0, encoding: .utf8) ?? ""
+        subType = withUnsafePointer(to: &vc.pointee.sub_type.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        issuer = withUnsafePointer(to: &vc.pointee.issuer.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        issuanceDate = withUnsafePointer(to: &vc.pointee.issuance_data.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        expirationDate = withUnsafePointer(to: &vc.pointee.expiration_data.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        description = withUnsafePointer(to: &vc.pointee.description.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
         credentialSubject = toArray(ptr: vc.pointee.CredentialSubject, length: Int(vc.pointee.count_subject))
         vcProof = CoreProofModel(vcProof: &vc.pointee.vcProof)
         revoked = (vc.pointee.revoked != 0)
@@ -127,7 +151,13 @@ extension VPCoreModel {
     public init(vp: UnsafeMutablePointer<VP>) {
         context = toArray(ptr: vp.pointee.context, length: Int(vp.pointee.count_context))
         type = toArray(ptr: vp.pointee.type, length: Int(vp.pointee.count_type))
-        holder = String(cString: &vp.pointee.holder.0, encoding: .utf8) ?? ""
+        
+        holder = withUnsafePointer(to: &vp.pointee.holder.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
         vc = []
         let vcCount = Int(vp.pointee.count_vc)
         for i in 0..<vcCount {
@@ -176,23 +206,74 @@ public struct CoreProofModel : Codable {
     public var nonce: String?
     
     public init(vcProof: UnsafeMutablePointer<VCProof>) {
-        type = String(cString: &vcProof.pointee.type.0, encoding: .utf8) ?? ""
-        created = String(cString: &vcProof.pointee.created.0, encoding: .utf8) ?? ""
-        verificationMethod = String(cString: &vcProof.pointee.verification_method.0, encoding: .utf8) ?? ""
-        proofPurpose = String(cString: &vcProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
+        type = withUnsafePointer(to: &vcProof.pointee.type.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        created = withUnsafePointer(to: &vcProof.pointee.created.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        verificationMethod = withUnsafePointer(to: &vcProof.pointee.verification_method.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        proofPurpose = withUnsafePointer(to: &vcProof.pointee.proof_purpose.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
         publicKey = Data(bytes: &vcProof.pointee.public_key.0, count: pubkeyLength).base64EncodedString()
-        JWSSignature = String(cString: &vcProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
+        JWSSignature = withUnsafePointer(to: &vcProof.pointee.JWSSignature.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
         nonce = nil
     }
     
     public init(vpProof: UnsafeMutablePointer<VPProof>) {
-        type = String(cString: &vpProof.pointee.type.0, encoding: .utf8) ?? ""
-        created = String(cString: &vpProof.pointee.created.0, encoding: .utf8) ?? ""
-        verificationMethod = String(cString: &vpProof.pointee.verification_method.0, encoding: .utf8) ?? ""
-        proofPurpose = String(cString: &vpProof.pointee.proof_purpose.0, encoding: .utf8) ?? ""
+        type = withUnsafePointer(to: &vpProof.pointee.type.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
+        created = withUnsafePointer(to: &vpProof.pointee.created.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
+        verificationMethod = withUnsafePointer(to: &vpProof.pointee.verification_method.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
+        proofPurpose = withUnsafePointer(to: &vpProof.pointee.proof_purpose.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
         publicKey = Data(bytes: &vpProof.pointee.public_key.0, count: pubkeyLength).base64EncodedString()
-        JWSSignature = String(cString: &vpProof.pointee.JWSSignature.0, encoding: .utf8) ?? ""
-        nonce = String(cString: &vpProof.pointee.nonce.0, encoding: .utf8)
+
+        JWSSignature = withUnsafePointer(to: &vpProof.pointee.JWSSignature.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+
+        nonce = withUnsafePointer(to: &vpProof.pointee.nonce.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
     }
     
     public func toVCProof()-> UnsafeMutablePointer<VCProof>? {
@@ -234,11 +315,31 @@ public struct QOSCoreModel: Codable {
 
 extension QOSCoreModel {
     public init(qos: UnsafeMutablePointer<QOS>) {
-        nonce = String(cString: &qos.pointee.nonce.0, encoding: .utf8) ?? ""
-        bandwidth = String(cString: &qos.pointee.bandwidth.0, encoding: .utf8) ?? ""
-        rssi = String(cString: &qos.pointee.rssi.0, encoding: .utf8) ?? ""
-        packetLose = String(cString: &qos.pointee.packLose.0, encoding: .utf8) ?? ""
-        jwsSignature = String(cString: &qos.pointee.JWSSignature.0, encoding: .utf8) ?? ""
+        nonce = withUnsafePointer(to: &qos.pointee.nonce.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        bandwidth = withUnsafePointer(to: &qos.pointee.bandwidth.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        rssi = withUnsafePointer(to: &qos.pointee.rssi.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        packetLose = withUnsafePointer(to: &qos.pointee.packLose.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
+        jwsSignature = withUnsafePointer(to: &qos.pointee.JWSSignature.0) {
+            $0.withMemoryRebound(to: UInt8.self, capacity: MemoryLayout.size(ofValue: $0)) { pointer in
+                String(cString: pointer)
+            }
+        }
     }
     
     public func toCStruct() -> UnsafeMutablePointer<QOS>? {
